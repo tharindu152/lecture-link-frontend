@@ -2,19 +2,19 @@
 
 LectureLink is a requirement based academic matchmaking platform for academic institutes.
 
-<img width="800" src="https://github.com/tharindu152/lecture-link-backend/blob/master/src/main/resources/pic/Lecture_Link_Architecture.drawio.png">
+<img width="800" src="https://github.com/tharindu152/lecture-link-frontend/blob/master/src/images/product/InfoPage.PNG">
 
 ### Signup page
-<img width="800" src="https://github.com/tharindu152/lecture-link-backend/blob/master/src/main/resources/pic/Lecture_Link_Architecture.drawio.png">
+<img width="800" src="https://github.com/tharindu152/lecture-link-frontend/blob/master/src/images/product/Signup.PNG">
 
 ### List view with pagination
-<img width="800" src="https://github.com/tharindu152/lecture-link-backend/blob/master/src/main/resources/pic/Lecture_Link_Architecture.drawio.png">
+<img width="800" src="https://github.com/tharindu152/lecture-link-frontend/blob/master/src/images/product/ListPagination.PNG">
 
 ### Dynamic forms with frontend validation
-<img width="800" src="https://github.com/tharindu152/lecture-link-backend/blob/master/src/main/resources/pic/Lecture_Link_Architecture.drawio.png">
+<img width="800" src="https://github.com/tharindu152/lecture-link-frontend/blob/master/src/images/product/Form.PNG">
 
 ### Device Responsiveness
-<img width="800" src="https://github.com/tharindu152/lecture-link-backend/blob/master/src/main/resources/pic/Lecture_Link_Architecture.drawio.png">
+<img width="800" src="https://github.com/tharindu152/lecture-link-frontend/blob/master/src/images/product/Responsive.PNG">
 
 ## Installation in Local Environment
 
