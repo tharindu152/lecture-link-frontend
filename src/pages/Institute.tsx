@@ -1,5 +1,5 @@
 import Breadcrumb from '../components/Breadcrumbs/Breadcrumb';
-import instituteLogo from '../images/brand/brand-03.svg';
+import instituteLogo from '../images/brand/iit.png';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { FaStar } from 'react-icons/fa';
