@@ -1,5 +1,7 @@
-import Breadcrumb from '../components/Breadcrumbs/Breadcrumb';
+import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
 import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import Loader from '../../common/Loader';
 
 // Mock Subject Data
 const mockSubjects: SubjectDto[] = [
@@ -55,6 +57,17 @@ const Subject = () => {
         </div>
       </>
     );
+  }
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000); // Simulating a loading state
+    return () => clearTimeout(timer); // Cleanup timer
+  }, []);
+
+  if (loading) {
+    return <Loader />;
   }
 
   return (

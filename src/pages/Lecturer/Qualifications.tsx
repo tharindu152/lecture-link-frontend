@@ -1,8 +1,9 @@
-import Breadcrumb from '../components/Breadcrumbs/Breadcrumb';
+import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
 import { Link, useNavigate } from 'react-router-dom';
-import { Level } from '../types/level.ts';
-import { useState } from 'react';
+import { Level } from '../../types/level.ts';
+import { useEffect, useState } from 'react';
 import Qualification from './Qualification.tsx';
+import Loader from '../../common/Loader';
 
 const qualifications: Qualification[] = [
   {
@@ -75,6 +76,17 @@ const Qualifications = () => {
   const handleNavigation = (path: string) => {
     navigate(path); // Navigate to the desired route
   };
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000); // Simulating a loading state
+    return () => clearTimeout(timer); // Cleanup timer
+  }, []);
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <>

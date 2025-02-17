@@ -1,6 +1,7 @@
-import Breadcrumb from '../components/Breadcrumbs/Breadcrumb';
+import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import Loader from '../../common/Loader';
 
 // Type definition for Lecturer
 type Lecturer = {
@@ -185,7 +186,7 @@ const lecturers: Lecturer[] = [
     isAssigned: true,
   },]
 
-const Lecturers = () => {
+const SmartMatchLecturers = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
 
@@ -205,6 +206,17 @@ const Lecturers = () => {
   const handleNavigation = (path: string) => {
     navigate(path); // Route navigation
   };
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000); // Simulating a loading state
+    return () => clearTimeout(timer); // Cleanup timer
+  }, []);
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <>
@@ -384,4 +396,4 @@ const Lecturers = () => {
   );
 };
 
-export default Lecturers;
+export default SmartMatchLecturers;

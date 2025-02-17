@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import CardDataStats from '../../components/CardDataStats';
 import ChartOne from '../../components/Charts/ChartOne';
 import ChartThree from '../../components/Charts/ChartThree';
@@ -6,8 +6,20 @@ import ChartTwo from '../../components/Charts/ChartTwo';
 import ChatCard from '../../components/Chat/ChatCard';
 import MapOne from '../../components/Maps/MapOne';
 import TableOne from '../../components/Tables/TableOne';
+import Loader from '../../common/Loader';
 
-const ECommerce: React.FC = () => {
+const Dashboard: React.FC = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000); // Simulating a loading state
+    return () => clearTimeout(timer); // Cleanup timer
+  }, []);
+
+  if (loading) {
+    return <Loader />;
+  }
+
   return (
     <>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
@@ -111,4 +123,4 @@ const ECommerce: React.FC = () => {
   );
 };
 
-export default ECommerce;
+export default Dashboard;

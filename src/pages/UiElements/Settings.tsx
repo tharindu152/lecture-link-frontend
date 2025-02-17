@@ -1,5 +1,7 @@
-import Breadcrumb from '../components/Breadcrumbs/Breadcrumb';
-import userThree from '../images/user/user-03.png';
+import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
+import userThree from '../../images/user/user-03.png';
+import { Modal } from '../../components/ModalSettings.tsx';
+import fireToast from '../../hooks/fireToast.tsx';
 
 const Settings = () => {
   return (
@@ -78,6 +80,9 @@ const Settings = () => {
                         defaultValue="+990 3343 7865"
                       />
                     </div>
+                  </div>
+
+                  <div>
                   </div>
 
                   <div className="mb-5.5">
@@ -193,6 +198,7 @@ const Settings = () => {
 
                   <div className="flex justify-end gap-4.5">
                     <button
+                      onSubmit={fireToast("Test")}
                       className="flex justify-center rounded border border-stroke py-2 px-6 font-medium text-black hover:shadow-1 dark:border-strokedark dark:text-white"
                       type="submit"
                     >

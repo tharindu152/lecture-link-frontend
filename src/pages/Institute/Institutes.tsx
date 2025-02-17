@@ -1,14 +1,15 @@
-import Breadcrumb from '../components/Breadcrumbs/Breadcrumb';
-import { useState } from 'react';
-import { Status } from '../types/status.ts';
-import { Program } from '../types/program.ts';
-import logo1 from '../images/brand/institute1.png';
-import logo2 from '../images/brand/institute2.jpg';
-import logo3 from '../images/brand/institute3.png';
-import logo4 from '../images/brand/institute4.jpg';
-import logo5 from '../images/brand/institute5.jpg';
-import dummyLogo from '../images/brand/logo-dummy.jpg';
+import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
+import { useEffect, useState } from 'react';
+import { Status } from '../../types/status.ts';
+import { Program } from '../../types/program.ts';
+import logo1 from '../../images/brand/institute1.png';
+import logo2 from '../../images/brand/institute2.jpg';
+import logo3 from '../../images/brand/institute3.png';
+import logo4 from '../../images/brand/institute4.jpg';
+import logo5 from '../../images/brand/institute5.jpg';
+import dummyLogo from '../../images/brand/logo-dummy.jpg';
 import { useNavigate } from 'react-router-dom';
+import Loader from '../../common/Loader';
 
 
 // Type definition for Institute
@@ -183,6 +184,17 @@ const Institutes = () => {
   const handleNavigation = (path: string) => {
     navigate(path); // Route navigation
   };
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000); // Simulating a loading state
+    return () => clearTimeout(timer); // Cleanup timer
+  }, []);
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <>

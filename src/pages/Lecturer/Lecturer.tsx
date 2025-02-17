@@ -1,8 +1,9 @@
-import Breadcrumb from '../components/Breadcrumbs/Breadcrumb';
-import lecturerImage from '../images/user/user-02.png';
+import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
+import lecturerImage from '../../images/user/user-02.png';
 import { Link } from 'react-router-dom';
 import { FaStar } from 'react-icons/fa';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import Loader from '../../common/Loader';
 
 const Lecturer = () => {
   const qualifications = [
@@ -20,6 +21,17 @@ const Lecturer = () => {
   ];
 
   const [rating, setRating] = useState(0);
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000); // Simulating a loading state
+    return () => clearTimeout(timer); // Cleanup timer
+  }, []);
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <>

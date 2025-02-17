@@ -1,6 +1,8 @@
-import Breadcrumb from '../components/Breadcrumbs/Breadcrumb';
-import { Level } from '../types/level.ts';
+import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
+import { Level } from '../../types/level.ts';
 import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import Loader from '../../common/Loader';
 
 // Mock Qualification Data
 const qualifications: Qualification[] = [
@@ -69,6 +71,17 @@ const Qualification = () => {
 
   // Parse the qualificationId from params and find the relevant qualification
   const qualification = qualifications[0];
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000); // Simulating a loading state
+    return () => clearTimeout(timer); // Cleanup timer
+  }, []);
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <>

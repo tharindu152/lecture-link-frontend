@@ -1,70 +1,191 @@
-import Breadcrumb from '../components/Breadcrumbs/Breadcrumb';
+import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
-import { Subject} from '../types/subject.ts';
+import Loader from '../../common/Loader';
 
-const subjects: Subject[] = [
+// Type definition for Lecturer
+type Lecturer = {
+  id: number;
+  name: string;
+  district: string;
+  email: string;
+  password: string;
+  dob: string;
+  contactNo?: string;
+  review?: string;
+  payRate: number;
+  qualifications?: string[];
+  picture?: string; // Path to image (Optional for dummy data)
+  status: 'ACTIVE' | 'INACTIVE';
+  isAssigned: boolean;
+  languages?: string;
+};
+
+const lecturers: Lecturer[] = [
   {
     id: 1,
-    name: "Mathematics",
-    noOfCredits: 3,
-    description: "An introduction to algebra, geometry, and calculus.",
+    name: 'John Doe',
+    district: 'Colombo',
+    email: 'john.doe@example.com',
+    password: 'password123',
+    dob: '1985-02-15',
+    contactNo: '123-456-7890',
+    review: 'Highly enthusiastic and motivating.',
+    payRate: 55.0,
+    qualifications: ["HND"],
+    picture:
+      '../../../src/images/user/user-01.png', // Dummy image URL (replace with actual image if needed)
+    status: 'ACTIVE',
     isAssigned: true,
-    lecturerId: 101,
+    languages: 'English, Spanish',
   },
   {
     id: 2,
-    name: "Physics",
-    noOfCredits: 4,
-    description: "Exploration of the fundamental principles of matter and energy.",
-    isAssigned: true,
-    lecturerId: 102,
+    name: 'Jane Smith',
+    district: 'Kurunagala',
+    email: 'jane.smith@example.com',
+    password: 'pass98765',
+    dob: '1990-06-20',
+    contactNo: '321-654-0987',
+    review: 'Excellent in business management lectures.',
+    payRate: 47.5,
+    qualifications: ["PGD"],
+    picture:
+      '../../../src/images/user/user-02.png',
+    status: 'ACTIVE',
+    isAssigned: false,
+    languages: 'English, French',
   },
   {
     id: 3,
-    name: "Chemistry",
-    noOfCredits: 3,
-    description: "Study of substances, their properties, and reactions.",
+    name: 'Michael Brown',
+    district: 'Nuwareliya',
+    email: 'michael.brown@example.com',
+    password: 'securePass80',
+    dob: '1977-10-11',
+    contactNo: '309-413-5566',
+    payRate: 60.0,
+    status: 'INACTIVE',
+    isAssigned: false,
+    qualifications: ["BSc"],
+    picture:
+      '../../../src/images/user/user-03.png',
+  },
+  {
+    id: 4,
+    name: 'Emily White',
+    district: 'Galle',
+    email: 'emily.white@example.com',
+    password: 'passstrong77',
+    dob: '1980-12-21',
+    contactNo: '425-862-5540',
+    payRate: 40.0,
+    status: 'ACTIVE',
+    review: 'Amazing at explaining complex concepts.',
+    qualifications: ["MSc"],
+    picture:
+      '../../../src/images/user/user-04.png',
+    isAssigned: true,
+  },
+  {
+    id: 2,
+    name: 'Jane Smith',
+    district: 'Kandy',
+    email: 'jane.smith@example.com',
+    password: 'pass98765',
+    dob: '1990-06-20',
+    contactNo: '321-654-0987',
+    review: 'Excellent in business management lectures.',
+    payRate: 47.5,
+    qualifications: ["PhD"],
+    picture:
+      '../../../src/images/user/user-05.png',
+    status: 'ACTIVE',
+    isAssigned: false,
+    languages: 'English, French',
+  },
+  {
+    id: 5,
+    name: 'Daniel Wilson',
+    district: 'Colombo',
+    email: 'daniel.wilson@example.com',
+    password: 'securePass90',
+    dob: '1979-08-11',
+    contactNo: '456-231-7566',
+    payRate: 40.0,
+    status: 'INACTIVE',
+    review: 'Amazing at explaining Agile concepts',
+    qualifications: ["HND"],
+    picture:
+      '../../../src/images/user/user-06.png',
+    isAssigned: false,
+  },
+  {
+    id: 1,
+    name: 'John Doe',
+    district: 'Kurunagala',
+    email: 'john.doe@example.com',
+    password: 'password123',
+    dob: '1985-02-15',
+    contactNo: '123-456-7890',
+    review: 'Highly enthusiastic and motivating.',
+    payRate: 55.0,
+    qualifications: ["PGD"],
+    picture:
+      '../../../src/images/user/user-07.png', // Dummy image URL (replace with actual image if needed)
+    status: 'ACTIVE',
+    isAssigned: true,
+    languages: 'English, Spanish',
+  },
+
+  {
+    id: 3,
+    name: 'Michael Brown',
+    district: 'Matale',
+    email: 'michael.brown@example.com',
+    password: 'securePass80',
+    dob: '1977-10-11',
+    contactNo: '309-413-5566',
+    payRate: 60.0,
+    status: 'INACTIVE',
+    isAssigned: false,
+    qualifications: ["BSc"],
+    picture:
+      '../../../src/images/user/user-08.png',
+  },
+  {
+    id: 5,
+    name: 'Daniel Wilson',
+    district: 'Nuwareliya',
+    email: 'daniel.wilson@example.com',
+    password: 'securePass90',
+    dob: '1979-08-11',
+    contactNo: '456-231-7566',
+    payRate: 40.0,
+    status: 'INACTIVE',
+    review: 'Amazing at explaining Agile concepts',
+    qualifications: ["MSc"],
+    picture:
+      '../../../src/images/user/user-09.png',
     isAssigned: false,
   },
   {
     id: 4,
-    name: "Computer Science",
-    noOfCredits: 5,
-    description: "Focuses on programming, algorithms, and data structures.",
-    isAssigned: false,
-  },
-  {
-    id: 5,
-    name: "History",
-    noOfCredits: 2,
-    description: "A comprehensive look into historical events and civilizations.",
+    name: 'Emily White',
+    district: 'Galle',
+    email: 'emily.white@example.com',
+    password: 'passstrong77',
+    dob: '1980-12-21',
+    contactNo: '425-862-5540',
+    payRate: 40.0,
+    status: 'ACTIVE',
+    review: 'Amazing at explaining complex concepts.',
+    qualifications: ["PhD"],
+    picture:
+      '../../../src/images/user/user-10.png',
     isAssigned: true,
-    lecturerId: 103,
-  },
-  {
-    id: 6,
-    name: "Biology",
-    noOfCredits: 4,
-    isAssigned: false,
-  },
-  {
-    id: 7,
-    name: "Philosophy",
-    noOfCredits: 3,
-    description: "Examines fundamental questions on existence, reality, and knowledge.",
-    isAssigned: true,
-    lecturerId: 104,
-  },
-  {
-    id: 8,
-    name: "Art",
-    noOfCredits: 2,
-    description: "Study of creative visual works, including painting and sculpture.",
-    isAssigned: false,
-  },
-];
+  },]
 
 
 // Dropdown options
@@ -74,7 +195,7 @@ const hourlyRateOptions = ['1000-1500', '1500-2000', '2000-3000', '3000<'];
 const isAssignedOptions = ["true", "false"];
 const languageOptions = ['English', 'Sinhala', 'Tamil'];
 
-const Lecturers = () => {
+const FilteredLecturers = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
   const [filteredLecturers, setFilteredLecturers] = useState([]);
@@ -86,7 +207,7 @@ const Lecturers = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentLecturers = filteredLecturers.slice(indexOfFirstItem, indexOfLastItem);
 
-  const totalPages = Math.ceil(subjects.length / itemsPerPage);
+  const totalPages = Math.ceil(lecturers.length / itemsPerPage);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -106,7 +227,7 @@ const Lecturers = () => {
     },
     onSubmit: (values) => {
       // Filtering logic based on form values
-      const filtered = subjects.filter((lecturer) => {
+      const filtered = lecturers.filter((lecturer) => {
         return (
           (!values.district || lecturer.district === values.district) &&
           (!values.qualification ||
@@ -137,6 +258,17 @@ const Lecturers = () => {
       setFilteredLecturers(filtered);
     },
   });
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000); // Simulating a loading state
+    return () => clearTimeout(timer); // Cleanup timer
+  }, []);
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <>
@@ -421,4 +553,4 @@ const Lecturers = () => {
   );
 };
 
-export default Lecturers;
+export default FilteredLecturers;

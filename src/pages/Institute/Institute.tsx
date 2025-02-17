@@ -1,10 +1,11 @@
-import Breadcrumb from '../components/Breadcrumbs/Breadcrumb';
-import instituteLogo from '../images/brand/iit.png';
+import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
+import instituteLogo from '../../images/brand/iit.png';
 import { Link, useLocation } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaStar } from 'react-icons/fa';
-import { Program } from '../types/program.ts';
-import { Level } from '../types/level.ts';
+import { Program } from '../../types/program.ts';
+import { Level } from '../../types/level.ts';
+import Loader from '../../common/Loader';
 
 const Institute = () => {
   const [rating, setRating] = useState(0);
@@ -123,6 +124,17 @@ const Institute = () => {
       setExpandedProgramIds([...expandedProgramIds, programId]);
     }
   };
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000); // Simulating a loading state
+    return () => clearTimeout(timer); // Cleanup timer
+  }, []);
+
+  if (loading) {
+    return <Loader />;
+  }
     
     return (
       <>

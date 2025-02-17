@@ -6,32 +6,35 @@ import PageTitle from './components/PageTitle';
 import DefaultLayout from './layout/DefaultLayout';
 import SignIn from './pages/Authentication/SignIn';
 import SignUp from './pages/Authentication/SignUp';
-import Calendar from './pages/Calendar';
-import Chart from './pages/Chart';
-import ECommerce from './pages/Dashboard/ECommerce';
+import Calendar from './pages/UiElements/Calendar.tsx';
+import Chart from './pages/UiElements/Chart.tsx';
+import Dashboard from './pages/Dashboard/Dashboard.tsx';
 import FormLayout from './pages/Form/FormLayout';
-import Institute from './pages/Institute';
-import Settings from './pages/Settings';
-import Programs from './pages/Programs';
+import Institute from './pages/Institute/Institute.tsx';
+import Settings from './pages/UiElements/Settings.tsx';
+import Programs from './pages/Institute/Programs.tsx';
 import Alerts from './pages/UiElements/Alerts';
 import Buttons from './pages/UiElements/Buttons';
-import Program from './pages/Program';
+import Program from './pages/Institute/Program.tsx';
 import UpdateInstituteForm from './pages/Form/UpdateInstituteForm';
 import UpdateProgramForm from './pages/Form/UpdateProgramForm';
-import Subjects from './pages/Subjects';
-import Subject from './pages/Subject';
+import Subjects from './pages/Institute/Subjects.tsx';
+import Subject from './pages/Institute/Subject.tsx';
 import UpdateSubjectForm from './pages/Form/UpdateSubjectForm';
-import NotFound from './pages/NotFound';
+import NotFound from './pages/UiElements/NotFound.tsx';
 import { useEffect, useState } from 'react';
-import Lecturers from './pages/Lecturers.tsx';
-import Lecturer from './pages/Lecturer.tsx';
+import Lecturers from './pages/Lecturer/Lecturers.tsx';
+import Lecturer from './pages/Lecturer/Lecturer.tsx';
 import UpdateLecturerForm from './pages/Form/UpdateLecturerForm.tsx';
-import FilteredLecturers from './pages/FilteredLecturers.tsx';
-import SmartMatchLecturers from './pages/SmartMatchLecturers.tsx';
-import Institutes from './pages/Institutes.tsx';
-import Qualification from './pages/Qualification.tsx';
-import Qualifications from './pages/Qualifications.tsx';
+import FilteredLecturers from './pages/Lecturer/FilteredLecturers.tsx';
+import SmartMatchLecturers from './pages/Lecturer/SmartMatchLecturers.tsx';
+import Institutes from './pages/Institute/Institutes.tsx';
+import Qualification from './pages/Lecturer/Qualification.tsx';
+import Qualifications from './pages/Lecturer/Qualifications.tsx';
 import UpdateQualificationForm from './pages/Form/UpdateQualificationForm.tsx';
+import FilteredSubjects from './pages/Institute/FilteredSubjects.tsx';
+import SmartMatchSubjects from './pages/Institute/SmartMatchSubjects.tsx';
+import useColorMode from './hooks/useColorMode.tsx';
 
 function App() {
   const routes: RouteObject[] = [
@@ -77,8 +80,8 @@ function App() {
           path: 'dashboard',
           element: (
             <>
-              <PageTitle title="Lecture Link | ECommerce" />
-              <ECommerce />
+              <PageTitle title="Lecture Link | Dashboard" />
+              <Dashboard />
             </>
           ),
         },
@@ -173,6 +176,24 @@ function App() {
                 <>
                   <PageTitle title="Lecture Link | Update Subject Form" />
                   <UpdateSubjectForm />
+                </>
+              ),
+            },
+            {
+              path: 'filtered-subjects', // `/app/subjects`
+              element: (
+                <>
+                  <PageTitle title="Lecture Link | Subjects" />
+                  <FilteredSubjects />
+                </>
+              ),
+            },
+            {
+              path: 'smartmatch-subjects', // `/app/subjects`
+              element: (
+                <>
+                  <PageTitle title="Lecture Link | Subjects" />
+                  <SmartMatchSubjects />
                 </>
               ),
             },
@@ -373,6 +394,7 @@ function DefaultLayoutWrapper() {
 // Loader wrapper to keep the loader functionality
 function LoaderWrapper({ children }: { readonly children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
+  useColorMode();
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1000); // Simulating a loading state
