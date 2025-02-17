@@ -245,7 +245,7 @@ const Lecturers = () => {
               </thead>
               <tbody>
               {currentLecturers.map((lecturer, key) => (
-                <tr key={key+lecturer} className="hover:bg-gray-200 dark:hover:bg-gray-800">
+                <tr key={key+lecturer.id} className="hover:bg-gray-200 dark:hover:bg-gray-800">
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                     {lecturer.picture ? (
                       <img
@@ -254,9 +254,11 @@ const Lecturers = () => {
                         className="h-12 w-12 rounded-full"
                       />
                     ) : (
-                      <div className="h-12 w-12 bg-gray-300 text-black dark:bg-gray-700 dark:text-white flex items-center justify-center rounded-full">
-                        No Img
-                      </div>
+                      <img
+                        src='../../../src/images/user/profile.png'
+                        alt={lecturer.name}
+                        className="h-12 w-12 rounded-full"
+                      />
                     )}
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">

@@ -126,26 +126,26 @@ const Lecturer = () => {
               </div>
 
               {subjects && (
-                <div className="flex gap-4">
-                  <h4 className="font-semibold text-black dark:text-white w-40">
+                <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
+                  <h4 className="font-semibold text-black dark:text-white sm:w-40">
                     Assigned Subjects:
                   </h4>
                   <ul className="list-disc flex-1 pl-4">
                     {subjects.map((subject, index) => (
-                      <li key={index+subject}>{subject}</li>
+                      <li key={index + subject}>{subject}</li>
                     ))}
                   </ul>
                 </div>
               )}
 
               {qualifications && (
-                <div className="flex gap-4">
-                  <h4 className="font-semibold text-black dark:text-white w-40">
+                <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
+                  <h4 className="font-semibold text-black dark:text-white sm:w-40">
                     Qualifications:
                   </h4>
                   <ul className="list-disc flex-1 pl-4">
                     {qualifications.map((qualification, index) => (
-                      <li key={index+qualification}>{qualification}</li>
+                      <li key={index + qualification}>{qualification}</li>
                     ))}
                   </ul>
                 </div>

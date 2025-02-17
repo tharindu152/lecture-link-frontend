@@ -46,6 +46,20 @@ const Breadcrumb = ({ pageName }: BreadcrumbProps) => {
             ) : (
               ''
             )}
+            {pageName === 'Institutes' ? (
+              <Link className="font-medium hover:underline" to="/app/profile/institutes">
+              </Link>
+            ) : (
+              ''
+            )}
+            {pageName === 'Add/Update Qualification' ||
+            pageName === 'Qualification Details' ? (
+              <Link className="font-medium hover:underline" to="/app/qualifications">
+                Qualifications /
+              </Link>
+            ) : (
+              ''
+            )}
           </li>
           <li className="text-primary">
             <Link className="font-medium hover:underline" to="">

@@ -28,6 +28,10 @@ import Lecturer from './pages/Lecturer.tsx';
 import UpdateLecturerForm from './pages/Form/UpdateLecturerForm.tsx';
 import FilteredLecturers from './pages/FilteredLecturers.tsx';
 import SmartMatchLecturers from './pages/SmartMatchLecturers.tsx';
+import Institutes from './pages/Institutes.tsx';
+import Qualification from './pages/Qualification.tsx';
+import Qualifications from './pages/Qualifications.tsx';
+import UpdateQualificationForm from './pages/Form/UpdateQualificationForm.tsx';
 
 function App() {
   const routes: RouteObject[] = [
@@ -99,6 +103,24 @@ function App() {
                 </>
               ),
             },
+            {
+              path: 'institutes',
+              element: (
+                <>
+                  <PageTitle title="Lecture Link | Institutes" />
+                  <Institutes />
+                </>
+              ),
+            },
+            {
+              path: 'institutes/:instituteId',
+              element: (
+                <>
+                  <PageTitle title="Lecture Link | Institutes" />
+                  <Institute />
+                </>
+              ),
+            },
           ],
         },
         {
@@ -160,6 +182,38 @@ function App() {
                 <>
                   <PageTitle title="Lecture Link | Subject" />
                   <Subject />
+                </>
+              ),
+            },
+          ],
+        },
+        {
+          path: 'qualifications',
+          children: [
+            {
+              index: true, // `/app/subjects`
+              element: (
+                <>
+                  <PageTitle title="Lecture Link | Qualifications" />
+                  <Qualifications />
+                </>
+              ),
+            },
+            {
+              path: 'add-qualification',
+              element: (
+                <>
+                  <PageTitle title="Lecture Link | Update Qualification Form" />
+                  <UpdateQualificationForm />
+                </>
+              ),
+            },
+            {
+              path: ':qualificationId', // `/app/subjects/:subject`
+              element: (
+                <>
+                  <PageTitle title="Lecture Link | Qualification" />
+                  <Qualification/>
                 </>
               ),
             },

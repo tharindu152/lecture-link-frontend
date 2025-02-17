@@ -1,291 +1,249 @@
 import Breadcrumb from '../components/Breadcrumbs/Breadcrumb';
-import { Link, useNavigate } from 'react-router-dom';
-import { Program } from '../types/program.ts';
-import { Level } from '../types/level.ts';
 import { useState } from 'react';
+import { Status } from '../types/status.ts';
+import { Program } from '../types/program.ts';
+import logo1 from '../images/brand/institute1.png';
+import logo2 from '../images/brand/institute2.jpg';
+import logo3 from '../images/brand/institute3.png';
+import logo4 from '../images/brand/institute4.jpg';
+import logo5 from '../images/brand/institute5.jpg';
+import dummyLogo from '../images/brand/logo-dummy.jpg';
+import { useNavigate } from 'react-router-dom';
 
-const programs: Program[] = [
+
+// Type definition for Institute
+type Institute = {
+  id: number;
+  name: string;
+  password: string;
+  email: string;
+  district: string;
+  telephone?: string;
+  ugcRegNo?: string;
+  description?: string;
+  review?: string;
+  subscribed: boolean;
+  logo?: string;
+  status: Status;
+  programs?: Program[];
+};
+
+const dummyInstitutes: Institute[] = [
   {
     id: 1,
-    name: 'Computer Science',
-    description: 'A comprehensive program covering core concepts in computing.',
-    level: Level.BSC,
-    durationInDays: 700,
-    studentCount: 150,
-    batchId: 'CS-B2023',
-    payment: 1000.0,
-    instituteId: 101,
-    subjects: [
-      {
-        id: 1,
-        name: 'Data Structures',
-        noOfCredits: 3,
-        isAssigned: true,
-        lecturerId: 202,
-      },
-      {
-        id: 2,
-        name: 'Operating Systems',
-        noOfCredits: 4,
-        isAssigned: true,
-        lecturerId: 203,
-      },
-    ],
+    name: "Global Institute of Technology",
+    password: "password123",
+    email: "info@git.edu",
+    district: "Colombo",
+    telephone: "0112345678",
+    ugcRegNo: "UGC123456",
+    description: "A leading institute for engineering and technology.",
+    review: "Excellent innovation programs.",
+    subscribed: true,
+    logo: logo1,
+    status: Status.ACTIVE,
   },
   {
     id: 2,
-    name: 'Business Administration',
-    description:
-      'A program focused on developing business and management skills.',
-    level: Level.MSC,
-    durationInDays: 900,
-    studentCount: 50,
-    batchId: 'BA-M2023',
-    payment: 1500.0,
-    instituteId: 102,
-    subjects: [
-      { id: 3, name: 'Strategic Management', noOfCredits: 4, isAssigned: true },
-      {
-        id: 4,
-        name: 'Corporate Finance',
-        noOfCredits: 3,
-        isAssigned: true,
-        lecturerId: 204,
-      },
-    ],
+    name: "City Business School",
+    password: "business123",
+    email: "admissions@cbs.edu",
+    district: "Kandy",
+    telephone: "0812345678",
+    ugcRegNo: "UGC654321",
+    description: "Renowned business school for future leaders.",
+    review: "Great faculty and campus.",
+    subscribed: true,
+    logo: logo2,
+    status: Status.ACTIVE,
   },
   {
     id: 3,
-    name: 'Software Engineering',
-    description: 'Combining programming skills with engineering principles.',
-    level: Level.HND,
-    durationInDays: 600,
-    studentCount: 200,
-    batchId: 'SE-H2023',
-    payment: 800.0,
-    instituteId: 103,
-    subjects: [
-      {
-        id: 5,
-        name: 'Object-Oriented Programming',
-        noOfCredits: 3,
-        isAssigned: true,
-      },
-      {
-        id: 6,
-        name: 'Agile Development',
-        noOfCredits: 2,
-        isAssigned: true,
-        lecturerId: 205,
-      },
-    ],
+    name: "Tech Vision Academy",
+    password: "vision789",
+    email: "info@techvision.edu",
+    district: "Galle",
+    telephone: "0912345678",
+    description: "Offers advanced courses for IT professionals.",
+    review: "Helpful for career growth.",
+    subscribed: false,
+    logo: logo3,
+    status: Status.INACTIVE,
   },
   {
     id: 4,
-    name: 'Cybersecurity',
-    description: 'A program focused on protecting systems and networks.',
-    level: Level.PGD,
-    durationInDays: 365,
-    studentCount: 30,
-    batchId: 'CY-P2023',
-    payment: 1200.0,
-    instituteId: 104,
-    subjects: [
-      {
-        id: 7,
-        name: 'Network Security',
-        noOfCredits: 4,
-        isAssigned: true,
-        lecturerId: 206,
-      },
-      { id: 8, name: 'Ethical Hacking', noOfCredits: 3, isAssigned: true },
-    ],
+    name: "National Art Academy",
+    password: "art456",
+    email: "contact@artacademy.edu",
+    district: "Jaffna",
+    telephone: "0212345678",
+    ugcRegNo: "UGC987654",
+    description: "Top institute for art and design studies.",
+    review: "Creative and inspiring atmosphere.",
+    subscribed: true,
+    logo: logo4,
+    status: Status.ACTIVE,
   },
   {
-    id: 1,
-    name: 'Computer Science',
-    description: 'A comprehensive program covering core concepts in computing.',
-    level: Level.BSC,
-    durationInDays: 700,
-    studentCount: 150,
-    batchId: 'CS-B2023',
-    payment: 1000.0,
-    instituteId: 101,
-    subjects: [
-      {
-        id: 1,
-        name: 'Data Structures',
-        noOfCredits: 3,
-        isAssigned: true,
-        lecturerId: 202,
-      },
-      {
-        id: 2,
-        name: 'Operating Systems',
-        noOfCredits: 4,
-        isAssigned: true,
-        lecturerId: 203,
-      },
-    ],
+    id: 5,
+    name: "Institute of Modern Education",
+    password: "educate123",
+    email: "info@ime.edu",
+    district: "Matara",
+    description: "Leading institute for modern education methods.",
+    review: "Innovative and accessible programs.",
+    subscribed: false,
+    logo: logo5,
+    status: Status.ACTIVE,
   },
   {
-    id: 2,
-    name: 'Business Administration',
-    description:
-      'A program focused on developing business and management skills.',
-    level: Level.MSC,
-    durationInDays: 900,
-    studentCount: 50,
-    batchId: 'BA-M2023',
-    payment: 1500.0,
-    instituteId: 102,
-    subjects: [
-      { id: 3, name: 'Strategic Management', noOfCredits: 4, isAssigned: true },
-      {
-        id: 4,
-        name: 'Corporate Finance',
-        noOfCredits: 3,
-        isAssigned: true,
-        lecturerId: 204,
-      },
-    ],
+    id: 6,
+    name: "Southern Institute of Management",
+    password: "management456",
+    email: "admin@southern.edu",
+    district: "Hambantota",
+    telephone: "0472345678",
+    ugcRegNo: "UGC111222",
+    description: "Specializes in management courses.",
+    review: "Good placement opportunities.",
+    subscribed: true,
+    logo: logo5,
+    status: Status.ACTIVE,
   },
   {
-    id: 3,
-    name: 'Software Engineering',
-    description: 'Combining programming skills with engineering principles.',
-    level: Level.HND,
-    durationInDays: 600,
-    studentCount: 200,
-    batchId: 'SE-H2023',
-    payment: 800.0,
-    instituteId: 103,
-    subjects: [
-      {
-        id: 5,
-        name: 'Object-Oriented Programming',
-        noOfCredits: 3,
-        isAssigned: true,
-      },
-      {
-        id: 6,
-        name: 'Agile Development',
-        noOfCredits: 2,
-        isAssigned: true,
-        lecturerId: 205,
-      },
-    ],
+    id: 7,
+    name: "Future Science Academy",
+    password: "future321",
+    email: "contact@fsa.edu",
+    district: "Anuradhapura",
+    telephone: "0252345678",
+    ugcRegNo: "UGC333444",
+    description: "Dedicated to advanced science education.",
+    subscribed: false,
+    logo: logo4,
+    status: Status.INACTIVE,
   },
   {
-    id: 4,
-    name: 'Cybersecurity',
-    description: 'A program focused on protecting systems and networks.',
-    level: Level.PGD,
-    durationInDays: 365,
-    studentCount: 30,
-    batchId: 'CY-P2023',
-    payment: 1200.0,
-    instituteId: 104,
-    subjects: [
-      {
-        id: 7,
-        name: 'Network Security',
-        noOfCredits: 4,
-        isAssigned: true,
-        lecturerId: 206,
-      },
-      { id: 8, name: 'Ethical Hacking', noOfCredits: 3, isAssigned: true },
-    ],
+    id: 8,
+    name: "North Central University",
+    password: "north123",
+    email: "inquiries@ncu.edu",
+    district: "Polonnaruwa",
+    description: "Comprehensive programs across various fields.",
+    review: "Well-rounded curriculum.",
+    subscribed: true,
+    logo: logo3,
+    status: Status.ACTIVE,
+  },
+  {
+    id: 9,
+    name: "Oceanic Maritime Academy",
+    password: "ocean789",
+    email: "apply@oceanic.edu",
+    district: "Trincomalee",
+    telephone: "0262345678",
+    ugcRegNo: "UGC555666",
+    description: "Centre of excellence for maritime studies.",
+    review: "Practical and job-oriented training.",
+    subscribed: true,
+    status: Status.ACTIVE,
+  },
+  {
+    id: 10,
+    name: "Highland Agricultural Institute",
+    password: "agri123",
+    email: "support@hai.edu",
+    district: "Nuwara Eliya",
+    description: "Promotes agricultural research and education.",
+    review: "Valuable initiatives for rural development.",
+    subscribed: false,
+    logo: logo5,
+    status: Status.INACTIVE,
   },
 ];
 
-const Programs = () => {
+
+const Institutes = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
 
-  const itemsPerPage = 5; // Define how many items to display per page.
+  const itemsPerPage = 5; // Number of institutes per page
 
-  // Calculate the items for the current page
+  // Calculate pagination indices
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentPrograms = programs.slice(indexOfFirstItem, indexOfLastItem);
+  const currentInstitutes = dummyInstitutes.slice(indexOfFirstItem, indexOfLastItem);
 
-  const totalPages = Math.ceil(programs.length / itemsPerPage);
+  const totalPages = Math.ceil(dummyInstitutes.length / itemsPerPage);
 
-  const handlePageChange = (page : number) => {
+  const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
   const handleNavigation = (path: string) => {
-    navigate(path); // Navigate to the desired route
+    navigate(path); // Route navigation
   };
 
   return (
     <>
-      <Breadcrumb pageName="Programs" />
+      <Breadcrumb pageName="Institutes" />
 
       <div className="flex flex-col gap-10">
         <div className="rounded-md border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
           <div className="max-w-full overflow-x-auto">
             <table className="w-full table-auto">
               <thead>
-                <tr className="bg-gray-2 text-left dark:bg-meta-4">
-                  <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
-                    Program
+                <tr className="bg-gray-2 dark:bg-meta-4">
+                  <th className="min-w-[120px] py-4 px-4 text-left font-medium text-black dark:text-white">
+                    Logo
                   </th>
-                  <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
-                    Student Count
+                  <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
+                    Name
                   </th>
-                  <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
-                    Duration (Months)
+                  <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
+                    E-mail
                   </th>
-                  <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
-                    Level
+                  <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
+                    Contact Number
                   </th>
-                  <th className="py-4 px-4 font-medium text-black dark:text-white">
+                  <th className="min-w-[100px] py-4 px-4 text-left font-medium text-black dark:text-white">
+                    District
+                  </th>
+                  <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
+                    UGC Reg No
+                  </th>
+                  <th className="py-4 px-4 text-left font-medium text-black dark:text-white">
                     Actions
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {currentPrograms.map((program, key) => (
+                {currentInstitutes.map((institute, key) => (
                   <tr
-                    key={key+program.id}
-                    className={'hover:bg-gray-200 dark:hover:bg-gray-800'}
+                    key={key + institute.id}
+                    className="hover:bg-gray-200 dark:hover:bg-gray-800"
                   >
-                    <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
-                      <h5 className="font-medium text-black dark:text-white">
-                        {program.name}
-                      </h5>
+                    <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                      <img
+                        src={institute.logo ?? dummyLogo}
+                        alt={institute.name}
+                        className="h-12 w-12 rounded-full"
+                      />
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      <p className="text-black dark:text-white">
-                        {program.studentCount}
-                      </p>
+                      {institute.name}
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      <p className="text-black dark:text-white">
-                        {Math.ceil(program.durationInDays / 30)}
-                      </p>
+                      {institute.email ?? 'N/A'}
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      <p
-                        className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium ${
-                          program.level === 'Phd'
-                            ? 'bg-meta-7 text-meta-7'
-                            : program.level === 'MSc'
-                            ? 'bg-danger text-danger'
-                            : program.level === 'BSc'
-                            ? 'bg-primary text-primary'
-                            : program.level === 'PGD'
-                            ? 'bg-warning text-warning'
-                            : program.level === 'HND'
-                            ? 'bg-success text-success'
-                            : ''
-                        }`}
-                      >
-                        {program.level}
-                      </p>
+                      {institute.telephone ?? 'N/A'}
+                    </td>
+                    <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                      {institute.district ?? 'N/A'}
+                    </td>
+                    <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                      {institute.ugcRegNo ?? 'N/A'}
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <div className="flex items-center space-x-3.5">
@@ -293,7 +251,9 @@ const Programs = () => {
                           className="hover:text-primary"
                           title="View"
                           onClick={() =>
-                            handleNavigation(`/app/programs/${program.id}`)
+                            handleNavigation(
+                              `/app/profile/institutes/${institute.id}`,
+                            )
                           }
                         >
                           <svg
@@ -318,7 +278,7 @@ const Programs = () => {
                           className="hover:text-warning"
                           title="Edit"
                           onClick={() =>
-                            handleNavigation(`/app/programs/add-program`)
+                            handleNavigation(`/app/institutes/add-institute`)
                           }
                         >
                           <svg
@@ -378,6 +338,7 @@ const Programs = () => {
                 ))}
               </tbody>
             </table>
+
             {/* Pagination Controls */}
             <div className="flex justify-center items-center space-x-2 mt-4">
               <button
@@ -410,28 +371,9 @@ const Programs = () => {
             </div>
           </div>
         </div>
-        {/* Add New Program Button */}
-        <Link
-          to="/app/programs/add-program"
-          className="mt-4 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
-        >
-          <svg
-            width="18"
-            viewBox="0 0 32 32"
-            xmlSpace="preserve"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M28 14H18V4a2 2 0 0 0-4 0v10H4a2 2 0 0 0 0 4h10v10a2 2 0 0 0 4 0V18h10a2 2 0 0 0 0-4z"
-              fill="currentColor"
-              className="fill-current"
-            ></path>
-          </svg>
-          Add New Program
-        </Link>
       </div>
     </>
   );
 };
 
-export default Programs;
+export default Institutes;

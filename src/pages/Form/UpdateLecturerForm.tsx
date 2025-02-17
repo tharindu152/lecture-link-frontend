@@ -15,7 +15,7 @@ const UpdateLecturerForm = () => {
       district: '',
       telephone: '',
       hourlyRate: undefined,
-      dateOdBirth: '',
+      dateOfBirth: '',
       rating: 0,
       isAssigned: false,
       status: 'ACTIVE',
@@ -42,7 +42,7 @@ const UpdateLecturerForm = () => {
         hourlyRate: Yup.number()
           .required('Hourly rate is required')
           .min(0, 'Hourly rate must be non-negative'), // Enforce non-negative hourly rate
-        dateOdBirth: Yup.date()
+        dateOfBirth: Yup.date()
           .required('Date of birth is required')
           .nullable()
           .max(new Date(), 'Date of birth cannot be in the future'), // Valid Date and not in the future
@@ -239,10 +239,13 @@ const UpdateLecturerForm = () => {
           <label className="block w-40 text-black dark:text-white" htmlFor="dob">
             Date of Birth
           </label>
-          <DatePickerTwo></DatePickerTwo>
+          <DatePickerTwo
+            value={formik.values.dateOfBirth} // Bind the value with formik
+            onChange={(date) => formik.setFieldValue('dateOfBirth', date)} // Update formik value on change
+          />
         </div>
-        {formik.touched.dateOdBirth && formik.errors.dateOdBirth && (
-          <p className="text-red-500 text-sm mb-4">{formik.errors.dateOdBirth}</p>
+        {formik.touched.dateOfBirth && formik.errors.dateOfBirth && (
+          <p className="text-red-500 text-sm mb-4">{formik.errors.dateOfBirth}</p>
         )}
 
 
