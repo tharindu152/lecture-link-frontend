@@ -115,7 +115,7 @@ const Qualification = () => {
               </h4>
               <p
                 className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium ${
-                  qualification.level === 'Phd'
+                  qualification.level === 'PhD'
                     ? 'bg-meta-7 text-meta-7'
                     : qualification.level === 'MSc'
                       ? 'bg-danger text-danger'

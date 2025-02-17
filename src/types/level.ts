@@ -1,5 +1,5 @@
 export enum Level {
-  PHD = "Phd",
+  PHD = "PhD",
   MSC = "MSc",
   BSC = "BSc",
   HND = "HND",

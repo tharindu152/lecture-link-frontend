@@ -40,7 +40,7 @@ const UpdateQualificationForm = () => {
             'HND',
             'BSc',
             'MSc',
-            'Phd',
+            'PhD',
           ],
           'Invalid level',
         ), // Adjust based on Level values

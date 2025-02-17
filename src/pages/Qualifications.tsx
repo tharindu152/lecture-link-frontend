@@ -143,7 +143,7 @@ const Qualifications = () => {
                         <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                           <p
                             className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium ${
-                              qual.level === 'Phd'
+                              qual.level === 'PhD'
                                 ? 'bg-meta-7 text-meta-7'
                                 : qual.level === 'MSc'
                                   ? 'bg-danger text-danger'
