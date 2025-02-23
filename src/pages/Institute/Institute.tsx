@@ -1,116 +1,16 @@
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
-import instituteLogo from '../../images/brand/iit.png';
 import { Link, useLocation } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FaStar } from 'react-icons/fa';
-import { Program } from '../../types/program.ts';
-import { Level } from '../../types/level.ts';
 import Loader from '../../common/Loader';
+import { useQuery } from 'react-query';
+import InstituteService from '../../services/instituteService.ts';
+import dummyLogo from '../../images/brand/logo-dummy.jpg';
 
 const Institute = () => {
   const [rating, setRating] = useState(0);
-  const [isSubscribed] = useState(false);
   const location = useLocation();
   const { pathname } = location;
-
-  const programs: Program[] = [
-    {
-      id: 1,
-      name: 'Computer Science',
-      description: 'A comprehensive program covering core concepts in computing.',
-      level: Level.BSC,
-      durationInDays: 700,
-      studentCount: 150,
-      batchId: 'CS-B2023',
-      payment: 1000.0,
-      instituteId: 101,
-      subjects: [
-        {
-          id: 1,
-          name: 'Data Structures',
-          noOfCredits: 3,
-          isAssigned: true,
-          lecturerId: 202,
-        },
-        {
-          id: 2,
-          name: 'Operating Systems',
-          noOfCredits: 4,
-          isAssigned: true,
-          lecturerId: 203,
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: 'Business Administration',
-      description:
-        'A program focused on developing business and management skills.',
-      level: Level.MSC,
-      durationInDays: 900,
-      studentCount: 50,
-      batchId: 'BA-M2023',
-      payment: 1500.0,
-      instituteId: 102,
-      subjects: [
-        { id: 3, name: 'Strategic Management', noOfCredits: 4, isAssigned: true },
-        {
-          id: 4,
-          name: 'Corporate Finance',
-          noOfCredits: 3,
-          isAssigned: true,
-          lecturerId: 204,
-        },
-      ],
-    },
-    {
-      id: 3,
-      name: 'Software Engineering',
-      description: 'Combining programming skills with engineering principles.',
-      level: Level.HND,
-      durationInDays: 600,
-      studentCount: 200,
-      batchId: 'SE-H2023',
-      payment: 800.0,
-      instituteId: 103,
-      subjects: [
-        {
-          id: 5,
-          name: 'Object-Oriented Programming',
-          noOfCredits: 3,
-          isAssigned: true,
-        },
-        {
-          id: 6,
-          name: 'Agile Development',
-          noOfCredits: 2,
-          isAssigned: true,
-          lecturerId: 205,
-        },
-      ],
-    },
-    {
-      id: 4,
-      name: 'Cybersecurity',
-      description: 'A program focused on protecting systems and networks.',
-      level: Level.PGD,
-      durationInDays: 365,
-      studentCount: 30,
-      batchId: 'CY-P2023',
-      payment: 1200.0,
-      instituteId: 104,
-      subjects: [
-        {
-          id: 7,
-          name: 'Network Security',
-          noOfCredits: 4,
-          isAssigned: true,
-          lecturerId: 206,
-        },
-        { id: 8, name: 'Ethical Hacking', noOfCredits: 3, isAssigned: true },
-      ],
-    },
-  ];
 
   const [expandedProgramIds, setExpandedProgramIds] = useState<number[]>([]);
 
@@ -125,14 +25,12 @@ const Institute = () => {
     }
   };
 
-  const [loading, setLoading] = useState(true);
+  const {
+    data: institute,
+    isLoading: isLoadingInstitute,
+  } = useQuery(['getInstituteById'], () => InstituteService.getInstituteById('institute', {instituteId:pathname.slice(24)}));
 
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1000); // Simulating a loading state
-    return () => clearTimeout(timer); // Cleanup timer
-  }, []);
-
-  if (loading) {
+  if (isLoadingInstitute) {
     return <Loader />;
   }
     
@@ -147,7 +45,7 @@ const Institute = () => {
             <div className="relative z-30 mx-auto mt-5 mb-4 md:mb-0 md:ml-1 md:mr-4 h-30 w-full max-w-30 rounded-full bg-white/20 p-1 backdrop-blur sm:h-44 sm:max-w-44 sm:p-3">
               <div className="relative drop-shadow-2">
                 <img
-                  src={instituteLogo}
+                  src={institute?.logo ?? dummyLogo}
                   alt="profile"
                   className="mx-auto md:-mt-3 md:-ml-3 sm:-mt-3 sm:-ml-3 -mt-1 -ml-1 h-30 max-w-30 rounded-full p-1 sm:h-44 sm:max-w-44 sm:p-3"
                 />
@@ -157,7 +55,7 @@ const Institute = () => {
             {/* Details Section */}
             <div className="flex-1 p-4">
               <h3 className="mb-4 text-3xl font-semibold text-black dark:text-white text-center md:text-left">
-                Informatics Institute of Technology
+                {institute?.name}
               </h3>
 
               <div className="space-y-3">
@@ -165,28 +63,28 @@ const Institute = () => {
                   <h4 className="font-semibold text-black dark:text-white w-full md:w-56">
                     UGC Registration Number:
                   </h4>
-                  <p>123456</p>
+                  <p>{institute?.ugcRegNo}</p>
                 </div>
 
                 <div className="flex flex-col md:flex-row">
                   <h4 className="font-semibold text-black dark:text-white w-full md:w-56">
                     E-mail:
                   </h4>
-                  <p>Sid_Nolan75@yahoo.com</p>
+                  <p>{institute?.email}</p>
                 </div>
 
                 <div className="flex flex-col md:flex-row">
                   <h4 className="font-semibold text-black dark:text-white w-full md:w-56">
                     Telephone Number:
                   </h4>
-                  <p>+94712345678</p>
+                  <p>{institute?.telephone}</p>
                 </div>
 
                 <div className="flex flex-col md:flex-row">
                   <h4 className="font-semibold text-black dark:text-white w-full md:w-56">
                     District:
                   </h4>
-                  <p>Hicksville</p>
+                  <p>{institute?.district}</p>
                 </div>
 
                 <div className="flex flex-col md:flex-row">
@@ -198,7 +96,7 @@ const Institute = () => {
                       <button
                         key={star}
                         type="button"
-                        onClick={() => setRating(star)}
+                        onClick={() => setRating((institute?.review?.split(" ").length ?? 0) % 6)}
                         className="focus:outline-none"
                       >
                         <FaStar
@@ -216,16 +114,16 @@ const Institute = () => {
                   <h4 className="font-semibold text-black dark:text-white w-full md:w-56">
                     Subscribed:
                   </h4>
-                  <p>{isSubscribed ? 'Yes' : 'No'}</p>
+                  <p>{institute?.subscribed ? 'Yes' : 'No'}</p>
                 </div>
 
-                {pathname.includes('institutes')  && (
+                {pathname.includes('institutes') && (
                   <div className="flex flex-col gap-4 md:flex-row">
                     <h4 className="font-semibold text-black dark:text-white w-full md:w-52">
                       Programs & Subjects:
                     </h4>
                     <ul className="flex-1 w-full">
-                      {programs?.map((program) => (
+                      {institute?.programs?.map((program) => (
                         <li key={program.id} className="mb-2">
                           <div
                             className="flex items-center cursor-pointer hover:text-blue-600 transition-colors"
@@ -265,19 +163,7 @@ const Institute = () => {
                   <h4 className="font-semibold text-black dark:text-white">
                     Description:
                   </h4>
-                  <p className="mt-1.5">
-                    The Informatics Institute of Technology is a private higher
-                    education institute in Sri Lanka that offers specialized
-                    offshore British degree programs in IT and Business. IIT has
-                    collaborated with British universities to offer
-                    undergraduate and postgraduate programs in Sri Lanka since
-                    its inception in 1990. The Informatics Institute of
-                    Technology is a private higher education institute in Sri
-                    Lanka that offers specialized offshore British degree
-                    programs in IT and Business. IIT has collaborated with
-                    British universities to offer undergraduate and postgraduate
-                    programs in Sri Lanka since its inception in 1990.
-                  </p>
+                  <p className="mt-1.5">{institute?.description}</p>
                 </div>
               </div>
 

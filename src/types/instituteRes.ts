@@ -1,8 +1,8 @@
 import { Program } from './program.ts';
 import { Status } from './status.ts';
 
-export type Institute = {
-  id?: number;
+export type InstituteRes = {
+  id: number;
   name: string;
   password: string;
   email: string;
@@ -12,7 +12,7 @@ export type Institute = {
   description?: string;
   review?: string;
   subscribed: boolean;
-  logo?: File;
+  logo?: string;
   status: Status;
   programs?: Program[];
 };
