@@ -1,33 +1,43 @@
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
-import { Subject } from '../../types/subject.ts';
-
-type ProgramDto = {
-  id: number;
-  name: string;
-  description?: string;
-  level: 'MSC' | 'BSC' | 'HND' | 'PGD';
-  durationInDays: number;
-  studentCount: number;
-  batchId?: string;
-  payment: number;
-  instituteId: number;
-  subjects?: Subject[];
-};
+import { useMutation } from 'react-query';
+import programService from '../../services/programService.ts';
+import { Program } from '../../types/program.ts';
+import { useEffect, useState } from 'react';
+import Loader from '../../common/Loader';
+import { Level } from '../../types/level.ts';
+import Toast from '../../components/Toast.tsx';
 
 const UpdateProgramForm = () => {
-  const formik = useFormik<ProgramDto>({
+
+  const [toast, setToast] = useState(null);
+
+  const { mutate: createProgram, isLoading: isCreatingProgram } = useMutation(
+    programService.createProgram,
+    {
+      onSuccess: () => {
+        // @ts-ignore
+        setToast({ message: "Program created successfully!", type: "success" });
+      },
+      onError: () => {
+        // @ts-ignore
+        setToast({ message: "Program creation unsuccessful!", type: "error" });
+      },
+    },
+  );
+
+  const formik = useFormik<Program>({
     initialValues: {
-      id: 1, // Example default ID
+      id: 0,
       name: '',
       description: '',
-      level: 'MSC',
+      level: Level.PGD,
       durationInDays: 0,
       studentCount: 0,
       batchId: '',
       payment: 0,
-      instituteId: 101, // Example institute ID
+      instituteId: 3,
     },
     validationSchema: Yup.object({
       name: Yup.string()
@@ -53,12 +63,24 @@ const UpdateProgramForm = () => {
       payment: Yup.number()
         .required('Payment is required')
         .positive('Payment must be greater than 0'),
-      instituteId: Yup.number().required('Institute ID is required'),
+      // instituteId: Yup.number().required('Institute ID is required').default(2),
+      instituteId: Yup.number().nullable()
     }),
     onSubmit: (values) => {
-      console.log('Form submitted with values:', values);
+      createProgram({ programData: values });
     },
   });
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isCreatingProgram || loading) {
+    return <Loader />;
+  }
 
   return (
     <>
@@ -73,7 +95,7 @@ const UpdateProgramForm = () => {
 
         {/* Name */}
         <div className="mb-4 flex items-center">
-          <label className="block w-40 text-black dark:text-white">Name</label>
+          <label className="block w-40 text-black dark:text-white" htmlFor="name">Name</label>
           <input
             id="name"
             name="name"
@@ -95,7 +117,7 @@ const UpdateProgramForm = () => {
 
         {/* Level Dropdown */}
         <div className="mb-4 flex items-center">
-          <label className="block w-40 text-black dark:text-white">Level</label>
+          <label className="block w-40 text-black dark:text-white" htmlFor="level">Level</label>
           <select
             id="level"
             name="level"
@@ -137,7 +159,7 @@ const UpdateProgramForm = () => {
 
         {/* Duration in Days (Counter) */}
         <div className="mb-4 flex items-center">
-          <label className="block w-40 text-black dark:text-white">
+          <label className="block w-40 text-black dark:text-white" htmlFor="durationInDays">
             Duration (Days)
           </label>
           <div className="flex items-center">
@@ -154,7 +176,7 @@ const UpdateProgramForm = () => {
 
         {/* Student Count (Counter) */}
         <div className="mb-4 flex items-center">
-          <label className="block w-40 text-black dark:text-white">
+          <label className="block w-40 text-black dark:text-white" htmlFor="studentCount">
             Student Count
           </label>
           <div className="flex items-center">
@@ -171,7 +193,7 @@ const UpdateProgramForm = () => {
 
         {/* Batch ID */}
         <div className="mb-4 flex items-center">
-          <label className="block w-40 text-black dark:text-white">
+          <label className="block w-40 text-black dark:text-white" htmlFor="batchId">
             Batch ID
           </label>
           <input
@@ -195,7 +217,7 @@ const UpdateProgramForm = () => {
 
         {/* Payment */}
         <div className="mb-4 flex items-center">
-          <label className="block w-40 text-black dark:text-white">
+          <label className="block w-40 text-black dark:text-white" htmlFor="payment">
             Payment
           </label>
           <input
@@ -247,15 +269,19 @@ const UpdateProgramForm = () => {
         )}
 
         {/* Submit Button */}
-        <div className="mt-6">
-          <button
-            type="submit"
-            className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
-          >
-            Update Program
-          </button>
-        </div>
+        <button
+          onClick={() => {
+            return formik.handleSubmit
+          }}
+          className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
+          type="submit"
+        >
+          Update Program
+        </button>
       </form>
+      {toast && <Toast
+        // @ts-ignore
+        {...toast} onClose={() => setToast(null)} />}
     </>
   );
 };

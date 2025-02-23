@@ -1,234 +1,70 @@
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
 import { Link, useNavigate } from 'react-router-dom';
-import { Program } from '../../types/program.ts';
-import { Level } from '../../types/level.ts';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Loader from '../../common/Loader';
-
-const programs: Program[] = [
-  {
-    id: 1,
-    name: 'Computer Science',
-    description: 'A comprehensive program covering core concepts in computing.',
-    level: Level.BSC,
-    durationInDays: 700,
-    studentCount: 150,
-    batchId: 'CS-B2023',
-    payment: 1000.0,
-    instituteId: 101,
-    subjects: [
-      {
-        id: 1,
-        name: 'Data Structures',
-        noOfCredits: 3,
-        isAssigned: true,
-        lecturerId: 202,
-      },
-      {
-        id: 2,
-        name: 'Operating Systems',
-        noOfCredits: 4,
-        isAssigned: true,
-        lecturerId: 203,
-      },
-    ],
-  },
-  {
-    id: 2,
-    name: 'Business Administration',
-    description:
-      'A program focused on developing business and management skills.',
-    level: Level.MSC,
-    durationInDays: 900,
-    studentCount: 50,
-    batchId: 'BA-M2023',
-    payment: 1500.0,
-    instituteId: 102,
-    subjects: [
-      { id: 3, name: 'Strategic Management', noOfCredits: 4, isAssigned: true },
-      {
-        id: 4,
-        name: 'Corporate Finance',
-        noOfCredits: 3,
-        isAssigned: true,
-        lecturerId: 204,
-      },
-    ],
-  },
-  {
-    id: 3,
-    name: 'Software Engineering',
-    description: 'Combining programming skills with engineering principles.',
-    level: Level.HND,
-    durationInDays: 600,
-    studentCount: 200,
-    batchId: 'SE-H2023',
-    payment: 800.0,
-    instituteId: 103,
-    subjects: [
-      {
-        id: 5,
-        name: 'Object-Oriented Programming',
-        noOfCredits: 3,
-        isAssigned: true,
-      },
-      {
-        id: 6,
-        name: 'Agile Development',
-        noOfCredits: 2,
-        isAssigned: true,
-        lecturerId: 205,
-      },
-    ],
-  },
-  {
-    id: 4,
-    name: 'Cybersecurity',
-    description: 'A program focused on protecting systems and networks.',
-    level: Level.PGD,
-    durationInDays: 365,
-    studentCount: 30,
-    batchId: 'CY-P2023',
-    payment: 1200.0,
-    instituteId: 104,
-    subjects: [
-      {
-        id: 7,
-        name: 'Network Security',
-        noOfCredits: 4,
-        isAssigned: true,
-        lecturerId: 206,
-      },
-      { id: 8, name: 'Ethical Hacking', noOfCredits: 3, isAssigned: true },
-    ],
-  },
-  {
-    id: 1,
-    name: 'Computer Science',
-    description: 'A comprehensive program covering core concepts in computing.',
-    level: Level.BSC,
-    durationInDays: 700,
-    studentCount: 150,
-    batchId: 'CS-B2023',
-    payment: 1000.0,
-    instituteId: 101,
-    subjects: [
-      {
-        id: 1,
-        name: 'Data Structures',
-        noOfCredits: 3,
-        isAssigned: true,
-        lecturerId: 202,
-      },
-      {
-        id: 2,
-        name: 'Operating Systems',
-        noOfCredits: 4,
-        isAssigned: true,
-        lecturerId: 203,
-      },
-    ],
-  },
-  {
-    id: 2,
-    name: 'Business Administration',
-    description:
-      'A program focused on developing business and management skills.',
-    level: Level.MSC,
-    durationInDays: 900,
-    studentCount: 50,
-    batchId: 'BA-M2023',
-    payment: 1500.0,
-    instituteId: 102,
-    subjects: [
-      { id: 3, name: 'Strategic Management', noOfCredits: 4, isAssigned: true },
-      {
-        id: 4,
-        name: 'Corporate Finance',
-        noOfCredits: 3,
-        isAssigned: true,
-        lecturerId: 204,
-      },
-    ],
-  },
-  {
-    id: 3,
-    name: 'Software Engineering',
-    description: 'Combining programming skills with engineering principles.',
-    level: Level.HND,
-    durationInDays: 600,
-    studentCount: 200,
-    batchId: 'SE-H2023',
-    payment: 800.0,
-    instituteId: 103,
-    subjects: [
-      {
-        id: 5,
-        name: 'Object-Oriented Programming',
-        noOfCredits: 3,
-        isAssigned: true,
-      },
-      {
-        id: 6,
-        name: 'Agile Development',
-        noOfCredits: 2,
-        isAssigned: true,
-        lecturerId: 205,
-      },
-    ],
-  },
-  {
-    id: 4,
-    name: 'Cybersecurity',
-    description: 'A program focused on protecting systems and networks.',
-    level: Level.PGD,
-    durationInDays: 365,
-    studentCount: 30,
-    batchId: 'CY-P2023',
-    payment: 1200.0,
-    instituteId: 104,
-    subjects: [
-      {
-        id: 7,
-        name: 'Network Security',
-        noOfCredits: 4,
-        isAssigned: true,
-        lecturerId: 206,
-      },
-      { id: 8, name: 'Ethical Hacking', noOfCredits: 3, isAssigned: true },
-    ],
-  },
-];
+import { useMutation, useQuery } from 'react-query';
+import programService from '../../services/programService.ts';
+import { Program } from '../../types/program.ts';
+import Toast from '../../components/Toast.tsx';
+import ConfirmationModal from '../../components/ConfirmationModal.tsx';
 
 const Programs = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProgram, setSelectedProgram] = useState(0);
   const navigate = useNavigate();
+  const [programsList, setProgramsList] = useState<Program[]>([]);
+  const [toast, setToast] = useState(null);
 
-  const itemsPerPage = 5; // Define how many items to display per page.
+  const { isLoading: isLoadingPrograms, refetch } = useQuery(
+    ['getPrograms'],
+    () => programService.getAllPrograms(),
+    {
+      onSuccess: (data) => {
+        setProgramsList(data);
+      },
+    },
+  );
 
-  // Calculate the items for the current page
+  const { mutate: deleteProgram, isLoading: isDeletingProgram } = useMutation(
+    programService.deleteProgramById,
+    {
+      onSuccess: () => {
+        // @ts-ignore
+        setToast({ message: "Program deleted successfully!", type: "success" });
+        refetch()
+      },
+      onError: () => {
+        // @ts-ignore
+        setToast({ message: "Program deletion unsuccessful!", type: "error" });
+      },
+    },
+  );
+
+  const itemsPerPage = 5;
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentPrograms = programs.slice(indexOfFirstItem, indexOfLastItem);
+  const currentPrograms = programsList.slice(indexOfFirstItem, indexOfLastItem);
 
-  const totalPages = Math.ceil(programs.length / itemsPerPage);
+  const totalPages = Math.ceil(programsList.length / itemsPerPage);
 
-  const handlePageChange = (page : number) => {
+  const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
   const handleNavigation = (path: string) => {
-    navigate(path); // Navigate to the desired route
+    navigate(path);
   };
 
-  const [loading, setLoading] = useState(true);
+  const deleteOperation = (programId:number) => {
+    setProgramsList((prev) =>
+      prev.filter((prog) => prog.id !== programId),
+    );
+    deleteProgram({programId: programId})
+  }
 
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1000); // Simulating a loading state
-    return () => clearTimeout(timer); // Cleanup timer
-  }, []);
-
-  if (loading) {
+  if (isLoadingPrograms || isDeletingProgram) {
     return <Loader />;
   }
 
@@ -262,7 +98,7 @@ const Programs = () => {
               <tbody>
                 {currentPrograms.map((program, key) => (
                   <tr
-                    key={key+program.id}
+                    key={(program.id ?? 0) + key}
                     className={'hover:bg-gray-200 dark:hover:bg-gray-800'}
                   >
                     <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
@@ -283,15 +119,15 @@ const Programs = () => {
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <p
                         className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium ${
-                          program.level === 'Phd'
+                          program.level.toLowerCase() === 'phd'
                             ? 'bg-meta-7 text-meta-7'
-                            : program.level === 'MSc'
+                            : program.level.toLowerCase() === 'msc'
                             ? 'bg-danger text-danger'
-                            : program.level === 'BSc'
+                            : program.level.toLowerCase() === 'bsc'
                             ? 'bg-primary text-primary'
-                            : program.level === 'PGD'
+                            : program.level.toLowerCase() === 'pgd'
                             ? 'bg-warning text-warning'
-                            : program.level === 'HND'
+                            : program.level.toLowerCase() === 'hnd'
                             ? 'bg-success text-success'
                             : ''
                         }`}
@@ -357,7 +193,15 @@ const Programs = () => {
                             </g>
                           </svg>
                         </button>
-                        <button className="hover:text-danger" title="Delete">
+                        <button
+                          onClick={() => {
+                            setIsModalOpen(true);
+                            // @ts-ignore
+                            setSelectedProgram(program?.id);
+                          }}
+                          className="hover:text-danger"
+                          title="Delete"
+                        >
                           <svg
                             className="fill-current"
                             width="18"
@@ -441,7 +285,28 @@ const Programs = () => {
           </svg>
           Add New Program
         </Link>
+        {toast && (
+          <Toast
+            {
+              // @ts-ignore
+              ...toast
+            }
+            onClose={() => setToast(null)}
+          />
+        )}
       </div>
+
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        title={'Confirm Deletion'}
+        message={'Are you sure that you want to delete this Program?'}
+        btnOne={'Delete'}
+        btnTwo={'Cancel'}
+        onConfirm={() => {
+          deleteOperation(selectedProgram);
+        }}
+        onClose={() => setIsModalOpen(false)}
+      ></ConfirmationModal>
     </>
   );
 };

@@ -1,37 +1,25 @@
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
-import { Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import Loader from '../../common/Loader';
-
-// Mock Program Data
-const mockProgram = {
-  id: 1,
-  name: 'Software Engineering',
-  description:
-    'Combining programming skills with engineering principles. A well-designed program to prepare students to excel in software design and architecture.',
-  level: 'BSC',
-  durationInDays: 720,
-  studentCount: 150,
-  batchId: 'SE-B2023',
-  payment: 1200.5,
-  instituteId: 101,
-  subjects: [
-    { id: 1, name: 'Object-Oriented Programming', noOfCredits: 3 },
-    { id: 2, name: 'Agile Development', noOfCredits: 2 },
-    { id: 3, name: 'Software Architecture', noOfCredits: 4 },
-  ],
-};
+import { useQuery } from 'react-query';
+import ProgramService from '../../services/programService.ts';
+import { useEffect } from 'react';
 
 const Program = () => {
 
-  const [loading, setLoading] = useState(true);
+  const location = useLocation();
+  const { pathname } = location;
+
+  const {
+    data: program,
+    isLoading: isLoadingProgram,
+  } = useQuery(['getProgramById'], () => ProgramService.getProgramById({programId:pathname.slice(14)}));
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1000); // Simulating a loading state
-    return () => clearTimeout(timer); // Cleanup timer
+    console.log(pathname.slice(14))
   }, []);
 
-  if (loading) {
+  if (isLoadingProgram) {
     return <Loader />;
   }
 
@@ -41,14 +29,14 @@ const Program = () => {
 
       <div className="rounded-md border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark p-6">
         <h3 className="text-3xl font-semibold text-black dark:text-white mb-6">
-          {mockProgram.name}
+          {program?.name}
         </h3>
 
         <div className="space-y-4">
           {/* Level */}
           <div className="flex gap-4">
             <h4 className="font-semibold text-black dark:text-white w-40">Level:</h4>
-            <p className="flex-1">{mockProgram.level}</p>
+            <p className="flex-1">{program?.level}</p>
           </div>
 
           {/* Duration in Days */}
@@ -56,7 +44,7 @@ const Program = () => {
             <h4 className="font-semibold text-black dark:text-white w-40">
               Duration (Months):
             </h4>
-            <p className="flex-1">{Math.ceil(mockProgram.durationInDays / 30)}</p>
+            <p className="flex-1">{Math.ceil(program?.durationInDays ?? 0 / 30)}</p>
           </div>
 
           {/* Student Count */}
@@ -64,21 +52,21 @@ const Program = () => {
             <h4 className="font-semibold text-black dark:text-white w-40">
               Student Count:
             </h4>
-            <p className="flex-1">{mockProgram.studentCount}</p>
+            <p className="flex-1">{program?.studentCount}</p>
           </div>
 
           {/* Batch ID */}
-          {mockProgram.batchId && (
+          {program?.batchId && (
             <div className="flex gap-4">
               <h4 className="font-semibold text-black dark:text-white w-40">Batch ID:</h4>
-              <p className="flex-1">{mockProgram.batchId}</p>
+              <p className="flex-1">{program?.batchId}</p>
             </div>
           )}
 
           {/* Payment */}
           <div className="flex gap-4">
             <h4 className="font-semibold text-black dark:text-white w-40">Payment:</h4>
-            <p className="flex-1">${mockProgram.payment.toFixed(2)}</p>
+            <p className="flex-1">${program?.payment.toFixed(2)}</p>
           </div>
 
           {/* Institute ID */}
@@ -86,17 +74,17 @@ const Program = () => {
             <h4 className="font-semibold text-black dark:text-white w-40">
               Institute ID:
             </h4>
-            <p className="flex-1">{mockProgram.instituteId}</p>
+            <p className="flex-1">{program?.instituteId}</p>
           </div>
 
           {/* Subjects */}
-          {mockProgram.subjects && (
+          {program?.subjects && (
             <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
               <h4 className="font-semibold text-black dark:text-white w-full sm:w-40">
                 Subjects:
               </h4>
               <ul className="list-disc flex-1 pl-4">
-                {mockProgram.subjects.map((subject) => (
+                {program?.subjects.map((subject) => (
                   <li key={subject.id} className="flex-1">
                     {subject.name} ({subject.noOfCredits} Credits)
                   </li>
@@ -110,7 +98,7 @@ const Program = () => {
             <h4 className="font-semibold text-black dark:text-white w-full sm:w-40">
               Description:
             </h4>
-            <p className="flex-1">{mockProgram.description}</p>
+            <p className="flex-1">{program?.description}</p>
           </div>
         </div>
         <Link

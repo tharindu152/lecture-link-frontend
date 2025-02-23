@@ -2,7 +2,7 @@ import { Subject } from './subject.ts';
 import { Level } from './level.ts';
 
 export type Program = {
-  id: number;
+  id?: number;
   name: string;
   description?: string;
   level: Level;
@@ -10,6 +10,6 @@ export type Program = {
   studentCount: number;
   batchId?: string;
   payment: number;
-  instituteId: number;
+  instituteId?: number;
   subjects?: Subject[];
 };
