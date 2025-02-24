@@ -14,7 +14,6 @@ const Institute = () => {
 
   const [expandedProgramIds, setExpandedProgramIds] = useState<number[]>([]);
 
-  // Function to toggle visibility of subjects
   const toggleSubjects = (programId: number) => {
     if (expandedProgramIds.includes(programId)) {
       setExpandedProgramIds(
@@ -127,10 +126,12 @@ const Institute = () => {
                         <li key={program.id} className="mb-2">
                           <div
                             className="flex items-center cursor-pointer hover:text-blue-600 transition-colors"
+                            // @ts-ignore
                             onClick={() => toggleSubjects(program.id)}
                           >
                             <span
                               className={`transition-transform duration-300 ${
+                                // @ts-ignore
                                 expandedProgramIds.includes(program.id)
                                   ? 'rotate-90'
                                   : 'rotate-0'
@@ -142,6 +143,7 @@ const Institute = () => {
                           </div>
                           <ul
                             className={`overflow-hidden transition-max-h duration-300 ease-in-out ${
+                              // @ts-ignore
                               expandedProgramIds.includes(program.id)
                                 ? 'max-h-screen'
                                 : 'max-h-0'
