@@ -3,7 +3,6 @@ import { Link, useLocation } from 'react-router-dom';
 import Loader from '../../common/Loader';
 import { useQuery } from 'react-query';
 import ProgramService from '../../services/programService.ts';
-import { useEffect } from 'react';
 
 const Program = () => {
 
@@ -14,10 +13,6 @@ const Program = () => {
     data: program,
     isLoading: isLoadingProgram,
   } = useQuery(['getProgramById'], () => ProgramService.getProgramById({programId:pathname.slice(14)}));
-
-  useEffect(() => {
-    console.log(pathname.slice(14))
-  }, []);
 
   if (isLoadingProgram) {
     return <Loader />;
