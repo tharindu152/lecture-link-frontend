@@ -3,261 +3,86 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import Loader from '../../common/Loader';
-
-// Type definition for Lecturer
-type Lecturer = {
-  id: number;
-  name: string;
-  district: string;
-  email: string;
-  password: string;
-  dob: string;
-  contactNo?: string;
-  review?: string;
-  payRate: number;
-  qualifications?: string[];
-  picture?: string; // Path to image (Optional for dummy data)
-  status: 'ACTIVE' | 'INACTIVE';
-  isAssigned: boolean;
-  languages?: string;
-};
-
-const lecturers: Lecturer[] = [
-  {
-    id: 1,
-    name: 'John Doe',
-    district: 'Colombo',
-    email: 'john.doe@example.com',
-    password: 'password123',
-    dob: '1985-02-15',
-    contactNo: '123-456-7890',
-    review: 'Highly enthusiastic and motivating.',
-    payRate: 55.0,
-    qualifications: ["HND"],
-    picture:
-      '../../../src/images/user/user-01.png', // Dummy image URL (replace with actual image if needed)
-    status: 'ACTIVE',
-    isAssigned: true,
-    languages: 'English, Spanish',
-  },
-  {
-    id: 2,
-    name: 'Jane Smith',
-    district: 'Kurunagala',
-    email: 'jane.smith@example.com',
-    password: 'pass98765',
-    dob: '1990-06-20',
-    contactNo: '321-654-0987',
-    review: 'Excellent in business management lectures.',
-    payRate: 47.5,
-    qualifications: ["PGD"],
-    picture:
-      '../../../src/images/user/user-02.png',
-    status: 'ACTIVE',
-    isAssigned: false,
-    languages: 'English, French',
-  },
-  {
-    id: 3,
-    name: 'Michael Brown',
-    district: 'Nuwareliya',
-    email: 'michael.brown@example.com',
-    password: 'securePass80',
-    dob: '1977-10-11',
-    contactNo: '309-413-5566',
-    payRate: 60.0,
-    status: 'INACTIVE',
-    isAssigned: false,
-    qualifications: ["BSc"],
-    picture:
-      '../../../src/images/user/user-03.png',
-  },
-  {
-    id: 4,
-    name: 'Emily White',
-    district: 'Galle',
-    email: 'emily.white@example.com',
-    password: 'passstrong77',
-    dob: '1980-12-21',
-    contactNo: '425-862-5540',
-    payRate: 40.0,
-    status: 'ACTIVE',
-    review: 'Amazing at explaining complex concepts.',
-    qualifications: ["MSc"],
-    picture:
-      '../../../src/images/user/user-04.png',
-    isAssigned: true,
-  },
-  {
-    id: 2,
-    name: 'Jane Smith',
-    district: 'Kandy',
-    email: 'jane.smith@example.com',
-    password: 'pass98765',
-    dob: '1990-06-20',
-    contactNo: '321-654-0987',
-    review: 'Excellent in business management lectures.',
-    payRate: 47.5,
-    qualifications: ["PhD"],
-    picture:
-      '../../../src/images/user/user-05.png',
-    status: 'ACTIVE',
-    isAssigned: false,
-    languages: 'English, French',
-  },
-  {
-    id: 5,
-    name: 'Daniel Wilson',
-    district: 'Colombo',
-    email: 'daniel.wilson@example.com',
-    password: 'securePass90',
-    dob: '1979-08-11',
-    contactNo: '456-231-7566',
-    payRate: 40.0,
-    status: 'INACTIVE',
-    review: 'Amazing at explaining Agile concepts',
-    qualifications: ["HND"],
-    picture:
-      '../../../src/images/user/user-06.png',
-    isAssigned: false,
-  },
-  {
-    id: 1,
-    name: 'John Doe',
-    district: 'Kurunagala',
-    email: 'john.doe@example.com',
-    password: 'password123',
-    dob: '1985-02-15',
-    contactNo: '123-456-7890',
-    review: 'Highly enthusiastic and motivating.',
-    payRate: 55.0,
-    qualifications: ["PGD"],
-    picture:
-      '../../../src/images/user/user-07.png', // Dummy image URL (replace with actual image if needed)
-    status: 'ACTIVE',
-    isAssigned: true,
-    languages: 'English, Spanish',
-  },
-
-  {
-    id: 3,
-    name: 'Michael Brown',
-    district: 'Matale',
-    email: 'michael.brown@example.com',
-    password: 'securePass80',
-    dob: '1977-10-11',
-    contactNo: '309-413-5566',
-    payRate: 60.0,
-    status: 'INACTIVE',
-    isAssigned: false,
-    qualifications: ["BSc"],
-    picture:
-      '../../../src/images/user/user-08.png',
-  },
-  {
-    id: 5,
-    name: 'Daniel Wilson',
-    district: 'Nuwareliya',
-    email: 'daniel.wilson@example.com',
-    password: 'securePass90',
-    dob: '1979-08-11',
-    contactNo: '456-231-7566',
-    payRate: 40.0,
-    status: 'INACTIVE',
-    review: 'Amazing at explaining Agile concepts',
-    qualifications: ["MSc"],
-    picture:
-      '../../../src/images/user/user-09.png',
-    isAssigned: false,
-  },
-  {
-    id: 4,
-    name: 'Emily White',
-    district: 'Galle',
-    email: 'emily.white@example.com',
-    password: 'passstrong77',
-    dob: '1980-12-21',
-    contactNo: '425-862-5540',
-    payRate: 40.0,
-    status: 'ACTIVE',
-    review: 'Amazing at explaining complex concepts.',
-    qualifications: ["PhD"],
-    picture:
-      '../../../src/images/user/user-10.png',
-    isAssigned: true,
-  },]
-
+import { useMutation } from 'react-query';
+import lecturerService from '../../services/lecturerService.ts';
+import { LecturerRes } from '../../types/lecturerRes.ts';
+import Toast from '../../components/Toast.tsx';
 
 // Dropdown options
 const districtOptions = ['Kandy', 'Colombo', 'Kurunagala', 'Matale', 'Nuwareliya', 'Galle'];
 const qualificationOptions = ['PhD', 'MSc', 'BSc', 'PGD', 'HND'];
-const hourlyRateOptions = ['1000-1500', '1500-2000', '2000-3000', '3000<'];
+const hourlyRateOptions = ['500-1000', '1000-1500', '1500-2000', '2000-3000', '3000<'];
 const isAssignedOptions = ["true", "false"];
 const languageOptions = ['English', 'Sinhala', 'Tamil'];
 
 const FilteredLecturers = () => {
+
+  const [filteredLecturers, setFilteredLecturers] = useState([] as LecturerRes[]);
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
-  const [filteredLecturers, setFilteredLecturers] = useState([]);
+  const [toast, setToast] = useState(null);
 
-  const itemsPerPage = 5; // Number of lecturers per page
+  const { mutate: filterLecturer, isLoading: isFilteringLecturer } = useMutation(
+    lecturerService.getFilteredLecturers,
+    {
+      onSuccess: (data) => {
+        // @ts-ignore
+        setToast({ message: "Lecturers are successfully filtered!", type: "success" });
+        // @ts-ignore
+        console.log(data)
+        // @ts-ignore
+        setFilteredLecturers(data.content)
+      },
+      onError: () => {
+        // @ts-ignore
+        setToast({ message: "Lecturer filteration is unsuccessful!", type: "error" });
+      },
+    },
+  );
 
-  // Calculate pagination indices
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentLecturers = filteredLecturers.slice(indexOfFirstItem, indexOfLastItem);
+  const itemsPerPage = 5;
 
-  const totalPages = Math.ceil(lecturers.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredLecturers?.length / itemsPerPage);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
   const handleNavigation = (path: string) => {
-    navigate(path); // Route navigation
+    navigate(path);
   };
 
   const formik = useFormik({
     initialValues: {
       district: '',
-      qualification: '',
       hourlyRate: '',
+      qualification: '',
       isAssigned: '',
-      language: '',
+      languages: '',
+      size: 10,
+      page: 1,
+      sort: 'id',
     },
     onSubmit: (values) => {
-      // Filtering logic based on form values
-      const filtered = lecturers.filter((lecturer) => {
-        return (
-          (!values.district || lecturer.district === values.district) &&
-          (!values.qualification ||
-            lecturer.qualifications?.includes(values.qualification)) &&
-          (!values.hourlyRate ||
-            (values.hourlyRate === '1000-1500' &&
-              lecturer.payRate >= 1000 &&
-              lecturer.payRate <= 1500) ||
-            (values.hourlyRate === '1500-2000' &&
-              lecturer.payRate > 1500 &&
-              lecturer.payRate <= 2000) ||
-            (values.hourlyRate === '2000-3000' &&
-              lecturer.payRate > 2000 &&
-              lecturer.payRate <= 3000) ||
-            (values.hourlyRate === '3000<' && lecturer.payRate > 3000)) &&
-          (!values.isAssigned ||
-            (values.isAssigned === 'Yes' && lecturer.isAssigned) ||
-            (values.isAssigned === 'No' && !lecturer.isAssigned)) &&
-          (!values.language ||
-            lecturer.languages
-              ?.toLowerCase()
-              .includes(values.language.toLowerCase()))
-        );
-      });
-
-      // Set the filtered lecturers to display in the table
-      // @ts-ignore
-      setFilteredLecturers(filtered);
+      filterLecturer({
+        district: values.district,
+        hourlyRate: values.hourlyRate,
+        qualification: values.qualification,
+        isAssigned: values.isAssigned === 'true',
+        languages: values.languages,
+        size: values.size ? Number(values.size) : 5,
+        page: values.page ? Number(values.page) : 0,
+        sort: values.sort,
+      })
     },
   });
+
+  const getHighestQualification = (lecturer: LecturerRes) => {
+    const priority = ["PHD", "MSC", "BSC", "HND", "PGD"];
+    const qualifications = lecturer?.qualifications?.map(q => q.level.toUpperCase()) || [];
+
+    return priority.find(level => qualifications.includes(level)) ?? "N/A";
+  };
 
   const [loading, setLoading] = useState(true);
 
@@ -266,7 +91,7 @@ const FilteredLecturers = () => {
     return () => clearTimeout(timer); // Cleanup timer
   }, []);
 
-  if (loading) {
+  if (loading || isFilteringLecturer) {
     return <Loader />;
   }
 
@@ -381,10 +206,12 @@ const FilteredLecturers = () => {
             <select
               id="language"
               name="language"
-              value={formik.values.language}
-              onChange={formik.handleChange}
+              value={formik.values.languages}
+              onChange={(e) => {
+                formik.setFieldValue('languages', e.target.value);
+              }}
               className={`block w-full rounded rounded-md border-[1.5px] border-2 border-gray-500 py-2 px-5 outline-none w-40 transition ${
-                formik.touched.language && formik.errors.language
+                formik.touched.languages && formik.errors.languages
                   ? 'border-red-500'
                   : 'border-gray-500 focus:border-primary'
               } dark:bg-gray-800`}>
@@ -400,6 +227,9 @@ const FilteredLecturers = () => {
           {/* Search Button */}
           <div className="flex items-end">
             <button
+              onClick={() => {
+                return formik.handleSubmit
+              }}
               type="submit"
               className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
             >
@@ -425,6 +255,9 @@ const FilteredLecturers = () => {
                     Highest Qualification
                   </th>
                   <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
+                    District
+                  </th>
+                  <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
                     Contact Number
                   </th>
                   <th className="min-w-[100px] py-4 px-4 text-left font-medium text-black dark:text-white">
@@ -439,7 +272,7 @@ const FilteredLecturers = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentLecturers.map((lecturer: Lecturer, key) => (
+                {filteredLecturers?.map((lecturer: LecturerRes, key) => (
                   <tr
                     key={key+lecturer.id}
                     className="hover:bg-gray-200 dark:hover:bg-gray-800"
@@ -461,7 +294,26 @@ const FilteredLecturers = () => {
                       {lecturer.name}
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      {lecturer.qualifications ? lecturer.qualifications[0] : 'N/A'}
+                      <p
+                        className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium ${
+                          getHighestQualification(lecturer).toLowerCase() === 'phd'
+                            ? 'bg-meta-7 text-meta-7'
+                            : getHighestQualification(lecturer).toLowerCase() === 'msc'
+                              ? 'bg-danger text-danger'
+                              : getHighestQualification(lecturer).toLowerCase() === 'bsc'
+                                ? 'bg-primary text-primary'
+                                :getHighestQualification(lecturer).toLowerCase() === 'pgd'
+                                  ? 'bg-warning text-warning'
+                                  : getHighestQualification(lecturer).toLowerCase() === 'hnd'
+                                    ? 'bg-success text-success'
+                                    : ''
+                        }`}
+                      >
+                        {getHighestQualification(lecturer)}
+                      </p>
+                    </td>
+                    <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                      {lecturer.district ?? 'N/A'}
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       {lecturer.contactNo ?? 'N/A'}
@@ -548,6 +400,15 @@ const FilteredLecturers = () => {
             </div>
           </div>
         </div>
+        {toast && (
+          <Toast
+            {
+              // @ts-ignore
+              ...toast
+            }
+            onClose={() => setToast(null)}
+          />
+        )}
       </div>
     </>
   );

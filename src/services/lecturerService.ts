@@ -1,6 +1,7 @@
 import { lectureLinkAxios } from './axiosConfig.ts';
 import { LecturerRes } from '../types/lecturerRes.ts';
 import { Lecturer } from '../types/lecturer.ts';
+import { FilteredLecturersResponse } from '../types/filteredLecturersResponse.ts';
 
 const LecturerService = {
   getAllLecturers: async (): Promise<LecturerRes[]> => {
@@ -37,22 +38,28 @@ const LecturerService = {
 
   getFilteredLecturers: async (payload: {
     district?: string;
-    status?: string;
+    hourlyRate?: string;
+    qualification?: string;
+    isAssigned?: boolean;
     languages?: string;
     size?: number;
     page?: number;
     sort?: string;
-  }): Promise<{ lecturers: LecturerRes[]; total: number }> => {
+  }): Promise<FilteredLecturersResponse> => {
     const params = new URLSearchParams();
 
-    if (payload.district) params.append("district", payload.district);
-    if (payload.status) params.append("status", payload.status);
-    if (payload.languages) params.append("languages", payload.languages);
-    if (payload.size !== undefined) params.append("size", payload.size.toString());
-    if (payload.page !== undefined) params.append("page", payload.page.toString());
-    if (payload.sort) params.append("sort", payload.sort);
+    if (payload.district) params.append('district', payload.district);
+    if (payload.hourlyRate !== undefined) params.append('payRateLower', payload.hourlyRate.split("-")[0].toString());
+    if (payload.hourlyRate !== undefined) params.append('payRateUpper', payload.hourlyRate.split("-")[1].toString());
+    if (payload.qualification) params.append('qualification', payload.qualification);
+    if (payload.isAssigned !== undefined) params.append('isAssigned', payload.isAssigned.toString());
+    if (payload.languages) params.append('languages', payload.languages);
+    if (payload.size !== undefined) params.append('size', payload.size.toString());
+    if (payload.page !== undefined) params.append('page', payload.page.toString());
+    if (payload.sort) params.append('sort', payload.sort);
 
-    const { data } = await lectureLinkAxios.get(`/lecturers/filter`, { params });
+    const { data } = await lectureLinkAxios.get<FilteredLecturersResponse>(`/lecturers/filter`, { params });
+
     return data;
   },
 

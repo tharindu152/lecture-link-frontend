@@ -63,6 +63,13 @@ const Lecturers = () => {
     deleteLecturer({lecturerId: lecturerId})
   }
 
+  const getHighestQualification = (lecturer: LecturerRes) => {
+    const priority = ["PHD", "MSC", "BSC", "HND", "PGD"];
+    const qualifications = lecturer?.qualifications?.map(q => q.level.toUpperCase()) || [];
+
+    return priority.find(level => qualifications.includes(level)) ?? "N/A";
+  };
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -92,6 +99,9 @@ const Lecturers = () => {
                   </th>
                   <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
                     Highest Qualification
+                  </th>
+                  <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
+                    District
                   </th>
                   <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
                     Contact Number
@@ -132,7 +142,26 @@ const Lecturers = () => {
                       {lecturer.name}
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      {lecturer.preference ?? 'N/A'}
+                      <p
+                        className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium ${
+                          getHighestQualification(lecturer).toLowerCase() === 'phd'
+                            ? 'bg-meta-7 text-meta-7'
+                            : getHighestQualification(lecturer).toLowerCase() === 'msc'
+                              ? 'bg-danger text-danger'
+                              : getHighestQualification(lecturer).toLowerCase() === 'bsc'
+                                ? 'bg-primary text-primary'
+                                :getHighestQualification(lecturer).toLowerCase() === 'pgd'
+                                  ? 'bg-warning text-warning'
+                                  : getHighestQualification(lecturer).toLowerCase() === 'hnd'
+                                    ? 'bg-success text-success'
+                                    : ''
+                        }`}
+                      >
+                        {getHighestQualification(lecturer)}
+                      </p>
+                    </td>
+                    <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                      {lecturer.district ?? 'N/A'}
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       {lecturer.contactNo ?? 'N/A'}
