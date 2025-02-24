@@ -20,7 +20,7 @@ const UpdateInstituteForm = () => {
       },
       onError: () => {
         // @ts-ignore
-        setToast({ message: "Institute creation unsuccessful!", type: "error" });
+        setToast({ message: "Institute creation is unsuccessful!", type: "error" });
       },
     },
   );
@@ -394,7 +394,9 @@ const UpdateInstituteForm = () => {
               {/* Placeholder or File Name */}
               {formik.values.logo ? (
                 <p className="text-sm text-primary truncate">
-                  {formik.values.logo.name}
+                  {formik.values.logo
+                    // @ts-ignore
+                    .name}
                 </p>
               ) : (
                 <>

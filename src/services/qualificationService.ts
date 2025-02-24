@@ -52,7 +52,7 @@ const QualificationService = {
     return data;
   },
 
-  deleteQualificationById: async (payload: { qualificationId: string }): Promise<{ success: boolean; message?: string }> => {
+  deleteQualificationById: async (payload: { qualificationId: number }): Promise<{ success: boolean; message?: string }> => {
     const { data } = await lectureLinkAxios.delete(`/qualifications/${payload.qualificationId}`);
     return data;
   },

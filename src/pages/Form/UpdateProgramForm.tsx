@@ -22,7 +22,7 @@ const UpdateProgramForm = () => {
       },
       onError: () => {
         // @ts-ignore
-        setToast({ message: "Program creation unsuccessful!", type: "error" });
+        setToast({ message: "Program creation is unsuccessful!", type: "error" });
       },
     },
   );

@@ -21,7 +21,7 @@ const UpdateSubjectForm = () => {
       },
       onError: () => {
         // @ts-ignore
-        setToast({ message: "Subject creation unsuccessful!", type: "error" });
+        setToast({ message: "Subject creation is unsuccessful!", type: "error" });
       },
     },
   );

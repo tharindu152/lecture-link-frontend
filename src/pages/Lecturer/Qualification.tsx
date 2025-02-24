@@ -1,85 +1,20 @@
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
-import { Level } from '../../types/level.ts';
-import { Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import Loader from '../../common/Loader';
-
-// Mock Qualification Data
-const qualifications: Qualification[] = [
-  {
-    id: 1,
-    name: "Bachelor of Science in Computer Science",
-    awardingBody: "University of Technology",
-    durationInDays: 1095,
-    discipline: "Computer Science",
-    completedAt: "2022-05-15",
-    level: Level.PHD,
-    lecturerId: 101,
-  },
-  {
-    id: 2,
-    name: "Master of Business Administration",
-    awardingBody: "Global Business Institute",
-    durationInDays: 730,
-    discipline: "Management",
-    completedAt: "2021-11-25",
-    level: Level.HND,
-    lecturerId: 102,
-  },
-  {
-    id: 3,
-    name: "Diploma in Graphic Design",
-    awardingBody: "Creative Arts Academy",
-    durationInDays: 180,
-    completedAt: "2020-08-10",
-    level: Level.PGD,
-    lecturerId: 103,
-  },
-  {
-    id: 4,
-    name: "Ph.D. in Astrophysics",
-    awardingBody: "Institute of Advanced Sciences",
-    durationInDays: 1825,
-    discipline: "Astrophysics",
-    completedAt: "2023-02-14",
-    level: Level.BSC,
-    lecturerId: 104,
-  },
-  {
-    id: 5,
-    name: "Certificate in Data Analysis",
-    awardingBody: "Online Data Academy",
-    durationInDays: 90,
-    completedAt: "2021-06-30",
-    level: Level.MSC,
-    lecturerId: 105,
-  },
-];
-
-type Qualification = {
-  id: number;
-  name: string;
-  awardingBody: string;
-  durationInDays: number;
-  discipline?: string;
-  completedAt: string;
-  level: Level;
-  lecturerId: number;
-};
+import { useQuery } from 'react-query';
+import QualificationService from '../../services/qualificationService.ts';
 
 const Qualification = () => {
 
-  // Parse the qualificationId from params and find the relevant qualification
-  const qualification = qualifications[0];
+  const location = useLocation();
+  const { pathname } = location;
 
-  const [loading, setLoading] = useState(true);
+  const {
+    data: qualification,
+    isLoading: isLoadingQualification,
+  } = useQuery(['getQualificationById'], () => QualificationService.getQualificationById({qualificationId:pathname.slice(20)}));
 
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1000); // Simulating a loading state
-    return () => clearTimeout(timer); // Cleanup timer
-  }, []);
-
-  if (loading) {
+  if (isLoadingQualification) {
     return <Loader />;
   }
 
@@ -89,7 +24,7 @@ const Qualification = () => {
 
       <div className="rounded-md border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark p-6">
         <h3 className="text-3xl font-semibold text-black dark:text-white mb-6">
-          {qualification.name}
+          {qualification?.name}
         </h3>
 
         <div className="space-y-4">
@@ -97,21 +32,21 @@ const Qualification = () => {
             <h4 className="font-semibold text-black dark:text-white w-40">
               Title:
             </h4>
-            <p className="flex-1">{qualification.name}</p>
+            <p className="flex-1">{qualification?.name}</p>
           </div>
 
           <div className="flex gap-4">
             <h4 className="font-semibold text-black dark:text-white w-40">
               Awarding Body:
             </h4>
-            <p className="flex-1">{qualification.awardingBody}</p>
+            <p className="flex-1">{qualification?.awardingBody}</p>
           </div>
 
           <div className="flex gap-4">
             <h4 className="font-semibold text-black dark:text-white w-40">
               Discipline:
             </h4>
-            <p className="flex-1">{qualification.discipline}</p>
+            <p className="flex-1">{qualification?.discipline}</p>
 
           </div>
 
@@ -119,7 +54,7 @@ const Qualification = () => {
               <h4 className="font-semibold text-black dark:text-white w-40">
                 Duration (Months):
               </h4>
-              <p className="flex-1">{Math.ceil(qualification.durationInDays / 30)}</p>
+              <p className="flex-1">{Math.ceil((qualification?.durationInDays ?? 0) / 30)}</p>
             </div>
 
             <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
@@ -128,20 +63,20 @@ const Qualification = () => {
               </h4>
               <p
                 className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium ${
-                  qualification.level === 'PhD'
+                  qualification?.level === 'PhD'
                     ? 'bg-meta-7 text-meta-7'
-                    : qualification.level === 'MSc'
+                    : qualification?.level === 'MSc'
                       ? 'bg-danger text-danger'
-                      : qualification.level === 'BSc'
+                      : qualification?.level === 'BSc'
                         ? 'bg-primary text-primary'
-                        : qualification.level === 'PGD'
+                        : qualification?.level === 'PGD'
                           ? 'bg-warning text-warning'
-                          : qualification.level === 'HND'
+                          : qualification?.level === 'HND'
                             ? 'bg-success text-success'
                             : ''
                 }`}
               >
-                {qualification.level}
+                {qualification?.level}
               </p>
             </div>
 
@@ -149,7 +84,7 @@ const Qualification = () => {
             <h4 className="font-semibold text-black dark:text-white w-full sm:w-40">
               Completed At:
             </h4>
-            <p className="flex-1 break-words">{qualification.completedAt}</p>
+            <p className="flex-1 break-words">{qualification?.completedAt}</p>
           </div>
         </div>
         <Link

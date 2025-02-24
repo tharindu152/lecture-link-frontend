@@ -22,7 +22,7 @@ const UpdateLecturerForm = () => {
       },
       onError: () => {
         // @ts-ignore
-        setToast({ message: "Lecturer creation unsuccessful!", type: "error" });
+        setToast({ message: "Lecturer creation is unsuccessful!", type: "error" });
       },
     },
   );
@@ -103,6 +103,7 @@ const UpdateLecturerForm = () => {
     return <Loader />;
   }
 
+  // @ts-ignore
   return (
     <>
       <Breadcrumb pageName="Add/Update Lecturer" />
@@ -398,7 +399,9 @@ const UpdateLecturerForm = () => {
               {/* Placeholder or File Name */}
               {formik.values.picture ? (
                 <p className="text-sm text-primary truncate">
-                  {formik.values.picture.name}
+                  {formik.values.picture
+                    // @ts-ignore
+                    .name}
                 </p>
               ) : (
                 <>

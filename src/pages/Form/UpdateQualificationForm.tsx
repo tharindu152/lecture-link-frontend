@@ -4,18 +4,39 @@ import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
 import { Qualification } from '../../types/qualification.ts';
 import { Level } from '../../types/level.ts';
 import DatePickerTwo from '../../components/Forms/DatePicker/DatePickerTwo.tsx';
+import { useEffect, useState } from 'react';
+import { useMutation } from 'react-query';
+import qualificationService from '../../services/qualificationService.ts';
+import Loader from '../../common/Loader';
+import Toast from '../../components/Toast.tsx';
 
 const UpdateQualificationForm = () => {
+
+  const [toast, setToast] = useState(null);
+
+  const { mutate: createQualification, isLoading: isCreatingQualification } = useMutation(
+    qualificationService.createQualification,
+    {
+      onSuccess: () => {
+        // @ts-ignore
+        setToast({ message: "Qualification created successfully!", type: "success" });
+      },
+      onError: () => {
+        // @ts-ignore
+        setToast({ message: "Qualification creation is unsuccessful!", type: "error" });
+      },
+    },
+  );
+
   const formik = useFormik<Qualification>({
     initialValues: {
-      id: 1,
       name: '',
       awardingBody: '',
       durationInDays: 1,
       discipline: '',
       completedAt: '',
       level: '' as Level,
-      lecturerId: 1,
+      lecturerId: 15,
     },
     validationSchema: Yup.object({
       name: Yup.string()
@@ -43,15 +64,27 @@ const UpdateQualificationForm = () => {
             'PhD',
           ],
           'Invalid level',
-        ), // Adjust based on Level values
-      lecturerId: Yup.number()
-        .required('Lecturer ID is required')
-        .oneOf([1, 2, 3, 4], 'Invalid Lecturer ID'), // Valid lecturer IDs
+        )
     }),
     onSubmit: (values) => {
-      console.log('Form submitted with values:', values);
+      createQualification({ qualificationData: values });
     },
   });
+
+  useEffect(() => {
+    console.log(formik)
+  }, [formik]);
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isCreatingQualification || loading) {
+    return <Loader />;
+  }
 
   return (
     <>
@@ -199,15 +232,19 @@ const UpdateQualificationForm = () => {
         )}
 
         {/* Submit Button */}
-        <div className="mt-6">
-          <button
-            type="submit"
-            className="w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
-          >
-            Update Qualification
-          </button>
-        </div>
+        <button
+          onClick={() => {
+            return formik.handleSubmit
+          }}
+          className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
+          type="submit"
+        >
+          Update Qualification
+        </button>
       </form>
+      {toast && <Toast
+        // @ts-ignore
+        {...toast} onClose={() => setToast(null)} />}
     </>
   );
 };

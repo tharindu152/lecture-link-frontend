@@ -1,7 +1,7 @@
 import { Level } from './level.ts';
 
 export type Qualification = {
-  id: number;
+  id?: number;
   name: string;
   awardingBody: string;
   durationInDays: number;

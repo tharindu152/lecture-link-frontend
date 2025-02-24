@@ -73,6 +73,7 @@ const Subjects = () => {
 
   const subjectProgramMap = programsList.reduce((acc, prog) => {
     prog.subjects?.forEach((sub) => {
+      // @ts-ignore
       acc[sub.id] = prog.name;
     });
     return acc;
@@ -89,6 +90,7 @@ const Subjects = () => {
     return <Loader />;
   }
 
+  // @ts-ignore
   return (
     <>
       <Breadcrumb pageName="Subjects" />
@@ -132,7 +134,9 @@ const Subjects = () => {
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-4">
                       <h5 className="font-medium text-black dark:text-white">
-                        {subjectProgramMap[subject.id] || 'No Program'}
+                        {subjectProgramMap[
+                          // @ts-ignore
+                          subject.id] || 'No Program'}
                       </h5>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
@@ -217,6 +221,7 @@ const Subjects = () => {
                         <button
                           onClick={() => {
                             setIsModalOpen(true);
+                            // @ts-ignore
                             setSelectedSubject(subject.id);
                           }}
                           className="hover:text-danger"
