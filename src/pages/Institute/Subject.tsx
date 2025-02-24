@@ -1,53 +1,19 @@
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
-import { Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import Loader from '../../common/Loader';
-
-// Mock Subject Data
-const mockSubjects: SubjectDto[] = [
-  {
-    id: 1,
-    name: 'Agile Development',
-    noOfCredits: 2,
-    description: 'Introduction to Agile methodologies and practices.',
-    isAssigned: true,
-    lecturerId: 101,
-  },
-  {
-    id: 2,
-    name: 'Object-Oriented Programming',
-    noOfCredits: 3,
-    description:
-      'Learn the fundamentals of object-oriented programming and design patterns.',
-    isAssigned: true,
-    lecturerId: 102,
-  },
-  {
-    id: 3,
-    name: 'Software Architecture',
-    noOfCredits: 4,
-    description:
-      'An advanced course on designing scalable and maintainable software systems.',
-    isAssigned: false,
-    lecturerId: 103,
-  },
-];
-
-type SubjectDto = {
-  id: number;
-  name: string;
-  noOfCredits: number;
-  description?: string;
-  isAssigned: boolean;
-  lecturerId?: number;
-};
+import { useQuery } from 'react-query';
+import SubjectService from '../../services/subjectService.ts';
 
 const Subject = () => {
 
-  // Parse the subjectId from params and find the relevant subject
-  const subject = mockSubjects.find((sub) => sub.id === 1);
+  const location = useLocation();
+  const { pathname } = location;
 
-  // Handle case where subject is not found
+  const {
+    data: subject,
+    isLoading: isLoadingSubject,
+  } = useQuery(['getSubjectById'], () => SubjectService.getSubjectById({subjectId:pathname.slice(14)}));
+
   if (!subject) {
     return (
       <>
@@ -59,14 +25,7 @@ const Subject = () => {
     );
   }
 
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1000); // Simulating a loading state
-    return () => clearTimeout(timer); // Cleanup timer
-  }, []);
-
-  if (loading) {
+  if (isLoadingSubject) {
     return <Loader />;
   }
 

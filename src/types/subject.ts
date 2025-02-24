@@ -1,5 +1,5 @@
 export type Subject = {
-  id: number;
+  id?: number;
   name: string;
   noOfCredits: number;
   description?: string;
