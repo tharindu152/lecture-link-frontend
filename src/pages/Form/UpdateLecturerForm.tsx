@@ -2,67 +2,106 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { FaStar } from 'react-icons/fa';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
-import { Link } from 'react-router-dom';
 import DatePickerTwo from '../../components/Forms/DatePicker/DatePickerTwo.tsx';
+import { useState } from 'react';
+import { useMutation } from 'react-query';
+import Loader from '../../common/Loader';
+import lecturerService from '../../services/lecturerService.ts';
+import Toast from '../../components/Toast.tsx';
 
 const UpdateLecturerForm = () => {
+
+  const [toast, setToast] = useState(null);
+
+  const { mutate: createLecturer, isLoading: isCreatingLecturer } = useMutation(
+    lecturerService.createLecturer,
+    {
+      onSuccess: () => {
+        // @ts-ignore
+        setToast({ message: "Lecturer created successfully!", type: "success" });
+      },
+      onError: () => {
+        // @ts-ignore
+        setToast({ message: "Lecturer creation unsuccessful!", type: "error" });
+      },
+    },
+  );
+
   const formik = useFormik({
     initialValues: {
-      id: '',
       name: '',
       password: '',
       email: '',
       district: '',
-      telephone: '',
-      hourlyRate: undefined,
-      dateOfBirth: '',
-      rating: 0,
+      contactNo: '',
+      payRate: 0,
+      dob: '',
+      review: 0,
       isAssigned: false,
       status: 'ACTIVE',
       picture: null,
-      description: '',
+      preference: '',
     },
     validationSchema: Yup.object().shape({
-        id: Yup.string().required('ID is required'), // ID must not be empty
         name: Yup.string()
           .required('Name is required')
           .min(2, 'Name must be at least 2 characters')
-          .max(50, 'Name cannot exceed 50 characters'), // Enforce limits
+          .max(50, 'Name cannot exceed 50 characters'),
         password: Yup.string()
           .required('Password is required')
           .min(6, 'Password must be at least 6 characters')
-          .max(50, 'Password cannot exceed 50 characters'), // Basic password validation
+          .max(50, 'Password cannot exceed 50 characters'),
         email: Yup.string()
           .required('Email is required')
-          .email('Enter a valid email address'), // Valid email format
-        district: Yup.string().required('District is required'), // Must not be empty
-        telephone: Yup.string()
-          .required('Telephone is required')
-          .matches(/^\d{10}$/, 'Telephone must be a valid 10-digit number'), // 10-digit phone number
-        hourlyRate: Yup.number()
+          .email('Enter a valid email address'),
+        district: Yup.string().required('District is required'),
+        contactNo: Yup.string()
+          .required('Contact number is required')
+          .matches(/^\d{10}$/, 'Telephone must be a valid 10-digit number'),
+        payRate: Yup.number()
           .required('Hourly rate is required')
-          .min(0, 'Hourly rate must be non-negative'), // Enforce non-negative hourly rate
-        dateOfBirth: Yup.date()
+          .integer('Hourly rate must be an integer')
+          .positive('Hourly rate must be a positive value')
+          .min(10, 'Hourly rate must be non-negative'),
+        dob: Yup.date()
           .required('Date of birth is required')
           .nullable()
-          .max(new Date(), 'Date of birth cannot be in the future'), // Valid Date and not in the future
-        rating: Yup.number()
+          .max(new Date(), 'Date of birth cannot be in the future'),
+        review: Yup.number()
           .required('Rating is required')
           .min(0, 'Rating must be non-negative')
-          .max(5, 'Rating cannot exceed 5'), // Rating validation (e.g., 0-5 scale)
-        isAssigned: Yup.boolean().required('Assignment status is required'), // Boolean validation
+          .max(5, 'Rating cannot exceed 5'),
+        isAssigned: Yup.boolean().required('Assignment status is required'),
         status: Yup.string()
           .required('Status is required')
-          .oneOf(['ACTIVE', 'INACTIVE'], 'Status must be either ACTIVE or INACTIVE'), // Status must be a predefined valid value
-        picture: Yup.mixed().nullable(), // Allow `null` for optional fields
-        description: Yup.string()
+          .oneOf(['ACTIVE', 'INACTIVE'], 'Status must be either ACTIVE or INACTIVE'),
+        picture: Yup.mixed().nullable(),
+        preference: Yup.string()
           .optional()
-          .max(200, 'Description cannot exceed 200 characters'), // Optional with length limit
+          .max(1000, 'Description cannot exceed 200 characters'),
       }),
     onSubmit: (values) => {
-      console.log('Form successfully submitted:', values);
+      const formData = new FormData();
+      formData.append('name', values.name);
+      formData.append('password', values.password);
+      formData.append('email', values.email);
+      formData.append('district', values.district);
+      formData.append('contactNo', values.contactNo);
+      formData.append('payRate', values.payRate.toString());
+      formData.append('dob', values.dob);
+      formData.append('review', values.review?.toString() ?? '0');
+      formData.append('isAssigned', String(values.isAssigned));
+      formData.append('status', values.status);
+      formData.append('preference', values.preference);
+      if (values.picture) formData.append('picture', values.picture);
+      console.log(formData)
+      createLecturer({ lecturerConfig: formData });
     },
   });
+
+  if (isCreatingLecturer) {
+    return <Loader />;
+  }
 
   return (
     <>
@@ -197,17 +236,19 @@ const UpdateLecturerForm = () => {
             type="text"
             placeholder="Enter telephone number"
             className={`flex-1 rounded-md border-[1.5px] py-2 px-3 outline-none transition ${
-              formik.touched.telephone && formik.errors.telephone
+              formik.touched.contactNo && formik.errors.contactNo
                 ? 'border-red-500'
                 : 'border-gray-300 focus:border-primary'
             } dark:bg-gray-800`}
-            onChange={formik.handleChange}
+            onChange={(e) => {
+              formik.setFieldValue('contactNo', e.target.value);
+            }}
             onBlur={formik.handleBlur}
-            value={formik.values.telephone}
+            value={formik.values.contactNo}
           />
         </div>
-        {formik.touched.telephone && formik.errors.telephone && (
-          <p className="text-red-500 text-sm mb-4">{formik.errors.telephone}</p>
+        {formik.touched.contactNo && formik.errors.contactNo && (
+          <p className="text-red-500 text-sm mb-4">{formik.errors.contactNo}</p>
         )}
 
         {/* Payment */}
@@ -221,17 +262,20 @@ const UpdateLecturerForm = () => {
             type="number"
             placeholder="Enter Hourly Rate"
             className={`rounded-md border-[1.5px] py-2 px-3 outline-none w-52 text-center transition ${
-              formik.touched.hourlyRate && formik.errors.hourlyRate
+              formik.touched.payRate && formik.errors.payRate
                 ? 'border-red-500'
                 : 'border-gray-300 focus:border-primary'
             } dark:bg-gray-800`}
-            onChange={formik.handleChange}
+            value={formik.values.payRate}
+            onChange={(e) => {
+              const value = e.target.value ? parseFloat(e.target.value) : 0;
+              formik.setFieldValue('payRate', value);
+            }}
             onBlur={formik.handleBlur}
-            value={formik.values.hourlyRate}
           />
         </div>
-        {formik.touched.hourlyRate && formik.errors.hourlyRate && (
-          <p className="text-red-500 text-sm mb-4">{formik.errors.hourlyRate}</p>
+        {formik.touched.payRate && formik.errors.payRate && (
+          <p className="text-red-500 text-sm mb-4">{formik.errors.payRate}</p>
         )}
 
         {/* dob */}
@@ -240,12 +284,13 @@ const UpdateLecturerForm = () => {
             Date of Birth
           </label>
           <DatePickerTwo
-            value={formik.values.dateOfBirth} // Bind the value with formik
-            onChange={(date) => formik.setFieldValue('dateOfBirth', date)} // Update formik value on change
+            id="dob"
+            value={formik.values.dob}
+            onChange={(date) => formik.setFieldValue('dob', date)}
           />
         </div>
-        {formik.touched.dateOfBirth && formik.errors.dateOfBirth && (
-          <p className="text-red-500 text-sm mb-4">{formik.errors.dateOfBirth}</p>
+        {formik.touched.dob && formik.errors.dob && (
+          <p className="text-red-500 text-sm mb-4">{formik.errors.dob}</p>
         )}
 
 
@@ -258,9 +303,9 @@ const UpdateLecturerForm = () => {
             <span
               id={`rating-${star}`}
               key={star}
-              onClick={() => formik.setFieldValue('rating', star)}
+              onClick={() => formik.setFieldValue('review', star)}
               className={`mx-1 cursor-pointer text-2xl ${
-                formik.values.rating >= star
+                formik.values.review >= star
                   ? 'text-yellow-400'
                   : 'text-gray-500'
               }`}
@@ -344,7 +389,7 @@ const UpdateLecturerForm = () => {
               className="absolute inset-0 z-50 w-full h-full opacity-0 cursor-pointer"
               onChange={(e) => {
                 const file = e.currentTarget.files?.[0] || null;
-                formik.setFieldValue('picture', file); // Set file to Formik's field
+                formik.setFieldValue('picture', file);
               }}
             />
 
@@ -408,35 +453,36 @@ const UpdateLecturerForm = () => {
             name="description"
             placeholder="Enter Description"
             className={`w-full sm:flex-1 rounded-md border-[1.5px] py-2 px-3 outline-none transition resize-none ${
-              formik.touched.description && formik.errors.description
+              formik.touched.preference && formik.errors.preference
                 ? 'border-red-500'
                 : 'border-gray-300 focus:border-primary'
             } dark:bg-gray-800 dark:text-white h-32`}
-            onChange={formik.handleChange}
+            onChange={(e) => {
+              formik.setFieldValue('preference', e.target.value);
+            }}
             onBlur={formik.handleBlur}
-            value={formik.values.description}
-            rows={6} // Allows multi-line support
+            value={formik.values.preference}
+            rows={6}
           />
         </div>
-        {formik.touched.description && formik.errors.description && (
+        {formik.touched.preference && formik.errors.preference && (
           <p className="text-red-500 text-sm mb-4">
-            {formik.errors.description}
+            {formik.errors.preference}
           </p>
         )}
 
         {/* Submit Button */}
-
-        <Link
-          to="/app/lecturers/add-lecturer"
+        <button
+          onClick={()=>formik.handleSubmit()}
           className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
+          type="submit"
         >
-          <button
-            type="submit"
-          >
-            Update Lecturer
-          </button>
-        </Link>
+          Update Lecturer
+        </button>
       </form>
+      {toast && <Toast {
+                     // @ts-ignore
+                     ...toast} onClose={() => setToast(null)} />}
     </>
   );
 };

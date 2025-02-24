@@ -1,35 +1,25 @@
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
-import lecturerImage from '../../images/user/user-02.png';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { FaStar } from 'react-icons/fa';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Loader from '../../common/Loader';
+import { useQuery } from 'react-query';
+import LecturerService from '../../services/lecturerService.ts';
+import { Subject } from '../../types/subject.ts';
 
 const Lecturer = () => {
-  const qualifications = [
-    'BSc in Computer Science',
-    'MSc in Artificial Intelligence',
-    'PhD in Machine Learning',
-    'Certified Data Scientist',
-  ];
-
-  const subjects = [
-    'Computer Science',
-    'Artificial Intelligence',
-    'Machine Learning',
-    'Data Scientist',
-  ];
 
   const [rating, setRating] = useState(0);
+  const location = useLocation();
+  const { pathname } = location;
 
-  const [loading, setLoading] = useState(true);
+  const {
+    data: lecturer,
+    isLoading: isLoadingLecturer,
+  } = useQuery(['getLecturerById'], () => LecturerService.getLecturerById({lecturerId:pathname.slice(15)}));
 
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1000); // Simulating a loading state
-    return () => clearTimeout(timer); // Cleanup timer
-  }, []);
 
-  if (loading) {
+  if (isLoadingLecturer) {
     return <Loader />;
   }
 
@@ -44,7 +34,7 @@ const Lecturer = () => {
           <div className="relative z-30 mx-auto mt-5 mb-4 md:mb-0 md:ml-1 md:mr-4 h-30 w-full max-w-30 rounded-full bg-white/20 p-1 backdrop-blur sm:h-44 sm:max-w-44 sm:p-3">
             <div className="relative drop-shadow-2">
               <img
-                src={lecturerImage}
+                src={lecturer?.picture}
                 alt="lecturer-profile"
                 className="mx-auto md:-mt-3 md:-ml-3 sm:-mt-3 sm:-ml-3 -mt-1 -ml-1 h-30 max-w-30 rounded-full p-1 sm:h-44 sm:max-w-44 sm:p-3"
               />
@@ -54,7 +44,7 @@ const Lecturer = () => {
           {/* Details Section */}
           <div className="flex-1 p-4">
             <h3 className="mb-4 text-3xl font-semibold text-black dark:text-white text-center md:text-left">
-              Dr. John Doe
+              {lecturer?.name}
             </h3>
 
             <div className="space-y-3">
@@ -62,56 +52,56 @@ const Lecturer = () => {
                 <h4 className="font-semibold text-black dark:text-white w-full md:w-44">
                   Lecturer ID:
                 </h4>
-                <p>LEC-102345</p>
+                <p>{lecturer?.id}</p>
               </div>
 
               <div className="flex flex-col md:flex-row">
                 <h4 className="font-semibold text-black dark:text-white w-full md:w-44">
                   E-mail:
                 </h4>
-                <p>john.doe@university.edu</p>
+                <p>{lecturer?.email}</p>
               </div>
 
               <div className="flex flex-col md:flex-row">
                 <h4 className="font-semibold text-black dark:text-white w-full md:w-44">
                   Telephone Number:
                 </h4>
-                <p>+94123456789</p>
+                <p>{lecturer?.contactNo}</p>
               </div>
 
               <div className="flex flex-col md:flex-row">
                 <h4 className="font-semibold text-black dark:text-white w-full md:w-44">
                   District:
                 </h4>
-                <p>Kandy</p>
+                <p>{lecturer?.district}</p>
               </div>
 
               <div className="flex flex-col md:flex-row">
                 <h4 className="font-semibold text-black dark:text-white w-full md:w-44">
                   Date of Birth:
                 </h4>
-                <p>01/04/1995</p>
+                <p>{lecturer?.dob}</p>
               </div>
 
               <div className="flex flex-col md:flex-row">
                 <h4 className="font-semibold text-black dark:text-white w-full md:w-44">
                   Hourly Rate:
                 </h4>
-                <p>LKR 2500</p>
+                <p>LKR {lecturer?.payRate}</p>
               </div>
 
               <div className="flex flex-col md:flex-row">
                 <h4 className="font-semibold text-black dark:text-white w-full md:w-44">
                   Status:
                 </h4>
-                <p>ACTIVE</p>
+                <p>{lecturer?.status}</p>
               </div>
 
               <div className="flex flex-col md:flex-row">
                 <h4 className="font-semibold text-black dark:text-white w-full md:w-44">
                   Languages:
                 </h4>
-                <p>English, Sinhala</p>
+                <p>{lecturer?.languages}</p>
               </div>
 
               <div className="flex flex-col md:flex-row">
@@ -123,7 +113,7 @@ const Lecturer = () => {
                     <button
                       key={star}
                       type="button"
-                      onClick={() => setRating(star)}
+                      onClick={() => setRating((lecturer?.review?.split(" ").length ?? 0) % 6)}
                       className="focus:outline-none"
                     >
                       <FaStar
@@ -137,27 +127,27 @@ const Lecturer = () => {
                 </div>
               </div>
 
-              {subjects && (
+              {lecturer?.subjects && (
                 <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
                   <h4 className="font-semibold text-black dark:text-white sm:w-40">
                     Assigned Subjects:
                   </h4>
                   <ul className="list-disc flex-1 pl-4">
-                    {subjects.map((subject, index) => (
-                      <li key={index + subject}>{subject}</li>
+                    {lecturer?.subjects.map((subject : Subject, index) => (
+                      <li key={index + subject.name}>{subject.name}</li>
                     ))}
                   </ul>
                 </div>
               )}
 
-              {qualifications && (
+              {lecturer?.qualifications && (
                 <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
                   <h4 className="font-semibold text-black dark:text-white sm:w-40">
                     Qualifications:
                   </h4>
                   <ul className="list-disc flex-1 pl-4">
-                    {qualifications.map((qualification, index) => (
-                      <li key={index + qualification}>{qualification}</li>
+                    {lecturer?.qualifications.map((qualification, index) => (
+                      <li key={index + qualification.name}>{qualification.name}</li>
                     ))}
                   </ul>
                 </div>
@@ -165,14 +155,10 @@ const Lecturer = () => {
 
               <div>
                 <h4 className="font-semibold text-black dark:text-white">
-                  Description:
+                  Review:
                 </h4>
                 <p className="mt-1.5">
-                  Dr. John Doe is a senior lecturer at the University of XYZ,
-                  specializing in Machine Learning and Artificial Intelligence.
-                  With 15+ years of experience, Dr. Doe has worked on numerous
-                  research projects and published extensively in the field of
-                  data science.
+                  {lecturer?.review}
                 </p>
               </div>
             </div>

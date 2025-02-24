@@ -1,8 +1,9 @@
 import { Status } from './status.ts';
 import { Qualification } from './qualification.ts';
+import { Subject } from './subject.ts';
 
-export type Lecturer = {
-  id?: number;
+export type LecturerRes = {
+  id: number;
   name: string;
   district: string;
   email: string;
@@ -12,9 +13,10 @@ export type Lecturer = {
   review?: string;
   payRate: number;
   preference?: string;
-  picture?: File;
+  picture?: string;
   status: Status;
   isAssigned: boolean;
   languages?: string;
   qualifications?: Qualification[];
+  subjects?: Subject[];
 };

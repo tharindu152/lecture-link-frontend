@@ -8,14 +8,14 @@ import DatePickerTwo from '../../components/Forms/DatePicker/DatePickerTwo.tsx';
 const UpdateQualificationForm = () => {
   const formik = useFormik<Qualification>({
     initialValues: {
-      id: 1, // Example default ID
+      id: 1,
       name: '',
       awardingBody: '',
-      durationInDays: 1, // Default duration
-      discipline: '', // Optional field
-      completedAt: '', // Example empty date string
-      level: '' as Level, // Replace with a default value based on Level type
-      lecturerId: 1, // Default lecturer ID
+      durationInDays: 1,
+      discipline: '',
+      completedAt: '',
+      level: '' as Level,
+      lecturerId: 1,
     },
     validationSchema: Yup.object({
       name: Yup.string()

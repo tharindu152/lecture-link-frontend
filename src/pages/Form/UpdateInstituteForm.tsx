@@ -88,7 +88,7 @@ const UpdateInstituteForm = () => {
       formData.append('subscribed', values.subscribed.toString());
       if (values.telephone) formData.append('telephone', values.telephone);
       if (values.ugcRegNo) formData.append('ugcRegNo', values.ugcRegNo);
-      if (values.logo) formData.append('logo', values.logo); // Append the file
+      if (values.logo) formData.append('logo', values.logo);
 
       createInstitute({ instituteConfig: formData });
     },

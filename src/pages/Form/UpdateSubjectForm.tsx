@@ -1,25 +1,39 @@
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
-
-type SubjectDto = {
-  id: number; // Represents the ID
-  name: string; // Subject name
-  noOfCredits: number; // Number of credits
-  description?: string; // Optional description
-  isAssigned: boolean; // Indicates assignment status
-  lecturerId?: number; // Optional lecturer ID
-};
+import { Subject } from '../../types/subject.ts';
+import { useEffect, useState } from 'react';
+import { useMutation } from 'react-query';
+import Loader from '../../common/Loader';
+import subjectService from '../../services/subjectService.ts';
+import Toast from '../../components/Toast.tsx';
 
 const UpdateSubjectForm = () => {
-  const formik = useFormik<SubjectDto>({
+
+  const [toast, setToast] = useState(null);
+
+  const { mutate: createSubject, isLoading: isCreatingSubject } = useMutation(
+    subjectService.createSubject,
+    {
+      onSuccess: () => {
+        // @ts-ignore
+        setToast({ message: "Subject created successfully!", type: "success" });
+      },
+      onError: () => {
+        // @ts-ignore
+        setToast({ message: "Subject creation unsuccessful!", type: "error" });
+      },
+    },
+  );
+
+  const formik = useFormik<Subject>({
     initialValues: {
-      id: 1, // Example default ID
+      id: undefined,
       name: '',
       noOfCredits: 1,
       description: '',
       isAssigned: false,
-      lecturerId: 1, // Default selection
+      lecturerId: undefined,
     },
     validationSchema: Yup.object({
       name: Yup.string()
@@ -35,13 +49,23 @@ const UpdateSubjectForm = () => {
         .nullable(),
       isAssigned: Yup.boolean().required('Assignment status is required'),
       lecturerId: Yup.number()
-        .required('Lecturer ID is required')
-        .oneOf([1, 2, 3, 4], 'Invalid Lecturer ID'), // Must match an actual dropdown entry
+        .nullable(),
     }),
     onSubmit: (values) => {
-      console.log('Form submitted with values:', values);
+      createSubject({ subjectData: values });
     },
   });
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isCreatingSubject || loading) {
+    return <Loader />;
+  }
 
   return (
     <>
@@ -56,7 +80,7 @@ const UpdateSubjectForm = () => {
 
         {/* Subject Name */}
         <div className="mb-4 flex items-center">
-          <label className="block w-40 text-black dark:text-white">Name</label>
+          <label className="block w-40 text-black dark:text-white" htmlFor="name">Name</label>
           <input
             id="name"
             name="name"
@@ -78,10 +102,11 @@ const UpdateSubjectForm = () => {
 
         {/* Is Assigned (Toggle) */}
         <div className="mb-4 flex items-center">
-          <label className="block w-40 text-black dark:text-white">
+          <label className="block w-40 text-black dark:text-white" htmlFor="isAssigned">
             Is Assigned
           </label>
           <div
+            id="isAssigned"
             onClick={() =>
               formik.setFieldValue('isAssigned', !formik.values.isAssigned)
             }
@@ -99,7 +124,7 @@ const UpdateSubjectForm = () => {
 
         {/* Lecturer ID (Dropdown) */}
         <div className="mb-4 flex items-center">
-          <label className="block w-40 text-black dark:text-white">
+          <label className="block w-40 text-black dark:text-white" htmlFor="lecturerId">
             Lecturer ID
           </label>
           <select
@@ -127,7 +152,7 @@ const UpdateSubjectForm = () => {
 
         {/* Number of Credits (Counter) */}
         <div className="mb-4 flex items-center">
-          <label className="block w-40 text-black dark:text-white">
+          <label className="block w-40 text-black dark:text-white" htmlFor="noOfCredits">
             No. of Credits
           </label>
           <div className="flex items-center">
@@ -191,6 +216,9 @@ const UpdateSubjectForm = () => {
           </button>
         </div>
       </form>
+      {toast && <Toast
+        // @ts-ignore
+        {...toast} onClose={() => setToast(null)} />}
     </>
   );
 };

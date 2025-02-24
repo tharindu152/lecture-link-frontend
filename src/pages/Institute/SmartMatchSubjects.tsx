@@ -2,219 +2,48 @@ import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Loader from '../../common/Loader';
+import { LecturerRes } from '../../types/lecturerRes.ts';
+import { useQuery } from 'react-query';
+import lecturerService from '../../services/lecturerService.ts';
 
-// Type definition for Lecturer
-type Lecturer = {
-  id: number;
-  name: string;
-  district: string;
-  email: string;
-  password: string;
-  dob: string;
-  contactNo?: string;
-  review?: string;
-  payRate: number;
-  qualifications?: string[];
-  picture?: string; // Path to image (Optional for dummy data)
-  status: 'ACTIVE' | 'INACTIVE';
-  isAssigned: boolean;
-  languages?: string;
-};
-
-const lecturers: Lecturer[] = [
-  {
-    id: 1,
-    name: 'John Doe',
-    district: 'Colombo',
-    email: 'john.doe@example.com',
-    password: 'password123',
-    dob: '1985-02-15',
-    contactNo: '123-456-7890',
-    review: 'Highly enthusiastic and motivating.',
-    payRate: 55.0,
-    qualifications: ["HND"],
-    picture:
-      '../../../src/images/user/user-01.png', // Dummy image URL (replace with actual image if needed)
-    status: 'ACTIVE',
-    isAssigned: true,
-    languages: 'English, Spanish',
-  },
-  {
-    id: 2,
-    name: 'Jane Smith',
-    district: 'Kurunagala',
-    email: 'jane.smith@example.com',
-    password: 'pass98765',
-    dob: '1990-06-20',
-    contactNo: '321-654-0987',
-    review: 'Excellent in business management lectures.',
-    payRate: 47.5,
-    qualifications: ["PGD"],
-    picture:
-      '../../../src/images/user/user-02.png',
-    status: 'ACTIVE',
-    isAssigned: false,
-    languages: 'English, French',
-  },
-  {
-    id: 3,
-    name: 'Michael Brown',
-    district: 'Nuwareliya',
-    email: 'michael.brown@example.com',
-    password: 'securePass80',
-    dob: '1977-10-11',
-    contactNo: '309-413-5566',
-    payRate: 60.0,
-    status: 'INACTIVE',
-    isAssigned: false,
-    qualifications: ["BSc"],
-    picture:
-      '../../../src/images/user/user-03.png',
-  },
-  {
-    id: 4,
-    name: 'Emily White',
-    district: 'Galle',
-    email: 'emily.white@example.com',
-    password: 'passstrong77',
-    dob: '1980-12-21',
-    contactNo: '425-862-5540',
-    payRate: 40.0,
-    status: 'ACTIVE',
-    review: 'Amazing at explaining complex concepts.',
-    qualifications: ["MSc"],
-    picture:
-      '../../../src/images/user/user-04.png',
-    isAssigned: true,
-  },
-  {
-    id: 2,
-    name: 'Jane Smith',
-    district: 'Kandy',
-    email: 'jane.smith@example.com',
-    password: 'pass98765',
-    dob: '1990-06-20',
-    contactNo: '321-654-0987',
-    review: 'Excellent in business management lectures.',
-    payRate: 47.5,
-    qualifications: ["PhD"],
-    picture:
-      '../../../src/images/user/user-05.png',
-    status: 'ACTIVE',
-    isAssigned: false,
-    languages: 'English, French',
-  },
-  {
-    id: 5,
-    name: 'Daniel Wilson',
-    district: 'Colombo',
-    email: 'daniel.wilson@example.com',
-    password: 'securePass90',
-    dob: '1979-08-11',
-    contactNo: '456-231-7566',
-    payRate: 40.0,
-    status: 'INACTIVE',
-    review: 'Amazing at explaining Agile concepts',
-    qualifications: ["HND"],
-    picture:
-      '../../../src/images/user/user-06.png',
-    isAssigned: false,
-  },
-  {
-    id: 1,
-    name: 'John Doe',
-    district: 'Kurunagala',
-    email: 'john.doe@example.com',
-    password: 'password123',
-    dob: '1985-02-15',
-    contactNo: '123-456-7890',
-    review: 'Highly enthusiastic and motivating.',
-    payRate: 55.0,
-    qualifications: ["PGD"],
-    picture:
-      '../../../src/images/user/user-07.png', // Dummy image URL (replace with actual image if needed)
-    status: 'ACTIVE',
-    isAssigned: true,
-    languages: 'English, Spanish',
-  },
-
-  {
-    id: 3,
-    name: 'Michael Brown',
-    district: 'Matale',
-    email: 'michael.brown@example.com',
-    password: 'securePass80',
-    dob: '1977-10-11',
-    contactNo: '309-413-5566',
-    payRate: 60.0,
-    status: 'INACTIVE',
-    isAssigned: false,
-    qualifications: ["BSc"],
-    picture:
-      '../../../src/images/user/user-08.png',
-  },
-  {
-    id: 5,
-    name: 'Daniel Wilson',
-    district: 'Nuwareliya',
-    email: 'daniel.wilson@example.com',
-    password: 'securePass90',
-    dob: '1979-08-11',
-    contactNo: '456-231-7566',
-    payRate: 40.0,
-    status: 'INACTIVE',
-    review: 'Amazing at explaining Agile concepts',
-    qualifications: ["MSc"],
-    picture:
-      '../../../src/images/user/user-09.png',
-    isAssigned: false,
-  },
-  {
-    id: 4,
-    name: 'Emily White',
-    district: 'Galle',
-    email: 'emily.white@example.com',
-    password: 'passstrong77',
-    dob: '1980-12-21',
-    contactNo: '425-862-5540',
-    payRate: 40.0,
-    status: 'ACTIVE',
-    review: 'Amazing at explaining complex concepts.',
-    qualifications: ["PhD"],
-    picture:
-      '../../../src/images/user/user-10.png',
-    isAssigned: true,
-  },]
 
 const SmartMatchSubjects = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
+  const [lecturerList, setLecturerList] = useState<LecturerRes[]>([]);
 
-  const itemsPerPage = 5; // Number of lecturers per page
+  const {
+    isLoading: isLoadingLecturers,
+  } = useQuery(['getLecturers'], () => lecturerService.getAllLecturers(), {
+    onSuccess: (data) => {
+      setLecturerList(data)
+    }
+  });
 
-  // Calculate pagination indices
+  const itemsPerPage = 5;
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentLecturers = lecturers.slice(indexOfFirstItem, indexOfLastItem);
+  const currentLecturers = lecturerList.slice(indexOfFirstItem, indexOfLastItem);
 
-  const totalPages = Math.ceil(lecturers.length / itemsPerPage);
+  const totalPages = Math.ceil(lecturerList.length / itemsPerPage);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
   const handleNavigation = (path: string) => {
-    navigate(path); // Route navigation
+    navigate(path);
   };
 
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1000); // Simulating a loading state
-    return () => clearTimeout(timer); // Cleanup timer
+    const timer = setTimeout(() => setLoading(false), 1000);
+    return () => clearTimeout(timer);
   }, []);
 
-  if (loading) {
+  if (loading || isLoadingLecturers) {
     return <Loader />;
   }
 
@@ -284,7 +113,7 @@ const SmartMatchSubjects = () => {
               </tr>
               </thead>
               <tbody>
-              {currentLecturers.map((lecturer: Lecturer, key) => (
+              {currentLecturers.map((lecturer: LecturerRes, key) => (
                 <tr
                   key={key+lecturer.id}
                   className="hover:bg-gray-200 dark:hover:bg-gray-800"
@@ -306,7 +135,15 @@ const SmartMatchSubjects = () => {
                     {lecturer.name}
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                    {lecturer.qualifications[0] || 'N/A'}
+                    <ul>
+                      {lecturer.qualifications && lecturer.qualifications.length > 0 ? (
+                        lecturer.qualifications.map((qualification, index) => (
+                          <li key={index + qualification.name}>{qualification.name}</li>
+                        ))
+                      ) : (
+                        <li>N/A</li>
+                      )}
+                    </ul>
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                     {lecturer.contactNo ?? 'N/A'}
