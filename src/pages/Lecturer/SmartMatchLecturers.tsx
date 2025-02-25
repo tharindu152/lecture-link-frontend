@@ -2,26 +2,10 @@ import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Loader from '../../common/Loader/Loader.tsx';
+import { LecturerRes } from '../../types/lecturerRes.ts';
+import dummyProfileImg from '../../images/user/profile.png';
 
-// Type definition for Lecturer
-type Lecturer = {
-  id: number;
-  name: string;
-  district: string;
-  email: string;
-  password: string;
-  dob: string;
-  contactNo?: string;
-  review?: string;
-  payRate: number;
-  qualifications?: string[];
-  picture?: string; // Path to image (Optional for dummy data)
-  status: 'ACTIVE' | 'INACTIVE';
-  isAssigned: boolean;
-  languages?: string;
-};
-
-const lecturers: Lecturer[] = [
+const lecturers: LecturerRes[] = [
   {
     id: 1,
     name: 'John Doe',
@@ -207,6 +191,13 @@ const SmartMatchLecturers = () => {
     navigate(path); // Route navigation
   };
 
+  const getHighestQualification = (lecturer: LecturerRes) => {
+    const priority = ["PHD", "MSC", "BSC", "HND", "PGD"];
+    const qualifications = lecturer?.qualifications?.map(q => q.level.toUpperCase()) || [];
+
+    return priority.find(level => qualifications.includes(level)) ?? "N/A";
+  };
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -284,29 +275,48 @@ const SmartMatchLecturers = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentLecturers.map((lecturer: Lecturer, key) => (
+                {currentLecturers.map((lecturer: LecturerRes, key) => (
                   <tr
-                    key={key+lecturer.id}
+                    key={key+lecturer.name}
                     className="hover:bg-gray-200 dark:hover:bg-gray-800"
                   >
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      {lecturer.picture ? (
-                        <img
-                          src={lecturer.picture}
-                          alt={lecturer.name}
-                          className="h-12 w-12 rounded-full"
-                        />
-                      ) : (
-                        <div className="h-12 w-12 bg-gray-300 text-black dark:bg-gray-700 dark:text-white flex items-center justify-center rounded-full">
-                          No Img
-                        </div>
-                      )}
+                      <img
+                        src={lecturer.picture ?? dummyProfileImg}
+                        alt={lecturer.name}
+                        className="h-12 w-12 rounded-full"
+                      />
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       {lecturer.name}
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      {lecturer.qualifications[0] || 'N/A'}
+                      <p
+                        className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium ${
+                          getHighestQualification(lecturer).toLowerCase() ===
+                          'phd'
+                            ? 'bg-meta-7 text-meta-7'
+                            : getHighestQualification(
+                              lecturer,
+                            ).toLowerCase() === 'msc'
+                              ? 'bg-danger text-danger'
+                              : getHighestQualification(
+                                lecturer,
+                              ).toLowerCase() === 'bsc'
+                                ? 'bg-primary text-primary'
+                                : getHighestQualification(
+                                  lecturer,
+                                ).toLowerCase() === 'pgd'
+                                  ? 'bg-warning text-warning'
+                                  : getHighestQualification(
+                                    lecturer,
+                                  ).toLowerCase() === 'hnd'
+                                    ? 'bg-success text-success'
+                                    : ''
+                        }`}
+                      >
+                        {getHighestQualification(lecturer)}
+                      </p>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       {lecturer.contactNo ?? 'N/A'}

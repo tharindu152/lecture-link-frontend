@@ -84,7 +84,7 @@ const Qualification = () => {
             <h4 className="font-semibold text-black dark:text-white w-full sm:w-40">
               Completed At:
             </h4>
-            <p className="flex-1 break-words">{qualification?.completedAt}</p>
+            <p className="flex-1 break-words">{qualification?.completedAt.split(" ")[0]}</p>
           </div>
         </div>
         <Link

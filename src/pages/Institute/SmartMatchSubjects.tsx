@@ -5,6 +5,7 @@ import Loader from '../../common/Loader/Loader.tsx';
 import { LecturerRes } from '../../types/lecturerRes.ts';
 import { useQuery } from 'react-query';
 import lecturerService from '../../services/lecturerService.ts';
+import dummyProfileImg from '../../images/user/profile.png';
 
 
 const SmartMatchSubjects = () => {
@@ -115,21 +116,15 @@ const SmartMatchSubjects = () => {
               <tbody>
               {currentLecturers.map((lecturer: LecturerRes, key) => (
                 <tr
-                  key={key+lecturer.id}
+                  key={key+lecturer.name}
                   className="hover:bg-gray-200 dark:hover:bg-gray-800"
                 >
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                    {lecturer.picture ? (
-                      <img
-                        src={lecturer.picture}
-                        alt={lecturer.name}
-                        className="h-12 w-12 rounded-full"
-                      />
-                    ) : (
-                      <div className="h-12 w-12 bg-gray-300 text-black dark:bg-gray-700 dark:text-white flex items-center justify-center rounded-full">
-                        No Img
-                      </div>
-                    )}
+                    <img
+                      src={lecturer.picture ?? dummyProfileImg}
+                      alt={lecturer.name}
+                      className="h-12 w-12 rounded-full"
+                    />
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                     {lecturer.name}
