@@ -1,7 +1,7 @@
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import Loader from '../../common/Loader';
+import Loader from '../../common/Loader/Loader.tsx';
 import { useMutation, useQuery } from 'react-query';
 import programService from '../../services/programService.ts';
 import { Program } from '../../types/program.ts';

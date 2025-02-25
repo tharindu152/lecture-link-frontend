@@ -2,7 +2,7 @@ import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
 import { useState } from 'react';
 import dummyLogo from '../../images/brand/logo-dummy.jpg';
 import { useNavigate } from 'react-router-dom';
-import Loader from '../../common/Loader';
+import Loader from '../../common/Loader/Loader.tsx';
 import { useMutation, useQuery } from 'react-query';
 import { InstituteRes } from '../../types/instituteRes.ts';
 import instituteService from '../../services/instituteService.ts';
@@ -107,7 +107,7 @@ const Institutes = () => {
                 {currentInstitutes?.map(
                   (institute: InstituteRes, key: number) => (
                     <tr
-                      key={key + institute.id}
+                      key={key + institute?.name}
                       className="hover:bg-gray-200 dark:hover:bg-gray-800"
                     >
                       <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
@@ -195,6 +195,7 @@ const Institutes = () => {
                           <button
                             onClick={() => {
                               setIsModalOpen(true)
+                              // @ts-ignore
                               setSelectedInstitute(institute.id)
                             }}
                             className="hover:text-danger"

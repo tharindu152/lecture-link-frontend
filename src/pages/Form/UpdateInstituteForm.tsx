@@ -4,7 +4,7 @@ import { FaStar } from 'react-icons/fa';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
 import { useMutation } from 'react-query';
 import instituteService from '../../services/instituteService.ts';
-import Loader from '../../common/Loader';
+import Loader from '../../common/Loader/Loader.tsx';
 import { useEffect, useState } from 'react';
 import Toast from '../../components/Toast.tsx';
 

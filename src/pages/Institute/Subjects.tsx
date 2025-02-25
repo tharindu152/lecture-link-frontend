@@ -2,7 +2,7 @@ import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Program } from '../../types/program.ts';
-import Loader from '../../common/Loader';
+import Loader from '../../common/Loader/Loader.tsx';
 import { useMutation, useQuery } from 'react-query';
 import subjectService from '../../services/subjectService.ts';
 import programService from '../../services/programService.ts';

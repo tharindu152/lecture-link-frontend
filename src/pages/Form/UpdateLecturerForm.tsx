@@ -5,7 +5,7 @@ import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
 import DatePickerTwo from '../../components/Forms/DatePicker/DatePickerTwo.tsx';
 import { useState } from 'react';
 import { useMutation } from 'react-query';
-import Loader from '../../common/Loader';
+import Loader from '../../common/Loader/Loader.tsx';
 import lecturerService from '../../services/lecturerService.ts';
 import Toast from '../../components/Toast.tsx';
 

@@ -2,7 +2,7 @@ import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
-import Loader from '../../common/Loader';
+import Loader from '../../common/Loader/Loader.tsx';
 import { useMutation } from 'react-query';
 import subjectService from '../../services/subjectService.ts';
 import Toast from '../../components/Toast.tsx';

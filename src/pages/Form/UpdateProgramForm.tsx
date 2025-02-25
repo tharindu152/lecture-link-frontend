@@ -5,7 +5,7 @@ import { useMutation } from 'react-query';
 import programService from '../../services/programService.ts';
 import { Program } from '../../types/program.ts';
 import { useEffect, useState } from 'react';
-import Loader from '../../common/Loader';
+import Loader from '../../common/Loader/Loader.tsx';
 import { Level } from '../../types/level.ts';
 import Toast from '../../components/Toast.tsx';
 

@@ -2,7 +2,7 @@ import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
 import { Link, useLocation } from 'react-router-dom';
 import { FaStar } from 'react-icons/fa';
 import { useState } from 'react';
-import Loader from '../../common/Loader';
+import Loader from '../../common/Loader/Loader.tsx';
 import { useQuery } from 'react-query';
 import LecturerService from '../../services/lecturerService.ts';
 import { Subject } from '../../types/subject.ts';

@@ -5,7 +5,7 @@ import Logo from '../../images/logo/LectureLinkLogo.png';
 
 const SignUp: React.FC = () => {
   return (
-      <div className="rounded-md border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+      <div className="overflow-y-auto no-scrollbar rounded-md border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
         <div className="flex flex-wrap items-center justify-center h-screen">
           <div className="hidden w-full xl:block xl:w-1/2">
             <div className="py-17.5 px-26 text-center">

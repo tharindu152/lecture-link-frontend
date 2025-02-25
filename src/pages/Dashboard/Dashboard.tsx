@@ -6,7 +6,7 @@ import ChartTwo from '../../components/Charts/ChartTwo';
 import ChatCard from '../../components/Chat/ChatCard';
 import MapOne from '../../components/Maps/MapOne';
 import TableOne from '../../components/Tables/TableOne';
-import Loader from '../../common/Loader';
+import Loader from '../../common/Loader/Loader.tsx';
 
 const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);

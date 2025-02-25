@@ -1,6 +1,6 @@
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
 import { Link, useLocation } from 'react-router-dom';
-import Loader from '../../common/Loader';
+import Loader from '../../common/Loader/Loader.tsx';
 import { useQuery } from 'react-query';
 import QualificationService from '../../services/qualificationService.ts';
 

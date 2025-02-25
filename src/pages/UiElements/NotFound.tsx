@@ -1,7 +1,7 @@
 // src/pages/NotFound.jsx
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import Loader from '../../common/Loader';
+import Loader from '../../common/Loader/Loader.tsx';
 
 const NotFound = () => {
   const [loading, setLoading] = useState(true);

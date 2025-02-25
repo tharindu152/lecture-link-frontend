@@ -4,7 +4,7 @@ import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
 import { Subject } from '../../types/subject.ts';
 import { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
-import Loader from '../../common/Loader';
+import Loader from '../../common/Loader/Loader.tsx';
 import subjectService from '../../services/subjectService.ts';
 import Toast from '../../components/Toast.tsx';
 

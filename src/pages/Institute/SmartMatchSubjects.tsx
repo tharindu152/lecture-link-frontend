@@ -1,7 +1,7 @@
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import Loader from '../../common/Loader';
+import Loader from '../../common/Loader/Loader.tsx';
 import { LecturerRes } from '../../types/lecturerRes.ts';
 import { useQuery } from 'react-query';
 import lecturerService from '../../services/lecturerService.ts';

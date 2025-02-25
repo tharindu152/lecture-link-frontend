@@ -7,7 +7,7 @@ import DatePickerTwo from '../../components/Forms/DatePicker/DatePickerTwo.tsx';
 import { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
 import qualificationService from '../../services/qualificationService.ts';
-import Loader from '../../common/Loader';
+import Loader from '../../common/Loader/Loader.tsx';
 import Toast from '../../components/Toast.tsx';
 
 const UpdateQualificationForm = () => {
