@@ -1,5 +1,6 @@
 import { lectureLinkAxios } from './axiosConfig.ts';
 import { Subject } from '../types/subject.ts';
+import { SubjectRes } from '../types/subjectRes.ts';
 
 const SubjectService = {
   createSubject: async (payload: {
@@ -20,20 +21,29 @@ const SubjectService = {
   },
 
   getFilteredSubjects: async (payload: {
-    name?: string;
-    description?: string;
-    noOfCredits?: number;
-    isAssigned?: boolean;
+    district?: string;
+    programLevel?: string;
+    credits?: number;
+    hourlyRate?: string;
+    duration?: string;
+    studentCount?: string;
+    globalSearch?: string;
     size?: number;
     page?: number;
     sort?: string;
-  }): Promise<{ subjects: Subject[]; total: number }> => {
+  }): Promise<{ subjects: SubjectRes[]; total: number }> => {
     const params = new URLSearchParams();
 
-    if (payload.name) params.append("name", payload.name);
-    if (payload.description) params.append("description", payload.description);
-    if (payload.noOfCredits) params.append("noOfCredits", payload.noOfCredits.toString());
-    if (payload.isAssigned !== undefined) params.append("isAssigned", payload.isAssigned.toString());
+    if (payload.district) params.append("district", payload.district);
+    if (payload.programLevel) params.append("programLevel", payload.programLevel);
+    if (payload.credits !== undefined) params.append("credits", payload.credits.toString());
+    if (payload.hourlyRate !== undefined) params.append("paymentUpper", payload.hourlyRate.split('-')[1].toString());
+    if (payload.hourlyRate !== undefined) params.append("paymentLower", payload.hourlyRate.split('-')[0].toString());
+    if (payload.duration !== undefined) params.append("durationUpper", payload.duration.split('-')[1].toString());
+    if (payload.duration !== undefined) params.append("durationLower", payload.duration.split('-')[0].toString());
+    if (payload.studentCount !== undefined) params.append("studentUpper", payload.studentCount.split('-')[1].toString());
+    if (payload.studentCount !== undefined) params.append("studentLower", payload.studentCount.split('-')[0].toString());
+    if (payload.globalSearch) params.append("globalSearch", payload.globalSearch);
     if (payload.size !== undefined) params.append("size", payload.size.toString());
     if (payload.page !== undefined) params.append("page", payload.page.toString());
     if (payload.sort) params.append("sort", payload.sort);

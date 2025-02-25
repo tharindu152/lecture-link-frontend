@@ -1,6 +1,5 @@
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
 import userThree from '../../images/user/user-03.png';
-import { Modal } from '../../components/ModalSettings.tsx';
 import fireToast from '../../hooks/fireToast.tsx';
 
 const Settings = () => {

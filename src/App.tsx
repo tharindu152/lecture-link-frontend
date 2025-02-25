@@ -180,7 +180,7 @@ function App() {
               ),
             },
             {
-              path: 'filtered-subjects', // `/app/subjects`
+              path: 'filtered-subjects',
               element: (
                 <>
                   <PageTitle title="Lecture Link | Subjects" />

@@ -7,6 +7,7 @@ import { useMutation } from 'react-query';
 import lecturerService from '../../services/lecturerService.ts';
 import { LecturerRes } from '../../types/lecturerRes.ts';
 import Toast from '../../components/Toast.tsx';
+import dummyProfileImg from '../../images/user/profile.png';
 
 // Dropdown options
 const districtOptions = ['Kandy', 'Colombo', 'Kurunagala', 'Matale', 'Nuwareliya', 'Galle'];
@@ -27,7 +28,17 @@ const FilteredLecturers = () => {
     {
       onSuccess: (data) => {
         // @ts-ignore
-        setToast({ message: "Lecturers are successfully filtered!", type: "success" });
+        data.content.length !== 0
+          ? setToast({
+            // @ts-ignore
+            message: 'Lecturers are successfully filtered!',
+            type: 'success',
+          })
+          : setToast({
+            // @ts-ignore
+            message: 'No lecturers are available for given filters!',
+            type: 'error',
+          });
         // @ts-ignore
         console.log(data)
         // @ts-ignore
@@ -60,16 +71,16 @@ const FilteredLecturers = () => {
       isAssigned: '',
       languages: '',
       size: 10,
-      page: 1,
+      page: 0,
       sort: 'id',
     },
     onSubmit: (values) => {
       filterLecturer({
-        district: values.district,
-        hourlyRate: values.hourlyRate,
-        qualification: values.qualification,
+        district: values.district ?? null,
+        hourlyRate: values.hourlyRate ?? null,
+        qualification: values.qualification ?? null,
         isAssigned: values.isAssigned === 'true',
-        languages: values.languages,
+        languages: values.languages ?? null,
         size: values.size ? Number(values.size) : 5,
         page: values.page ? Number(values.page) : 0,
         sort: values.sort,
@@ -274,21 +285,15 @@ const FilteredLecturers = () => {
               <tbody>
                 {filteredLecturers?.map((lecturer: LecturerRes, key) => (
                   <tr
-                    key={key+lecturer.id}
+                    key={key+lecturer?.name}
                     className="hover:bg-gray-200 dark:hover:bg-gray-800"
                   >
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      {lecturer.picture ? (
-                        <img
-                          src={lecturer.picture}
-                          alt={lecturer.name}
-                          className="h-12 w-12 rounded-full"
-                        />
-                      ) : (
-                        <div className="h-12 w-12 bg-gray-300 text-black dark:bg-gray-700 dark:text-white flex items-center justify-center rounded-full">
-                          No Img
-                        </div>
-                      )}
+                      <img
+                        src={lecturer.picture ?? dummyProfileImg}
+                        alt={lecturer.name}
+                        className="h-12 w-12 rounded-full"
+                      />
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       {lecturer.name}

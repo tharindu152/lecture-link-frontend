@@ -3,211 +3,59 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import Loader from '../../common/Loader';
+import { useMutation } from 'react-query';
+import subjectService from '../../services/subjectService.ts';
+import Toast from '../../components/Toast.tsx';
+import { SubjectRes } from '../../types/subjectRes.ts';
 
-// Type definition for Lecturer
-type Lecturer = {
-  id: number;
-  name: string;
-  district: string;
-  email: string;
-  password: string;
-  dob: string;
-  contactNo?: string;
-  review?: string;
-  payRate: number;
-  qualifications?: string[];
-  picture?: string; // Path to image (Optional for dummy data)
-  status: 'ACTIVE' | 'INACTIVE';
-  isAssigned: boolean;
-  languages?: string;
-};
-
-const lecturers: Lecturer[] = [
-  {
-    id: 1,
-    name: 'John Doe',
-    district: 'Colombo',
-    email: 'john.doe@example.com',
-    password: 'password123',
-    dob: '1985-02-15',
-    contactNo: '123-456-7890',
-    review: 'Highly enthusiastic and motivating.',
-    payRate: 55.0,
-    qualifications: ["HND"],
-    picture:
-      '../../../src/images/user/user-01.png', // Dummy image URL (replace with actual image if needed)
-    status: 'ACTIVE',
-    isAssigned: true,
-    languages: 'English, Spanish',
-  },
-  {
-    id: 2,
-    name: 'Jane Smith',
-    district: 'Kurunagala',
-    email: 'jane.smith@example.com',
-    password: 'pass98765',
-    dob: '1990-06-20',
-    contactNo: '321-654-0987',
-    review: 'Excellent in business management lectures.',
-    payRate: 47.5,
-    qualifications: ["PGD"],
-    picture:
-      '../../../src/images/user/user-02.png',
-    status: 'ACTIVE',
-    isAssigned: false,
-    languages: 'English, French',
-  },
-  {
-    id: 3,
-    name: 'Michael Brown',
-    district: 'Nuwareliya',
-    email: 'michael.brown@example.com',
-    password: 'securePass80',
-    dob: '1977-10-11',
-    contactNo: '309-413-5566',
-    payRate: 60.0,
-    status: 'INACTIVE',
-    isAssigned: false,
-    qualifications: ["BSc"],
-    picture:
-      '../../../src/images/user/user-03.png',
-  },
-  {
-    id: 4,
-    name: 'Emily White',
-    district: 'Galle',
-    email: 'emily.white@example.com',
-    password: 'passstrong77',
-    dob: '1980-12-21',
-    contactNo: '425-862-5540',
-    payRate: 40.0,
-    status: 'ACTIVE',
-    review: 'Amazing at explaining complex concepts.',
-    qualifications: ["MSc"],
-    picture:
-      '../../../src/images/user/user-04.png',
-    isAssigned: true,
-  },
-  {
-    id: 2,
-    name: 'Jane Smith',
-    district: 'Kandy',
-    email: 'jane.smith@example.com',
-    password: 'pass98765',
-    dob: '1990-06-20',
-    contactNo: '321-654-0987',
-    review: 'Excellent in business management lectures.',
-    payRate: 47.5,
-    qualifications: ["PhD"],
-    picture:
-      '../../../src/images/user/user-05.png',
-    status: 'ACTIVE',
-    isAssigned: false,
-    languages: 'English, French',
-  },
-  {
-    id: 5,
-    name: 'Daniel Wilson',
-    district: 'Colombo',
-    email: 'daniel.wilson@example.com',
-    password: 'securePass90',
-    dob: '1979-08-11',
-    contactNo: '456-231-7566',
-    payRate: 40.0,
-    status: 'INACTIVE',
-    review: 'Amazing at explaining Agile concepts',
-    qualifications: ["HND"],
-    picture:
-      '../../../src/images/user/user-06.png',
-    isAssigned: false,
-  },
-  {
-    id: 1,
-    name: 'John Doe',
-    district: 'Kurunagala',
-    email: 'john.doe@example.com',
-    password: 'password123',
-    dob: '1985-02-15',
-    contactNo: '123-456-7890',
-    review: 'Highly enthusiastic and motivating.',
-    payRate: 55.0,
-    qualifications: ["PGD"],
-    picture:
-      '../../../src/images/user/user-07.png', // Dummy image URL (replace with actual image if needed)
-    status: 'ACTIVE',
-    isAssigned: true,
-    languages: 'English, Spanish',
-  },
-
-  {
-    id: 3,
-    name: 'Michael Brown',
-    district: 'Matale',
-    email: 'michael.brown@example.com',
-    password: 'securePass80',
-    dob: '1977-10-11',
-    contactNo: '309-413-5566',
-    payRate: 60.0,
-    status: 'INACTIVE',
-    isAssigned: false,
-    qualifications: ["BSc"],
-    picture:
-      '../../../src/images/user/user-08.png',
-  },
-  {
-    id: 5,
-    name: 'Daniel Wilson',
-    district: 'Nuwareliya',
-    email: 'daniel.wilson@example.com',
-    password: 'securePass90',
-    dob: '1979-08-11',
-    contactNo: '456-231-7566',
-    payRate: 40.0,
-    status: 'INACTIVE',
-    review: 'Amazing at explaining Agile concepts',
-    qualifications: ["MSc"],
-    picture:
-      '../../../src/images/user/user-09.png',
-    isAssigned: false,
-  },
-  {
-    id: 4,
-    name: 'Emily White',
-    district: 'Galle',
-    email: 'emily.white@example.com',
-    password: 'passstrong77',
-    dob: '1980-12-21',
-    contactNo: '425-862-5540',
-    payRate: 40.0,
-    status: 'ACTIVE',
-    review: 'Amazing at explaining complex concepts.',
-    qualifications: ["PhD"],
-    picture:
-      '../../../src/images/user/user-10.png',
-    isAssigned: true,
-  },]
-
-
-// Dropdown options
 const districtOptions = ['Kandy', 'Colombo', 'Kurunagala', 'Matale', 'Nuwareliya', 'Galle'];
-const qualificationOptions = ['PhD', 'MSc', 'BSc', 'PGD', 'HND'];
-const hourlyRateOptions = ['1000-1500', '1500-2000', '2000-3000', '3000<'];
-const isAssignedOptions = ["true", "false"];
-const languageOptions = ['English', 'Sinhala', 'Tamil'];
+const levelOptions = ['PHD', 'MSC', 'BSC', 'PGD', 'HND'];
+const creditOptions = [1,2,3,4];
+const hourlyRateOptions = ['500-1000', '1000-1500', '1500-2000', '2000-3000', '3000-5000'];
+const durationOptions = ['15-30', '30-60', '60-180', '180-360', '360-1440'];
+const studentCountOptions = ['10-50', '50-100', '100-200', '200-500', '500-1000'];
 
 const FilteredSubjects = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
-  const [filteredLecturers, setFilteredLecturers] = useState([]);
+  const [filteredSubjects, setFilteredSubjects] = useState([] as SubjectRes[]);
+  const [toast, setToast] = useState(null);
 
-  const itemsPerPage = 5; // Number of lecturers per page
+  const { mutate: filterSubjects, isLoading: isFilteringSubject } = useMutation(
+    subjectService.getFilteredSubjects,
+    {
+      onSuccess: (data) => {
+        // @ts-ignore
+        data.content.length !== 0
+          ? setToast({
+            // @ts-ignore
+              message: 'Subjects are successfully filtered!',
+              type: 'success',
+            })
+          : setToast({
+            // @ts-ignore
+              message: 'No subjects are available for given filters!',
+              type: 'error',
+            });
+        // @ts-ignore
+        console.log(data)
+        // @ts-ignore
+        setFilteredSubjects(data.content)
+      },
+      onError: () => {
+        // @ts-ignore
+        setToast({ message: "Subject filteration is unsuccessful!", type: "error" });
+      },
+    },
+  );
 
-  // Calculate pagination indices
+  const itemsPerPage = 5;
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentLecturers = filteredLecturers.slice(indexOfFirstItem, indexOfLastItem);
+  const currentSubjects = filteredSubjects.slice(indexOfFirstItem, indexOfLastItem);
 
-  const totalPages = Math.ceil(lecturers.length / itemsPerPage);
+  const totalPages = Math.ceil(filterSubjects.length / itemsPerPage);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -220,42 +68,29 @@ const FilteredSubjects = () => {
   const formik = useFormik({
     initialValues: {
       district: '',
-      qualification: '',
+      programLevel: '',
+      credits: '',
       hourlyRate: '',
-      isAssigned: '',
-      language: '',
+      duration: '',
+      studentCount: '',
+      globalSearch: '',
+      size: 10,
+      page: 0,
+      sort: 'name',
     },
     onSubmit: (values) => {
-      // Filtering logic based on form values
-      const filtered = lecturers.filter((lecturer) => {
-        return (
-          (!values.district || lecturer.district === values.district) &&
-          (!values.qualification ||
-            lecturer.qualifications?.includes(values.qualification)) &&
-          (!values.hourlyRate ||
-            (values.hourlyRate === '1000-1500' &&
-              lecturer.payRate >= 1000 &&
-              lecturer.payRate <= 1500) ||
-            (values.hourlyRate === '1500-2000' &&
-              lecturer.payRate > 1500 &&
-              lecturer.payRate <= 2000) ||
-            (values.hourlyRate === '2000-3000' &&
-              lecturer.payRate > 2000 &&
-              lecturer.payRate <= 3000) ||
-            (values.hourlyRate === '3000<' && lecturer.payRate > 3000)) &&
-          (!values.isAssigned ||
-            (values.isAssigned === 'Yes' && lecturer.isAssigned) ||
-            (values.isAssigned === 'No' && !lecturer.isAssigned)) &&
-          (!values.language ||
-            lecturer.languages
-              ?.toLowerCase()
-              .includes(values.language.toLowerCase()))
-        );
+      filterSubjects({
+        district: values.district ?? null,
+        programLevel: values.programLevel ?? null,
+        credits: values.credits ? Number(values.credits) : undefined,
+        hourlyRate: values.hourlyRate ?? null,
+        duration: values.duration ?? null,
+        studentCount: values.studentCount ?? null,
+        globalSearch: values.globalSearch ?? null,
+        size: values.size ? Number(values.size) : 10,
+        page: values.page ? Number(values.page) : 0,
+        sort: values.sort,
       });
-
-      // Set the filtered lecturers to display in the table
-      // @ts-ignore
-      setFilteredLecturers(filtered);
     },
   });
 
@@ -266,7 +101,7 @@ const FilteredSubjects = () => {
     return () => clearTimeout(timer); // Cleanup timer
   }, []);
 
-  if (loading) {
+  if (loading || isFilteringSubject) {
     return <Loader />;
   }
 
@@ -282,7 +117,9 @@ const FilteredSubjects = () => {
         >
           {/* District Filter */}
           <div className="flex flex-col">
-            <label className="block text-sm font-medium mb-2" htmlFor="district">District</label>
+            <label className="block text-sm font-medium mb-2" htmlFor="district">
+              District
+            </label>
             <select
               id="district"
               name="district"
@@ -296,32 +133,58 @@ const FilteredSubjects = () => {
             >
               <option value="">All</option>
               {districtOptions.map((district, index) => (
-                <option key={index+district} value={district}>
+                <option key={index + district} value={district}>
                   {district}
                 </option>
               ))}
             </select>
           </div>
 
-          {/* Qualification Filter */}
+          {/* Level Filter */}
           <div className="flex flex-col">
-            <label className="block text-sm font-medium mb-2" htmlFor="qualification">
-              Qualification
+            <label className="block text-sm font-medium mb-2" htmlFor="programLevel">
+              Level
             </label>
             <select
-              id="qualification"
-              name="qualification"
-              value={formik.values.qualification}
+              id="programLevel"
+              name="programLevel"
+              value={formik.values.programLevel}
               onChange={formik.handleChange}
               className={`block w-full rounded rounded-md border-[1.5px] border-2 border-gray-500 py-2 px-5 outline-none w-40 transition ${
-                formik.touched.qualification && formik.errors.qualification
+                formik.touched.programLevel && formik.errors.programLevel
                   ? 'border-red-500'
                   : 'border-gray-300 focus:border-primary'
-              } dark:bg-gray-800`}>
+              } dark:bg-gray-800`}
+            >
               <option value="">All</option>
-              {qualificationOptions.map((qualification, index) => (
-                <option key={index+qualification} value={qualification}>
-                  {qualification}
+              {levelOptions.map((level, index) => (
+                <option key={index + level} value={level}>
+                  {level}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Credits Filter */}
+          <div className="flex flex-col">
+            <label className="block text-sm font-medium mb-2" htmlFor="credits">
+              Credits
+            </label>
+            <select
+              id="credits"
+              name="credits"
+              value={formik.values.credits}
+              onChange={formik.handleChange}
+              className={`block w-full rounded rounded-md border-[1.5px] border-2 border-gray-500 py-2 px-5 outline-none w-40 transition ${
+                formik.touched.credits && formik.errors.credits
+                  ? 'border-red-500'
+                  : 'border-gray-300 focus:border-primary'
+              } dark:bg-gray-800`}
+            >
+              <option value="">All</option>
+              {creditOptions.map((credit, index) => (
+                <option key={index + credit} value={credit}>
+                  {credit}
                 </option>
               ))}
             </select>
@@ -341,57 +204,62 @@ const FilteredSubjects = () => {
                 formik.touched.hourlyRate && formik.errors.hourlyRate
                   ? 'border-red-500'
                   : 'border-gray-300 focus:border-primary'
-              } dark:bg-gray-800`}>
+              } dark:bg-gray-800`}
+            >
               <option value="">All</option>
               {hourlyRateOptions.map((rate, index) => (
-                <option key={index+rate} value={rate}>
+                <option key={index + rate} value={rate}>
                   {rate}
                 </option>
               ))}
             </select>
           </div>
 
-          {/* Is Assigned Filter */}
+          {/* Duration Rate Filter */}
           <div className="flex flex-col">
-            <label className="block text-sm font-medium mb-2" htmlFor="isAssigned">
-              Is Assigned
+            <label className="block text-sm font-medium mb-2" htmlFor="duration">
+              Duration
             </label>
             <select
-              id="isAssigned"
-              name="isAssigned"
-              value={formik.values.isAssigned}
+              id="duration"
+              name="duration"
+              value={formik.values.duration}
               onChange={formik.handleChange}
               className={`block w-full rounded rounded-md border-[1.5px] border-2 border-gray-500 py-2 px-5 outline-none w-40 transition ${
-                formik.touched.isAssigned && formik.errors.isAssigned
+                formik.touched.duration && formik.errors.duration
                   ? 'border-red-500'
                   : 'border-gray-300 focus:border-primary'
-              } dark:bg-gray-800`}>
+              } dark:bg-gray-800`}
+            >
               <option value="">All</option>
-              {isAssignedOptions.map((option, index) => (
-                <option key={index+option} value={option}>
-                  {option}
+              {durationOptions.map((duration, index) => (
+                <option key={index + duration} value={duration}>
+                  {duration}
                 </option>
               ))}
             </select>
           </div>
 
-          {/* Language Filter */}
+          {/* Student Count Rate Filter */}
           <div className="flex flex-col">
-            <label className="block text-sm font-medium mb-2" htmlFor="language">Language</label>
+            <label className="block text-sm font-medium mb-2" htmlFor="studentCount">
+              Student Count
+            </label>
             <select
-              id="language"
-              name="language"
-              value={formik.values.language}
+              id="studentCount"
+              name="studentCount"
+              value={formik.values.studentCount}
               onChange={formik.handleChange}
               className={`block w-full rounded rounded-md border-[1.5px] border-2 border-gray-500 py-2 px-5 outline-none w-40 transition ${
-                formik.touched.language && formik.errors.language
+                formik.touched.studentCount && formik.errors.studentCount
                   ? 'border-red-500'
-                  : 'border-gray-500 focus:border-primary'
-              } dark:bg-gray-800`}>
+                  : 'border-gray-300 focus:border-primary'
+              } dark:bg-gray-800`}
+            >
               <option value="">All</option>
-              {languageOptions.map((language, index) => (
-                <option key={index+language} value={language}>
-                  {language}
+              {studentCountOptions.map((count, index) => (
+                <option key={index + count} value={count}>
+                  {count}
                 </option>
               ))}
             </select>
@@ -400,6 +268,9 @@ const FilteredSubjects = () => {
           {/* Search Button */}
           <div className="flex items-end">
             <button
+              onClick={() => {
+                return formik.handleSubmit
+              }}
               type="submit"
               className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
             >
@@ -414,71 +285,87 @@ const FilteredSubjects = () => {
           <div className="max-w-full overflow-x-auto">
             <table className="w-full table-auto">
               <thead>
-              <tr className="bg-gray-2 dark:bg-meta-4">
-                <th className="min-w-[120px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                  Picture
+              <tr className="bg-gray-2 text-left dark:bg-meta-4">
+                <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+                  Subject
                 </th>
-                <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                  Name
+                <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
+                  Level
                 </th>
-                <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                  Highest Qualification
+                <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
+                  No of Credits
                 </th>
-                <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                  Contact Number
+                <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
+                  Duration (months)
                 </th>
-                <th className="min-w-[100px] py-4 px-4 text-left font-medium text-black dark:text-white">
+                <th className="py-4 px-4 font-medium text-black dark:text-white">
+                  Student Count
+                </th>
+                <th className="py-4 px-4 font-medium text-black dark:text-white">
+                  District
+                </th>
+                <th className="py-4 px-4 font-medium text-black dark:text-white">
                   Hourly Rate (LKR)
                 </th>
-                <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                  Is Assigned
-                </th>
-                <th className="py-4 px-4 text-left font-medium text-black dark:text-white">
+                <th className="py-4 px-4 font-medium text-black dark:text-white">
                   Actions
                 </th>
               </tr>
               </thead>
               <tbody>
-              {currentLecturers.map((lecturer: Lecturer, key) => (
+              {currentSubjects.map((subject, key) => (
                 <tr
-                  key={key+lecturer.id}
-                  className="hover:bg-gray-200 dark:hover:bg-gray-800"
+                  key={key + subject.name + subject.noOfCredits}
+                  className={'hover:bg-gray-200 dark:hover:bg-gray-800'}
                 >
-                  <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                    {lecturer.picture ? (
-                      <img
-                        src={lecturer.picture}
-                        alt={lecturer.name}
-                        className="h-12 w-12 rounded-full"
-                      />
-                    ) : (
-                      <div className="h-12 w-12 bg-gray-300 text-black dark:bg-gray-700 dark:text-white flex items-center justify-center rounded-full">
-                        No Img
-                      </div>
-                    )}
+                  <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+                    <h5 className="font-medium text-black dark:text-white">
+                      {subject.name}
+                    </h5>
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                    {lecturer.name}
+                    <p
+                      className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium ${
+                        subject.level.toLowerCase() === 'phd'
+                          ? 'bg-meta-7 text-meta-7'
+                          : subject.level.toLowerCase() === 'msc'
+                            ? 'bg-danger text-danger'
+                            : subject.level.toLowerCase() === 'bsc'
+                              ? 'bg-primary text-primary'
+                              : subject.level.toLowerCase() === 'pgd'
+                                ? 'bg-warning text-warning'
+                                : subject.level.toLowerCase() === 'hnd'
+                                  ? 'bg-success text-success'
+                                  : ''
+                      }`}
+                    >
+                      {subject.level}
+                    </p>
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                    {lecturer.qualifications ? lecturer.qualifications[0] : 'N/A'}
+                    <p className="text-black dark:text-white">
+                      {subject.noOfCredits}
+                    </p>
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                    {lecturer.contactNo ?? 'N/A'}
+                    <p className="text-black dark:text-white">
+                      {Math.ceil((subject.durationInDays ?? 0) / 30)}
+                    </p>
                   </td>
-                  <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                    ${lecturer.payRate.toFixed(2)}
+                  <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+                    <h5 className="font-medium text-black dark:text-white">
+                      {subject.studentCount}
+                    </h5>
                   </td>
-                  <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      <span
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                          lecturer.isAssigned
-                            ? 'bg-success bg-opacity-10 text-success'
-                            : 'bg-warning bg-opacity-10 text-warning'
-                        }`}
-                      >
-                        {lecturer.isAssigned ? 'Assigned' : 'Unassigned'}
-                      </span>
+                  <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+                    <h5 className="font-medium text-black dark:text-white">
+                      {subject.district}
+                    </h5>
+                  </td>
+                  <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+                    <h5 className="font-medium text-black dark:text-white">
+                      {subject.payment}
+                    </h5>
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                     <div className="flex items-center space-x-3.5">
@@ -486,9 +373,7 @@ const FilteredSubjects = () => {
                         className="hover:text-primary"
                         title="View"
                         onClick={() =>
-                          handleNavigation(
-                            `/app/lecturers/${lecturer.id}`,
-                          )
+                          handleNavigation(`/app/subjects/${subject.id}`)
                         }
                       >
                         <svg
@@ -548,6 +433,15 @@ const FilteredSubjects = () => {
             </div>
           </div>
         </div>
+        {toast && (
+          <Toast
+            {
+              // @ts-ignore
+              ...toast
+            }
+            onClose={() => setToast(null)}
+          />
+        )}
       </div>
     </>
   );

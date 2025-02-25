@@ -1,22 +1,5 @@
-import { Status } from './status.ts';
-import { Qualification } from './qualification.ts';
-import { Subject } from './subject.ts';
+import { Lecturer } from './lecturer.ts';
 
-export type LecturerRes = {
-  id: number;
-  name: string;
-  district: string;
-  email: string;
-  password: string;
-  dob: string;
-  contactNo?: string;
-  review?: string;
-  payRate: number;
-  preference?: string;
+export type LecturerRes = Omit<Lecturer, 'picture'> & {
   picture?: string;
-  status: Status;
-  isAssigned: boolean;
-  languages?: string;
-  qualifications?: Qualification[];
-  subjects?: Subject[];
 };

@@ -7,6 +7,7 @@ import lecturerService from '../../services/lecturerService.ts';
 import { LecturerRes } from '../../types/lecturerRes.ts';
 import Toast from '../../components/Toast.tsx';
 import ConfirmationModal from '../../components/ConfirmationModal.tsx';
+import dummyProfileImg from '../../images/user/profile.png';
 
 const Lecturers = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -120,23 +121,15 @@ const Lecturers = () => {
               <tbody>
                 {currentLecturers.map((lecturer, key) => (
                   <tr
-                    key={key + lecturer.id}
+                    key={key + lecturer?.name}
                     className="hover:bg-gray-200 dark:hover:bg-gray-800"
                   >
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      {lecturer.picture ? (
-                        <img
-                          src={lecturer.picture}
-                          alt={lecturer.name}
-                          className="h-12 w-12 rounded-full"
-                        />
-                      ) : (
-                        <img
-                          src="../../../src/images/user/profile.png"
-                          alt={lecturer.name}
-                          className="h-12 w-12 rounded-full"
-                        />
-                      )}
+                      <img
+                        src={lecturer.picture ?? dummyProfileImg}
+                        alt={lecturer.name}
+                        className="h-12 w-12 rounded-full"
+                      />
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       {lecturer.name}
@@ -144,17 +137,26 @@ const Lecturers = () => {
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <p
                         className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium ${
-                          getHighestQualification(lecturer).toLowerCase() === 'phd'
+                          getHighestQualification(lecturer).toLowerCase() ===
+                          'phd'
                             ? 'bg-meta-7 text-meta-7'
-                            : getHighestQualification(lecturer).toLowerCase() === 'msc'
-                              ? 'bg-danger text-danger'
-                              : getHighestQualification(lecturer).toLowerCase() === 'bsc'
-                                ? 'bg-primary text-primary'
-                                :getHighestQualification(lecturer).toLowerCase() === 'pgd'
-                                  ? 'bg-warning text-warning'
-                                  : getHighestQualification(lecturer).toLowerCase() === 'hnd'
-                                    ? 'bg-success text-success'
-                                    : ''
+                            : getHighestQualification(
+                                lecturer,
+                              ).toLowerCase() === 'msc'
+                            ? 'bg-danger text-danger'
+                            : getHighestQualification(
+                                lecturer,
+                              ).toLowerCase() === 'bsc'
+                            ? 'bg-primary text-primary'
+                            : getHighestQualification(
+                                lecturer,
+                              ).toLowerCase() === 'pgd'
+                            ? 'bg-warning text-warning'
+                            : getHighestQualification(
+                                lecturer,
+                              ).toLowerCase() === 'hnd'
+                            ? 'bg-success text-success'
+                            : ''
                         }`}
                       >
                         {getHighestQualification(lecturer)}
