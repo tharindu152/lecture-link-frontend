@@ -1,11 +1,12 @@
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
 import { Link, useLocation } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaStar } from 'react-icons/fa';
 import Loader from '../../common/Loader/Loader.tsx';
 import { useQuery } from 'react-query';
 import InstituteService from '../../services/instituteService.ts';
 import dummyLogo from '../../images/brand/logo-dummy.jpg';
+import { useData } from '../../context/MainContext.tsx';
 
 const Institute = () => {
   const [rating, setRating] = useState(0);
@@ -24,12 +25,25 @@ const Institute = () => {
     }
   };
 
-  const {
-    data: institute,
-    isLoading: isLoadingInstitute,
-  } = useQuery(['getInstituteById'], () => InstituteService.getInstituteById('institute', {instituteId:pathname.slice(24)}));
+  // const {
+  //   data: institute,
+  //   isLoading: isLoadingInstitute,
+  // } = useQuery(['getInstituteById'], () => InstituteService.getInstituteById({instituteId:Number(pathname.slice(24))}));
 
-  if (isLoadingInstitute) {
+  const institute = useData();
+
+  useEffect(() => {
+    console.log(institute)
+  }, [institute]);
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
     return <Loader />;
   }
     
