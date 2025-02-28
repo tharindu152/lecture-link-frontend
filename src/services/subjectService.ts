@@ -1,6 +1,6 @@
 import { lectureLinkAxios } from './axiosConfig.ts';
-import { Subject } from '../types/subject.ts';
-import { SubjectRes } from '../types/subjectRes.ts';
+import { Subject } from '../types/instituteTypes/subject.ts';
+import { FilteredSubjectRes } from '../types/instituteTypes/filteredSubjectRes.ts';
 
 const SubjectService = {
   createSubject: async (payload: {
@@ -31,7 +31,7 @@ const SubjectService = {
     size?: number;
     page?: number;
     sort?: string;
-  }): Promise<{ subjects: SubjectRes[]; total: number }> => {
+  }): Promise<{ subjects: FilteredSubjectRes[]; total: number }> => {
     const params = new URLSearchParams();
 
     if (payload.district) params.append("district", payload.district);

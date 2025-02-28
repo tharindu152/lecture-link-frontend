@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Loader from '../../common/Loader/Loader.tsx';
 import { useMutation, useQuery } from 'react-query';
 import programService from '../../services/programService.ts';
-import { Program } from '../../types/program.ts';
+import { Program } from '../../types/instituteTypes/program.ts';
 import Toast from '../../components/Toast.tsx';
 import ConfirmationModal from '../../components/ConfirmationModal.tsx';
 
@@ -108,31 +108,31 @@ const Programs = () => {
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <p className="text-black dark:text-white">
-                        {program.studentCount}
+                        {program?.studentCount}
                       </p>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <p className="text-black dark:text-white">
-                        {Math.ceil(program.durationInDays / 30)}
+                        {Math.ceil((program?.durationInDays ?? 0) / 30)}
                       </p>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <p
                         className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium ${
-                          program.level.toLowerCase() === 'phd'
+                          program?.level?.toLowerCase() === 'phd'
                             ? 'bg-meta-7 text-meta-7'
-                            : program.level.toLowerCase() === 'msc'
+                            : program?.level?.toLowerCase() === 'msc'
                             ? 'bg-danger text-danger'
-                            : program.level.toLowerCase() === 'bsc'
+                            : program?.level?.toLowerCase() === 'bsc'
                             ? 'bg-primary text-primary'
-                            : program.level.toLowerCase() === 'pgd'
+                            : program?.level?.toLowerCase() === 'pgd'
                             ? 'bg-warning text-warning'
-                            : program.level.toLowerCase() === 'hnd'
+                            : program?.level?.toLowerCase() === 'hnd'
                             ? 'bg-success text-success'
                             : ''
                         }`}
                       >
-                        {program.level}
+                        {program?.level}
                       </p>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">

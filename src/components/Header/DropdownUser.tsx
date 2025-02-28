@@ -1,12 +1,18 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ClickOutside from '../ClickOutside';
 import InstituteLogo from '../../images/brand/iit.png';
+import Toast from '../Toast.tsx';
+import ConfirmationModal from '../ConfirmationModal.tsx';
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [toast, setToast] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
+  <>
     <ClickOutside onClick={() => setDropdownOpen(false)} className="relative">
       <Link
         onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -119,7 +125,9 @@ const DropdownUser = () => {
               </Link>
             </li>
           </ul>
-          <button className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base">
+          <button onClick={() => {
+            setIsModalOpen(true)
+          }} className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-danger lg:text-base">
             <svg
               className="fill-current"
               width="22"
@@ -142,7 +150,34 @@ const DropdownUser = () => {
         </div>
       )}
       {/* <!-- Dropdown End --> */}
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        title={'Confirm Logout'}
+        message={'Are you sure that you want to Signing Out?'}
+        btnOne={'Signing Out'}
+        btnTwo={'Cancel'}
+        onConfirm={() => {
+          localStorage.removeItem("token");
+          localStorage.removeItem("issuer");
+          // @ts-ignore
+          setToast({ message: 'User Signing Out', type: 'error' });
+          setTimeout(() => {
+            navigate('/');
+          }, 3000);
+        }}
+        onClose={() => setIsModalOpen(false)}
+      ></ConfirmationModal>
     </ClickOutside>
+    {toast && (
+      <Toast
+        {
+          // @ts-ignore
+          ...toast
+        }
+        onClose={() => setToast(null)}
+      />
+    )}
+  </>
   );
 };
 

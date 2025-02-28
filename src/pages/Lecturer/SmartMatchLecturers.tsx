@@ -2,7 +2,7 @@ import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Loader from '../../common/Loader/Loader.tsx';
-import { LecturerRes } from '../../types/lecturerRes.ts';
+import { LecturerRes } from '../../types/lecturerTypes/lecturerRes.ts';
 import dummyProfileImg from '../../images/user/profile.png';
 
 const lecturers: LecturerRes[] = [
@@ -14,7 +14,7 @@ const lecturers: LecturerRes[] = [
     password: 'password123',
     dob: '1985-02-15',
     contactNo: '123-456-7890',
-    review: 'Highly enthusiastic and motivating.',
+    rating: 'Highly enthusiastic and motivating.',
     payRate: 55.0,
     qualifications: ["HND"],
     picture:
@@ -31,7 +31,7 @@ const lecturers: LecturerRes[] = [
     password: 'pass98765',
     dob: '1990-06-20',
     contactNo: '321-654-0987',
-    review: 'Excellent in business management lectures.',
+    rating: 'Excellent in business management lectures.',
     payRate: 47.5,
     qualifications: ["PGD"],
     picture:
@@ -65,7 +65,7 @@ const lecturers: LecturerRes[] = [
     contactNo: '425-862-5540',
     payRate: 40.0,
     status: 'ACTIVE',
-    review: 'Amazing at explaining complex concepts.',
+    rating: 'Amazing at explaining complex concepts.',
     qualifications: ["MSc"],
     picture:
       '../../../src/images/user/user-04.png',
@@ -79,7 +79,7 @@ const lecturers: LecturerRes[] = [
     password: 'pass98765',
     dob: '1990-06-20',
     contactNo: '321-654-0987',
-    review: 'Excellent in business management lectures.',
+    rating: 'Excellent in business management lectures.',
     payRate: 47.5,
     qualifications: ["PhD"],
     picture:
@@ -98,7 +98,7 @@ const lecturers: LecturerRes[] = [
     contactNo: '456-231-7566',
     payRate: 40.0,
     status: 'INACTIVE',
-    review: 'Amazing at explaining Agile concepts',
+    rating: 'Amazing at explaining Agile concepts',
     qualifications: ["HND"],
     picture:
       '../../../src/images/user/user-06.png',
@@ -112,7 +112,7 @@ const lecturers: LecturerRes[] = [
     password: 'password123',
     dob: '1985-02-15',
     contactNo: '123-456-7890',
-    review: 'Highly enthusiastic and motivating.',
+    rating: 'Highly enthusiastic and motivating.',
     payRate: 55.0,
     qualifications: ["PGD"],
     picture:
@@ -147,7 +147,7 @@ const lecturers: LecturerRes[] = [
     contactNo: '456-231-7566',
     payRate: 40.0,
     status: 'INACTIVE',
-    review: 'Amazing at explaining Agile concepts',
+    rating: 'Amazing at explaining Agile concepts',
     qualifications: ["MSc"],
     picture:
       '../../../src/images/user/user-09.png',
@@ -163,7 +163,7 @@ const lecturers: LecturerRes[] = [
     contactNo: '425-862-5540',
     payRate: 40.0,
     status: 'ACTIVE',
-    review: 'Amazing at explaining complex concepts.',
+    rating: 'Amazing at explaining complex concepts.',
     qualifications: ["PhD"],
     picture:
       '../../../src/images/user/user-10.png',
@@ -282,35 +282,35 @@ const SmartMatchLecturers = () => {
                   >
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <img
-                        src={lecturer.picture ?? dummyProfileImg}
-                        alt={lecturer.name}
+                        src={lecturer?.picture ?? dummyProfileImg}
+                        alt={lecturer?.name}
                         className="h-12 w-12 rounded-full"
                       />
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      {lecturer.name}
+                      {lecturer?.name}
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <p
                         className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium ${
-                          getHighestQualification(lecturer).toLowerCase() ===
+                          getHighestQualification(lecturer)?.toLowerCase() ===
                           'phd'
                             ? 'bg-meta-7 text-meta-7'
                             : getHighestQualification(
                               lecturer,
-                            ).toLowerCase() === 'msc'
+                            )?.toLowerCase() === 'msc'
                               ? 'bg-danger text-danger'
                               : getHighestQualification(
                                 lecturer,
-                              ).toLowerCase() === 'bsc'
+                              )?.toLowerCase() === 'bsc'
                                 ? 'bg-primary text-primary'
                                 : getHighestQualification(
                                   lecturer,
-                                ).toLowerCase() === 'pgd'
+                                )?.toLowerCase() === 'pgd'
                                   ? 'bg-warning text-warning'
                                   : getHighestQualification(
                                     lecturer,
-                                  ).toLowerCase() === 'hnd'
+                                  )?.toLowerCase() === 'hnd'
                                     ? 'bg-success text-success'
                                     : ''
                         }`}
@@ -319,20 +319,20 @@ const SmartMatchLecturers = () => {
                       </p>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      {lecturer.contactNo ?? 'N/A'}
+                      {lecturer?.contactNo ?? 'N/A'}
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      ${lecturer.payRate.toFixed(2)}
+                      ${lecturer?.payRate?.toFixed(2)}
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <span
                         className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                          lecturer.isAssigned
+                          lecturer?.isAssigned
                             ? 'bg-success bg-opacity-10 text-success'
                             : 'bg-warning bg-opacity-10 text-warning'
                         }`}
                       >
-                        {lecturer.isAssigned ? 'Assigned' : 'Unassigned'}
+                        {lecturer?.isAssigned ? 'Assigned' : 'Unassigned'}
                       </span>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">

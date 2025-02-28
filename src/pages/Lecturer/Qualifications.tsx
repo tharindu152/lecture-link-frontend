@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Loader from '../../common/Loader/Loader.tsx';
 import { useMutation, useQuery } from 'react-query';
 import qualificationService from '../../services/qualificationService.ts';
-import { Qualification } from '../../types/qualification.ts';
+import { Qualification } from '../../types/lecturerTypes/qualification.ts';
 import ConfirmationModal from '../../components/ConfirmationModal.tsx';
 import Toast from '../../components/Toast.tsx';
 
@@ -117,46 +117,46 @@ const Qualifications = () => {
                   >
                     <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                       <h5 className="font-medium text-black dark:text-white">
-                        {qual.name}
+                        {qual?.name}
                       </h5>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-4">
                       <h5 className="font-medium text-black dark:text-white">
-                        {qual.discipline}
+                        {qual?.discipline}
                       </h5>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <p className="text-black dark:text-white">
-                        {qual.awardingBody}
+                        {qual?.awardingBody}
                       </p>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <p className="text-black dark:text-white">
-                        {Math.ceil(qual.durationInDays / 30)}
+                        {Math.ceil((qual?.durationInDays ?? 0) / 30)}
                       </p>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <p className="text-black dark:text-white">
-                        {qual.completedAt?.split(" ")[0]}
+                        {qual?.completedAt?.split(" ")[0]}
                       </p>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <p
                         className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium ${
-                          qual.level.toLowerCase() === 'phd'
+                          qual.level?.toLowerCase() === 'phd'
                             ? 'bg-meta-7 text-meta-7'
-                            : qual.level.toLowerCase() === 'msc'
+                            : qual.level?.toLowerCase() === 'msc'
                             ? 'bg-danger text-danger'
-                            : qual.level.toLowerCase() === 'bsc'
+                            : qual.level?.toLowerCase() === 'bsc'
                             ? 'bg-primary text-primary'
-                            : qual.level.toLowerCase() === 'pgd'
+                            : qual.level?.toLowerCase() === 'pgd'
                             ? 'bg-warning text-warning'
-                            : qual.level.toLowerCase() === 'hnd'
+                            : qual.level?.toLowerCase() === 'hnd'
                             ? 'bg-success text-success'
                             : ''
                         }`}
                       >
-                        {qual.level}
+                        {qual?.level}
                       </p>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">

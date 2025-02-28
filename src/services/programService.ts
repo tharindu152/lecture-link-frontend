@@ -1,5 +1,5 @@
 import { lectureLinkAxios } from './axiosConfig.ts';
-import { Program } from '../types/program.ts';
+import { Program } from '../types/instituteTypes/program.ts';
 
 const ProgramService = {
   createProgram: async (payload: {

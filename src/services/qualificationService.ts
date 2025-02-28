@@ -1,5 +1,5 @@
 import { lectureLinkAxios } from './axiosConfig.ts';
-import { Qualification } from '../types/qualification.ts';
+import { Qualification } from '../types/lecturerTypes/qualification.ts';
 
 const QualificationService = {
   createQualification: async (payload: {

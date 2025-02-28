@@ -5,7 +5,7 @@ import { useState } from 'react';
 import Loader from '../../common/Loader/Loader.tsx';
 import { useQuery } from 'react-query';
 import LecturerService from '../../services/lecturerService.ts';
-import { Subject } from '../../types/subject.ts';
+import { Subject } from '../../types/instituteTypes/subject.ts';
 
 const Lecturer = () => {
 
@@ -18,6 +18,9 @@ const Lecturer = () => {
     isLoading: isLoadingLecturer,
   } = useQuery(['getLecturerById'], () => LecturerService.getLecturerById({lecturerId:pathname.slice(15)}));
 
+  document.addEventListener('mousemove', (event) => {
+    setRating(lecturer?.rating)
+  });
 
   if (isLoadingLecturer) {
     return <Loader />;
@@ -80,7 +83,7 @@ const Lecturer = () => {
                 <h4 className="font-semibold text-black dark:text-white w-full md:w-44">
                   Date of Birth:
                 </h4>
-                <p>{lecturer?.dob}</p>
+                <p>{lecturer?.dob?.split(" ")[0]}</p>
               </div>
 
               <div className="flex flex-col md:flex-row">
@@ -99,9 +102,9 @@ const Lecturer = () => {
 
               <div className="flex flex-col md:flex-row">
                 <h4 className="font-semibold text-black dark:text-white w-full md:w-44">
-                  Languages:
+                  Delivery Language:
                 </h4>
-                <p>{lecturer?.languages}</p>
+                <p>{lecturer?.language}</p>
               </div>
 
               <div className="flex flex-col md:flex-row">
@@ -110,19 +113,13 @@ const Lecturer = () => {
                 </h4>
                 <div className="flex items-center">
                   {[1, 2, 3, 4, 5].map((star) => (
-                    <button
+                    <FaStar
                       key={star}
-                      type="button"
-                      onClick={() => setRating((lecturer?.review?.split(" ").length ?? 0) % 6)}
-                      className="focus:outline-none"
-                    >
-                      <FaStar
-                        size={20}
-                        className={
-                          star <= rating ? 'text-yellow-500' : 'text-gray-400'
-                        }
-                      />
-                    </button>
+                      size={20}
+                      className={
+                        star <= rating ? 'text-yellow-500' : 'text-gray-400'
+                      }
+                    />
                   ))}
                 </div>
               </div>
@@ -152,15 +149,6 @@ const Lecturer = () => {
                   </ul>
                 </div>
               )}
-
-              <div>
-                <h4 className="font-semibold text-black dark:text-white">
-                  Review:
-                </h4>
-                <p className="mt-1.5">
-                  {lecturer?.review}
-                </p>
-              </div>
             </div>
 
             <Link

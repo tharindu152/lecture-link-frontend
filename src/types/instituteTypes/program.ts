@@ -1,5 +1,6 @@
 import { Subject } from './subject.ts';
-import { Level } from './level.ts';
+import { Level } from '../enums/level.ts';
+import { Language } from '../enums/language.ts';
 
 export type Program = {
   id?: number;
@@ -8,6 +9,7 @@ export type Program = {
   level: Level;
   durationInDays: number;
   studentCount: number;
+  language: Language;
   batchId?: string;
   payment: number;
   instituteId?: number;

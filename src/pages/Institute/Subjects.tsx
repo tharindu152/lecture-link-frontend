@@ -1,7 +1,7 @@
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { Program } from '../../types/program.ts';
+import { Program } from '../../types/instituteTypes/program.ts';
 import Loader from '../../common/Loader/Loader.tsx';
 import { useMutation, useQuery } from 'react-query';
 import subjectService from '../../services/subjectService.ts';
@@ -124,7 +124,7 @@ const Subjects = () => {
               <tbody>
                 {currentSubjects.map((subject, key) => (
                   <tr
-                    key={key + subject.name + subject.noOfCredits}
+                    key={key + subject.name + subject?.noOfCredits}
                     className={'hover:bg-gray-200 dark:hover:bg-gray-800'}
                   >
                     <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
@@ -141,22 +141,22 @@ const Subjects = () => {
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <p className="text-black dark:text-white">
-                        {subject.noOfCredits}
+                        {subject?.noOfCredits}
                       </p>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <p
                         className={` ${
-                          subject.isAssigned ? 'text-green-500' : 'text-red-500'
+                          subject?.isAssigned ? 'text-green-500' : 'text-red-500'
                         }`}
                       >
-                        {subject.isAssigned ? 'Yes' : 'No'}
+                        {subject?.isAssigned ? 'Yes' : 'No'}
                       </p>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <p className="text-black dark:text-white">
-                        {subject.lecturerId
-                          ? subject.lecturerId
+                        {subject?.lecturerId
+                          ? subject?.lecturerId
                           : 'Not Assigned'}
                       </p>
                     </td>

@@ -44,13 +44,16 @@ const UpdateInstituteForm = () => {
       name: Yup.string()
         .required('Name is required')
         .max(255, 'Name must not exceed 255 characters'),
-      password: Yup.string()
-        .required('Password is required')
-        .min(8, 'Password must be at least 8 characters')
-        .max(255, 'Password must not exceed 255 characters'),
       email: Yup.string()
-        .required('Email is required')
-        .email('Invalid email address'),
+        .email('Invalid email format')
+        .required('Email is required'),
+      password: Yup.string()
+        .matches(
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[_]?)[A-Za-z\d_]{15,16}$/,
+          'Password must be 15-16 characters long and include at least one uppercase letter, one lowercase letter,' +
+          ' and one number. No special characters allowed other than underscore ',
+        )
+        .required('Password is required'),
       district: Yup.string()
         .required('District is required')
         .max(500, 'District must not exceed 500 characters'),

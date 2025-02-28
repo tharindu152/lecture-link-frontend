@@ -5,7 +5,7 @@ import { useFormik } from 'formik';
 import Loader from '../../common/Loader/Loader.tsx';
 import { useMutation } from 'react-query';
 import lecturerService from '../../services/lecturerService.ts';
-import { LecturerRes } from '../../types/lecturerRes.ts';
+import { LecturerRes } from '../../types/lecturerTypes/lecturerRes.ts';
 import Toast from '../../components/Toast.tsx';
 import dummyProfileImg from '../../images/user/profile.png';
 
@@ -290,26 +290,26 @@ const FilteredLecturers = () => {
                   >
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <img
-                        src={lecturer.picture ?? dummyProfileImg}
-                        alt={lecturer.name}
+                        src={lecturer?.picture ?? dummyProfileImg}
+                        alt={lecturer?.name}
                         className="h-12 w-12 rounded-full"
                       />
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      {lecturer.name}
+                      {lecturer?.name}
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <p
                         className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium ${
-                          getHighestQualification(lecturer).toLowerCase() === 'phd'
+                          getHighestQualification(lecturer)?.toLowerCase() === 'phd'
                             ? 'bg-meta-7 text-meta-7'
-                            : getHighestQualification(lecturer).toLowerCase() === 'msc'
+                            : getHighestQualification(lecturer)?.toLowerCase() === 'msc'
                               ? 'bg-danger text-danger'
-                              : getHighestQualification(lecturer).toLowerCase() === 'bsc'
+                              : getHighestQualification(lecturer)?.toLowerCase() === 'bsc'
                                 ? 'bg-primary text-primary'
-                                :getHighestQualification(lecturer).toLowerCase() === 'pgd'
+                                :getHighestQualification(lecturer)?.toLowerCase() === 'pgd'
                                   ? 'bg-warning text-warning'
-                                  : getHighestQualification(lecturer).toLowerCase() === 'hnd'
+                                  : getHighestQualification(lecturer)?.toLowerCase() === 'hnd'
                                     ? 'bg-success text-success'
                                     : ''
                         }`}
@@ -318,13 +318,13 @@ const FilteredLecturers = () => {
                       </p>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      {lecturer.district ?? 'N/A'}
+                      {lecturer?.district ?? 'N/A'}
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      {lecturer.contactNo ?? 'N/A'}
+                      {lecturer?.contactNo ?? 'N/A'}
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      ${lecturer.payRate.toFixed(2)}
+                      ${lecturer?.payRate?.toFixed(2)}
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <span
@@ -334,7 +334,7 @@ const FilteredLecturers = () => {
                             : 'bg-warning bg-opacity-10 text-warning'
                         }`}
                       >
-                        {lecturer.isAssigned ? 'Assigned' : 'Unassigned'}
+                        {lecturer?.isAssigned ? 'Assigned' : 'Unassigned'}
                       </span>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">

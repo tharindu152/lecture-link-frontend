@@ -1,5 +1,6 @@
-import { Status } from './status.ts';
+import { Status } from '../enums/status.ts';
 import { Qualification } from './qualification.ts';
+import { Language } from '../enums/language.ts';
 
 export type Lecturer = {
   id?: number;
@@ -7,14 +8,16 @@ export type Lecturer = {
   district: string;
   email: string;
   password: string;
-  dob: string;
+  dob?: string;
   contactNo?: string;
-  review?: string;
-  payRate: number;
+  language?: Language;
+  rating?: number;
+  subscribed?: boolean;
+  payRate?: number;
   preference?: string;
   picture?: File;
   status: Status;
-  isAssigned: boolean;
+  isAssigned?: boolean;
   languages?: string;
   qualifications?: Qualification[];
 };

@@ -1,4 +1,4 @@
-import { Level } from './level.ts';
+import { Level } from '../enums/level.ts';
 
 export type Qualification = {
   id?: number;

@@ -1,8 +1,8 @@
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
-import { Qualification } from '../../types/qualification.ts';
-import { Level } from '../../types/level.ts';
+import { Qualification } from '../../types/lecturerTypes/qualification.ts';
+import { Level } from '../../types/enums/level.ts';
 import DatePickerTwo from '../../components/Forms/DatePicker/DatePickerTwo.tsx';
 import { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';

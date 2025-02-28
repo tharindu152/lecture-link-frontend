@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Loader from '../../common/Loader/Loader.tsx';
 import { useMutation, useQuery } from 'react-query';
 import lecturerService from '../../services/lecturerService.ts';
-import { LecturerRes } from '../../types/lecturerRes.ts';
+import { LecturerRes } from '../../types/lecturerTypes/lecturerRes.ts';
 import Toast from '../../components/Toast.tsx';
 import ConfirmationModal from '../../components/ConfirmationModal.tsx';
 import dummyProfileImg from '../../images/user/profile.png';
@@ -126,7 +126,7 @@ const Lecturers = () => {
                   >
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <img
-                        src={lecturer.picture ?? dummyProfileImg}
+                        src={lecturer?.picture ?? dummyProfileImg}
                         alt={lecturer.name}
                         className="h-12 w-12 rounded-full"
                       />
@@ -137,24 +137,24 @@ const Lecturers = () => {
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <p
                         className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium ${
-                          getHighestQualification(lecturer).toLowerCase() ===
+                          getHighestQualification(lecturer)?.toLowerCase() ===
                           'phd'
                             ? 'bg-meta-7 text-meta-7'
                             : getHighestQualification(
                                 lecturer,
-                              ).toLowerCase() === 'msc'
+                              )?.toLowerCase() === 'msc'
                             ? 'bg-danger text-danger'
                             : getHighestQualification(
                                 lecturer,
-                              ).toLowerCase() === 'bsc'
+                              )?.toLowerCase() === 'bsc'
                             ? 'bg-primary text-primary'
                             : getHighestQualification(
                                 lecturer,
-                              ).toLowerCase() === 'pgd'
+                              )?.toLowerCase() === 'pgd'
                             ? 'bg-warning text-warning'
                             : getHighestQualification(
                                 lecturer,
-                              ).toLowerCase() === 'hnd'
+                              )?.toLowerCase() === 'hnd'
                             ? 'bg-success text-success'
                             : ''
                         }`}
@@ -163,23 +163,23 @@ const Lecturers = () => {
                       </p>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      {lecturer.district ?? 'N/A'}
+                      {lecturer?.district ?? 'N/A'}
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      {lecturer.contactNo ?? 'N/A'}
+                      {lecturer?.contactNo ?? 'N/A'}
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      ${lecturer.payRate.toFixed(2)}
+                      ${lecturer?.payRate?.toFixed(2)}
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <span
                         className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                          lecturer.isAssigned
+                          lecturer?.isAssigned
                             ? 'bg-success bg-opacity-10 text-success'
                             : 'bg-warning bg-opacity-10 text-warning'
                         }`}
                       >
-                        {lecturer.isAssigned ? 'Assigned' : 'Unassigned'}
+                        {lecturer?.isAssigned ? 'Assigned' : 'Unassigned'}
                       </span>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">

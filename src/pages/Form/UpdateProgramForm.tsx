@@ -3,10 +3,10 @@ import * as Yup from 'yup';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
 import { useMutation } from 'react-query';
 import programService from '../../services/programService.ts';
-import { Program } from '../../types/program.ts';
+import { Program } from '../../types/instituteTypes/program.ts';
 import { useEffect, useState } from 'react';
 import Loader from '../../common/Loader/Loader.tsx';
-import { Level } from '../../types/level.ts';
+import { Level } from '../../types/enums/level.ts';
 import Toast from '../../components/Toast.tsx';
 
 const UpdateProgramForm = () => {

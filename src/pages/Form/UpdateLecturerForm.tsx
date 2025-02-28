@@ -94,7 +94,6 @@ const UpdateLecturerForm = () => {
       formData.append('status', values.status);
       formData.append('preference', values.preference);
       if (values.picture) formData.append('picture', values.picture);
-      console.log(formData)
       createLecturer({ lecturerConfig: formData });
     },
   });

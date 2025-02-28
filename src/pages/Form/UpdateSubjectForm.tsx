@@ -1,7 +1,7 @@
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
-import { Subject } from '../../types/subject.ts';
+import { Subject } from '../../types/instituteTypes/subject.ts';
 import { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
 import Loader from '../../common/Loader/Loader.tsx';

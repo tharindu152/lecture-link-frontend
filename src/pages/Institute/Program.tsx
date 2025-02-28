@@ -81,7 +81,7 @@ const Program = () => {
               <ul className="list-disc flex-1 pl-4">
                 {program?.subjects.map((subject) => (
                   <li key={subject.id} className="flex-1">
-                    {subject.name} ({subject.noOfCredits} Credits)
+                    {subject.name} ({subject?.noOfCredits} Credits)
                   </li>
                 ))}
               </ul>

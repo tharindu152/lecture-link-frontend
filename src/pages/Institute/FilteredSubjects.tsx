@@ -6,7 +6,7 @@ import Loader from '../../common/Loader/Loader.tsx';
 import { useMutation } from 'react-query';
 import subjectService from '../../services/subjectService.ts';
 import Toast from '../../components/Toast.tsx';
-import { SubjectRes } from '../../types/subjectRes.ts';
+import { FilteredSubjectRes } from '../../types/instituteTypes/filteredSubjectRes.ts';
 
 const districtOptions = ['Kandy', 'Colombo', 'Kurunagala', 'Matale', 'Nuwareliya', 'Galle'];
 const levelOptions = ['PHD', 'MSC', 'BSC', 'PGD', 'HND'];
@@ -18,7 +18,7 @@ const studentCountOptions = ['10-50', '50-100', '100-200', '200-500', '500-1000'
 const FilteredSubjects = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
-  const [filteredSubjects, setFilteredSubjects] = useState([] as SubjectRes[]);
+  const [filteredSubjects, setFilteredSubjects] = useState([] as FilteredSubjectRes[]);
   const [toast, setToast] = useState(null);
 
   const { mutate: filterSubjects, isLoading: isFilteringSubject } = useMutation(
@@ -44,7 +44,7 @@ const FilteredSubjects = () => {
       },
       onError: () => {
         // @ts-ignore
-        setToast({ message: "Subject filteration is unsuccessful!", type: "error" });
+        setToast({ message: "Subject filtration is unsuccessful!", type: "error" });
       },
     },
   );

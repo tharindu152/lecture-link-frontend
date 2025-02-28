@@ -1,9 +1,86 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import LogoDark from '../../images/logo/LectureLinkLogoDark.png';
 import Logo from '../../images/logo/LectureLinkLogo.png';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { useMutation } from 'react-query';
+import authService from '../../services/authService.ts';
+import Loader from '../../common/Loader/Loader.tsx';
+import Toast from '../../components/Toast.tsx';
+import { jwtDecode } from 'jwt-decode';
 
 const SignIn: React.FC = () => {
+  const [toast, setToast] = useState(null);
+  const navigate = useNavigate();
+
+  const { mutate: signInUser, isLoading: isSigningIn } = useMutation(
+    authService.signIn,
+    {
+      onSuccess: (data) => {
+        try {
+          const decodedToken = jwtDecode(data);
+
+          if (decodedToken.iss !== import.meta
+            // @ts-ignore
+            .env.VITE_TOKEN_ISSUER) {
+            // @ts-ignore
+            setToast({ message: "Invalid token issuer!", type: "error" });
+            return;
+          }
+
+          localStorage.setItem("token", data);
+          localStorage.setItem("issuer", decodedToken.iss ?? '');
+          // @ts-ignore
+          setToast({ message: 'User Signed In Successfully', type: 'success' });
+          setTimeout(() => {
+            navigate('/app/dashboard');
+          }, 3000);
+        } catch (error) {
+          // @ts-ignore
+          setToast({ message: "Token validation failed!", type: "error" });
+        }
+      },
+      onError: () => {
+        // @ts-ignore
+        setToast({ message: "User Signing In is unsuccessful!", type: "error" });
+      },
+    },
+  );
+
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+      password: '',
+    },
+    validationSchema: Yup.object({
+      email: Yup.string()
+        .email('Invalid email format')
+        .required('Email is required'),
+      password: Yup.string()
+        .matches(
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*_?)[A-Za-z\d_]{15,16}$/,
+          'Password must be 15-16 characters long and include at least one uppercase letter, one lowercase letter,' +
+          ' and one number. No special characters allowed other than underscore ',
+        )
+        .required('Password is required'),
+    }),
+    onSubmit: async (values) => {
+      signInUser({ email: values.email, password: values.password });
+    },
+  });
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000); // Simulating a loading state
+    return () => clearTimeout(timer); // Cleanup timer
+  }, []);
+
+  if (loading || isSigningIn) {
+    return <Loader />;
+  }
+
   return (
       <div className="rounded-md border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark min-h-screen">
         <div className="flex flex-wrap items-center justify-center h-screen">
@@ -23,7 +100,7 @@ const SignIn: React.FC = () => {
                 Sign In to Lecture Link
               </h2>
 
-              <form>
+              <form onSubmit={formik.handleSubmit}>
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white" htmlFor="email">
                     Email
@@ -33,7 +110,14 @@ const SignIn: React.FC = () => {
                       id="email"
                       type="email"
                       placeholder="Enter your email"
-                      className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                      className={`w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary ${
+                        formik.touched.email && formik.errors.email
+                          ? 'border-red-500'
+                          : 'border-gray-300 focus:border-primary'
+                      }`}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      value={formik.values.email}
                     />
 
                     <span className="absolute right-4 top-4">
@@ -55,6 +139,9 @@ const SignIn: React.FC = () => {
                     </span>
                   </div>
                 </div>
+                {formik.touched.email && formik.errors.email && (
+                  <p className="text-red-500 text-sm mb-4">{formik.errors.email}</p>
+                )}
 
                 <div className="mb-6">
                   <label className="mb-2.5 block font-medium text-black dark:text-white" htmlFor="password">
@@ -64,8 +151,15 @@ const SignIn: React.FC = () => {
                     <input
                       id="password"
                       type="password"
-                      placeholder="6+ Characters, 1 Capital letter"
-                      className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                      placeholder="Enter your password"
+                      className={`w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary ${
+                        formik.touched.password && formik.errors.password
+                          ? 'border-red-500'
+                          : 'border-gray-300 focus:border-primary'
+                      }`}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      value={formik.values.password}
                     />
 
                     <span className="absolute right-4 top-4">
@@ -91,13 +185,16 @@ const SignIn: React.FC = () => {
                     </span>
                   </div>
                 </div>
+                {formik.touched.password && formik.errors.password && (
+                  <p className="text-red-500 text-sm mb-4">{formik.errors.password}</p>
+                )}
 
                 <div className="mb-5">
-                  <input
+                  <button
                     type="submit"
-                    value="Sign In"
+                    onClick={()=>formik.handleSubmit()}
                     className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
-                  />
+                  >Sign In</button>
                 </div>
 
                 <button className="flex w-full items-center justify-center gap-3.5 rounded-lg border border-stroke bg-gray p-4 hover:bg-opacity-50 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50">
@@ -149,6 +246,15 @@ const SignIn: React.FC = () => {
             </div>
           </div>
         </div>
+        {toast && (
+          <Toast
+            {
+              // @ts-ignore
+              ...toast
+            }
+            onClose={() => setToast(null)}
+          />
+        )}
       </div>
   );
 };

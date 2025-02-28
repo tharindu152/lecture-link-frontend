@@ -2,7 +2,7 @@ import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Loader from '../../common/Loader/Loader.tsx';
-import { LecturerRes } from '../../types/lecturerRes.ts';
+import { LecturerRes } from '../../types/lecturerTypes/lecturerRes.ts';
 import { useQuery } from 'react-query';
 import lecturerService from '../../services/lecturerService.ts';
 import dummyProfileImg from '../../images/user/profile.png';

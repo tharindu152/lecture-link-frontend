@@ -1,5 +1,5 @@
 import { lectureLinkAxios } from './axiosConfig.ts';
-import { InstituteRes } from '../types/instituteRes.ts';
+import { InstituteRes } from '../types/instituteTypes/instituteRes.ts';
 
 const InstituteService = {
   getAllInstitutes: async (_key: string): Promise<InstituteRes[]> => {
@@ -52,7 +52,7 @@ const InstituteService = {
     instituteConfig: FormData;
   }): Promise<{ id: string; name: string }> => {
     const { data } = await lectureLinkAxios.post(
-      `/institutes`,
+      `/register/institute`,
       payload.instituteConfig,
     );
     return data;

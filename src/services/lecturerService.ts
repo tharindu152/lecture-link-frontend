@@ -1,7 +1,7 @@
 import { lectureLinkAxios } from './axiosConfig.ts';
-import { LecturerRes } from '../types/lecturerRes.ts';
-import { Lecturer } from '../types/lecturer.ts';
-import { FilteredLecturersResponse } from '../types/filteredLecturersResponse.ts';
+import { LecturerRes } from '../types/lecturerTypes/lecturerRes.ts';
+import { Lecturer } from '../types/lecturerTypes/lecturer.ts';
+import { FilteredLecturersRes } from '../types/lecturerTypes/filteredLecturersRes.ts';
 
 const LecturerService = {
   getAllLecturers: async (): Promise<LecturerRes[]> => {
@@ -17,7 +17,7 @@ const LecturerService = {
   createLecturer: async (payload: {
     lecturerConfig: FormData;
   }): Promise<{ id: string; name: string }> => {
-    const { data } = await lectureLinkAxios.post(`/lecturers`, payload.lecturerConfig);
+    const { data } = await lectureLinkAxios.post(`/register/lecturer`, payload.lecturerConfig);
     return data;
   },
 
@@ -45,7 +45,7 @@ const LecturerService = {
     size?: number;
     page?: number;
     sort?: string;
-  }): Promise<FilteredLecturersResponse> => {
+  }): Promise<FilteredLecturersRes> => {
     const params = new URLSearchParams();
 
     if (payload.district) params.append('district', payload.district);
@@ -58,7 +58,7 @@ const LecturerService = {
     if (payload.page !== undefined) params.append('page', payload.page.toString());
     if (payload.sort) params.append('sort', payload.sort);
 
-    const { data } = await lectureLinkAxios.get<FilteredLecturersResponse>(`/lecturers/filter`, { params });
+    const { data } = await lectureLinkAxios.get<FilteredLecturersRes>(`/lecturers/filter`, { params });
 
     return data;
   },

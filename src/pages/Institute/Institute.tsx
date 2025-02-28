@@ -109,7 +109,7 @@ const Institute = () => {
                       <button
                         key={star}
                         type="button"
-                        onClick={() => setRating((institute?.review?.split(" ").length ?? 0) % 6)}
+                        onClick={() => setRating((institute?.rating?.split(" ").length ?? 0) % 6)}
                         className="focus:outline-none"
                       >
                         <FaStar
