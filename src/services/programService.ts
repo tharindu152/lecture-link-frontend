@@ -50,8 +50,8 @@ const ProgramService = {
   },
 
   updateProgram: async (payload: {
-    programId: string;
-    programData: Program;
+    programId: number | undefined;
+    programData: Program | undefined;
   }): Promise<{ id: number; name: string }> => {
     const { data } = await lectureLinkAxios.patch(`/programs/${payload.programId}`, payload.programData);
     return data;

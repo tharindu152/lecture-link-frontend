@@ -1,6 +1,6 @@
 import { Navigate, type RouteObject } from 'react-router-dom';
 import DefaultLayoutWrapper from '../layout/DefaultLayoutWrapper.tsx';
-import PageTitle from './../components/PageTitle';
+import PageTitle from '../components/Miscellaneous/PageTitle.tsx';
 import SignIn from './../pages/Authentication/SignIn';
 import SignUp from './../pages/Authentication/SignUp';
 import Dashboard from './../pages/Dashboard/Dashboard';
@@ -18,8 +18,8 @@ import FilteredLecturers from './../pages/Lecturer/FilteredLecturers';
 import SmartMatchLecturers from './../pages/Lecturer/SmartMatchLecturers';
 import Qualifications from './../pages/Lecturer/Qualifications';
 import UpdateQualificationForm from './../pages/Form/UpdateQualificationForm';
-import Settings from './../pages/UiElements/Settings';
-import NotFound from './../pages/UiElements/NotFound';
+import Settings from '../components/Miscellaneous/Settings';
+import NotFound from '../components/Miscellaneous/NotFound';
 import Program from '../pages/Institute/Program.tsx';
 import Subject from '../pages/Institute/Subject.tsx';
 import Qualification from '../pages/Lecturer/Qualification.tsx';
@@ -43,21 +43,24 @@ export const routes: RouteObject[] = [
       { path: 'dashboard', element: <><PageTitle title="Lecture Link | Dashboard" /><Dashboard /></> },
 
       { path: 'profile', children: [
-          { index: true, element: <><PageTitle title="Lecture Link | Institute" /><Institute /></> },
-          { path: 'update-institute', element: <><PageTitle title="Lecture Link | Update Institute" /><UpdateInstituteForm /></> },
+          { index: true, element: <><PageTitle title={`Lecture Link | ${localStorage.getItem("role") === 'INSTITUTE' ? "Institute" : "Lecturer"}`} />{localStorage.getItem("role") === 'INSTITUTE' ? <Institute /> : <Lecturer/>}</> },
+          { path: 'update-institute/:instituteId', element: <><PageTitle title="Lecture Link | Update Institute" /><UpdateInstituteForm /></> },
+          { path: 'settings', element: <><PageTitle title="Lecture Link | Settings" /><UpdateInstituteForm /></> },
           { path: 'institutes', element: <><PageTitle title="Lecture Link | Institutes" /><Institutes /></> },
           { path: 'institutes/:instituteId', element: <><PageTitle title="Lecture Link | Institute" /><Institute /></> }
         ]},
 
       { path: 'programs', children: [
           { index: true, element: <><PageTitle title="Lecture Link | Programs" /><Programs /></> },
-          { path: 'add-program', element: <><PageTitle title="Lecture Link | Update Program" /><UpdateProgramForm /></> },
+          { path: 'add-program', element: <><PageTitle title="Lecture Link | Add Program" /><UpdateProgramForm /></> },
+          { path: 'update-program/:programId', element: <><PageTitle title="Lecture Link | Update Program" /><UpdateProgramForm /></> },
           { path: ':programId', element: <><PageTitle title="Lecture Link | Program" /><Program /></> }
         ]},
 
       { path: 'subjects', children: [
           { index: true, element: <><PageTitle title="Subjects" /><Subjects /></> },
-          { path: 'add-subject', element: <><PageTitle title="Lecture Link | Update Subject" /><UpdateSubjectForm /></> },
+          { path: 'add-subject', element: <><PageTitle title="Lecture Link | Add Subject" /><UpdateSubjectForm /></> },
+          { path: 'update-subject/:subjectId', element: <><PageTitle title="Lecture Link | Update Subject" /><UpdateSubjectForm /></> },
           { path: 'filtered-subjects', element: <><PageTitle title="Lecture Link | Filtered Subjects" /><FilteredSubjects /></> },
           { path: 'smartmatch-subjects', element: <><PageTitle title="Lecture Link | Smart Match Subjects" /><SmartMatchSubjects /></> },
           { path: ':subjectId', element: <><PageTitle title="Lecture Link | Subject" /><Subject /></> }
@@ -65,15 +68,16 @@ export const routes: RouteObject[] = [
 
       { path: 'lecturers', children: [
           { index: true, element: <><PageTitle title="Lecturers" /><Lecturers /></> },
+          { path: 'update-lecturer/:lecturerId', element: <><PageTitle title="Lecture Link | Update Lecturer" /><UpdateLecturerForm /></> },
           { path: 'filtered-lecturers', element: <><PageTitle title="Filtered Lecturers" /><FilteredLecturers /></> },
-          { path: 'add-lecturer', element: <><PageTitle title="Lecture Link | Update Lecturer" /><UpdateLecturerForm /></> },
           { path: 'smartmatch-lecturers', element: <><PageTitle title="Smart Match Lecturers" /><SmartMatchLecturers /></> },
           { path: ':lecturerId', element: <><PageTitle title="Lecture Link | Lecturer" /><Lecturer /></> }
         ]},
 
       { path: 'qualifications', children: [
           { index: true, element: <><PageTitle title="Qualifications" /><Qualifications /></> },
-          { path: 'add-qualification', element: <><PageTitle title="Update Qualification" /><UpdateQualificationForm /></> },
+          { path: 'add-qualification', element: <><PageTitle title="Add Qualification" /><UpdateQualificationForm /></> },
+          { path: 'update-qualification/:qualificationId', element: <><PageTitle title="Update Qualification" /><UpdateQualificationForm /></> },
           { path: ':qualificationId', element: <><PageTitle title="Lecture Link | Qualification" /><Qualification /></> }
         ]},
 

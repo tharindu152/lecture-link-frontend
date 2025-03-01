@@ -5,7 +5,7 @@ import { FilteredSubjectRes } from '../types/instituteTypes/filteredSubjectRes.t
 const SubjectService = {
   createSubject: async (payload: {
     subjectData: Subject;
-  }): Promise<{ id: string; name: string }> => {
+  }): Promise<{ id: number; name: string }> => {
     const { data } = await lectureLinkAxios.post(`/subjects`, payload.subjectData);
     return data;
   },
@@ -39,8 +39,8 @@ const SubjectService = {
     if (payload.credits !== undefined) params.append("credits", payload.credits.toString());
     if (payload.hourlyRate !== undefined) params.append("paymentUpper", payload.hourlyRate.split('-')[1].toString());
     if (payload.hourlyRate !== undefined) params.append("paymentLower", payload.hourlyRate.split('-')[0].toString());
-    if (payload.duration !== undefined) params.append("durationUpper", payload.duration.split('-')[1].toString());
-    if (payload.duration !== undefined) params.append("durationLower", payload.duration.split('-')[0].toString());
+    if (payload.duration !== undefined) params.append("durationUpper", (Number(payload.duration.split('-')[1])*30).toString());
+    if (payload.duration !== undefined) params.append("durationLower", (Number(payload.duration.split('-')[0])*30).toString());
     if (payload.studentCount !== undefined) params.append("studentUpper", payload.studentCount.split('-')[1].toString());
     if (payload.studentCount !== undefined) params.append("studentLower", payload.studentCount.split('-')[0].toString());
     if (payload.globalSearch) params.append("globalSearch", payload.globalSearch);
@@ -53,7 +53,7 @@ const SubjectService = {
   },
 
   updateSubject: async (payload: {
-    subjectId: string;
+    subjectId: number | undefined;
     subjectData: Subject;
   }): Promise<{ id: number; name: string }> => {
     const { data } = await lectureLinkAxios.patch(`/subjects/${payload.subjectId}`, payload.subjectData);

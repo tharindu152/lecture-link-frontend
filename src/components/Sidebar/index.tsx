@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import SidebarLinkGroup from './SidebarLinkGroup';
 import Logo from '../../images/logo/LectureLinkLogo.png';
+import { Role } from '../../types/enums/role.ts';
+import { useData } from '../../context/MainContext.tsx';
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -10,6 +12,7 @@ interface SidebarProps {
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   const location = useLocation();
+  const data = useData();
   const { pathname } = location;
 
   const trigger = useRef<any>(null);
@@ -97,8 +100,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
         <nav className=" py-4 px-4 lg:px-6">
           {/* <!-- Menu Group --> */}
           <div>
-            <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
-              INSTITUTE NAME
+            <h3 className="mb-4 ml-4 text-lg font-semibold text-bodydark2">
+              {data?.name}
             </h3>
             <ul className="mb-6 flex flex-col gap-1.5">
               <li>
@@ -144,7 +147,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 <NavLink
                   to="/app/profile"
                   className={`group relative flex items-center gap-1.5 rounded-sm py-2 px-3 font-medium text-grey-800 duration-300 ease-in-out hover:bg-gray-500 dark:hover:bg-meta-4 hover:text-bodydark1 ${
-                    pathname.includes('profile') && 'bg-gray-500 dark:bg-meta-4 text-bodydark1'
+                    pathname.includes('profile') &&
+                    'bg-gray-500 dark:bg-meta-4 text-bodydark1'
                   }`}
                 >
                   <svg
@@ -164,7 +168,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                       className="fill-000000"
                     ></path>
                   </svg>
-                  Profile
+                  {`${localStorage.getItem("role") === Role.INSTITUTE ? 'Institute' : 'Lecturer'} Profile`}
                 </NavLink>
               </li>
               {/* <!-- Menu Item Institute --> */}
@@ -523,7 +527,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 <NavLink
                   to="/app/chart"
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-grey-800 duration-300 ease-in-out hover:bg-gray-500 dark:hover:bg-meta-4 hover:text-bodydark1 ${
-                    pathname.includes('chart') && 'bg-gray-500 dark:bg-meta-4 text-bodydark1'
+                    pathname.includes('chart') &&
+                    'bg-gray-500 dark:bg-meta-4 text-bodydark1'
                   }`}
                 >
                   <svg

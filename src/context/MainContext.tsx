@@ -1,14 +1,12 @@
-import React, { createContext, ReactNode, useContext, useReducer } from "react";
+import React, { createContext, ReactNode, useContext, useEffect, useReducer } from 'react';
 import { InstituteRes } from "../types/instituteTypes/instituteRes.ts";
 import { LecturerRes } from '../types/lecturerTypes/lecturerRes.ts';
 import { Role } from '../types/enums/role.ts';
 
-const usrType = "Lecturer"
-
 type TAction = {
-  type: "view" | "delete",
-  [property: string] : any
-}
+  type: "view" | "delete" | "update",
+  [property: string]: any
+};
 
 function mainReducer(data: any | null, action: TAction): any | null {
   switch (action.type) {
@@ -16,6 +14,8 @@ function mainReducer(data: any | null, action: TAction): any | null {
       return action.data || null;
     case "delete":
       return null;
+    case "update":
+      return { ...data, ...action.data };
     default:
       return data;
   }
@@ -53,19 +53,35 @@ async function getLecturerById(id: number): Promise<LecturerRes | null> {
     return await response.json();
   } catch (error) {
     console.error("Error fetching lecturer:", error);
-    await getInstituteById(id)
     return null;
   }
 }
 
-const fetchedData = await getLecturerById(4);
+const id = Number(localStorage.getItem('userId'));
+const userRole = localStorage.getItem('role');
 
-const DataContext = usrType !== "Lecturer" ? createContext<LecturerRes | null>({} as LecturerRes) : createContext<InstituteRes | null>({} as InstituteRes);
+const fetchedData = userRole === Role.LECTURER ? await getLecturerById(id) : await getInstituteById(id);
+
+const DataContext = userRole === Role.LECTURER ? createContext<LecturerRes | null>({} as LecturerRes) : createContext<InstituteRes | null>({} as InstituteRes);
 const DispatcherContext = createContext<React.Dispatch<TAction>>(() => {});
 
 export function MainProvider({ children }: { children: ReactNode }) {
-
   const [data, dispatch] = useReducer(mainReducer, fetchedData);
+
+  useEffect(() => {
+    async function fetchData() {
+      if (!data) {
+        if (userRole === Role.LECTURER) {
+          const lecturer = await getLecturerById(id);
+          dispatch({ type: "view", data: lecturer });
+        } else if (userRole === Role.INSTITUTE) {
+          const institute = await getInstituteById(id);
+          dispatch({ type: "view", data: institute });
+        }
+      }
+    }
+    fetchData();
+  }, [data]);
 
   return (
     <DataContext.Provider value={data}>

@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Program } from '../../types/instituteTypes/program.ts';
 import Loader from '../../common/Loader/Loader.tsx';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation } from 'react-query';
 import subjectService from '../../services/subjectService.ts';
-import programService from '../../services/programService.ts';
-import Toast from '../../components/Toast.tsx';
-import ConfirmationModal from '../../components/ConfirmationModal.tsx';
+import Toast from '../../components/Miscellaneous/Toast.tsx';
+import ConfirmationModal from '../../components/Miscellaneous/ConfirmationModal.tsx';
+import { useData, useDispatcher } from '../../context/MainContext.tsx';
 
 const Subjects = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -15,53 +15,62 @@ const Subjects = () => {
   const [programsList, setProgramsList] = useState<Program[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState(0);
+  const [deleteErrCode, setDeleteErrCode] = useState();
   const [toast, setToast] = useState(null);
+  const data = useData();
+  const dispatch = useDispatcher();
 
-  const { isLoading: isLoadingPrograms, refetch } = useQuery(
-    ['getPrograms'],
-    () => programService.getAllPrograms(),
-    {
-      onSuccess: (data) => {
-        setProgramsList(data);
-      },
-    },
-  );
+  useEffect(() => {
+    // @ts-ignore
+    setProgramsList(data?.programs);
+  }, []);
 
   const { mutate: deleteSubject, isLoading: isDeletingSubject } = useMutation(
     subjectService.deleteSubjectById,
     {
-      onSuccess: () => {
+      onSuccess: (data) => {
         // @ts-ignore
         setToast({ message: "Subject deleted successfully!", type: "success" });
-        refetch()
-      },
-      onError: () => {
         // @ts-ignore
-        setToast({ message: "Subject deletion unsuccessful!", type: "error" });
+        setDeleteErrCode(data.message)
+        console.log(data)
+      },
+      onError: (data) => {
+        setToast({
+          // @ts-ignore
+          message:
+            'Subject deletion unsuccessful!. Please unassign the subject from program and lecturer before deleting.',
+          type: 'error',
+        });
+        // @ts-ignore
+        setDeleteErrCode(data.code)
+        console.log(deleteErrCode);
       },
     },
   );
 
   const deleteOperation = (subjectId: number) => {
-    setProgramsList((prev) =>
+    deleteSubject({ subjectId });
+    console.log(deleteErrCode);
+    (setProgramsList((prev) =>
       prev.map((program) =>
-        program?.subjects?.some((sub) => sub.id === subjectId)
-          ? { ...program, subjects: program.subjects.filter((sub) => sub.id !== subjectId) }
+        // @ts-ignore
+        (program?.subjects?.some((sub) => sub.id === subjectId) && deleteErrCode && deleteErrCode !== "ERR_BAD_RESPONSE")
+          ? { ...program, subjects: program?.subjects?.filter((sub) => sub?.id !== subjectId) }
           : program
       )
-    );
-    deleteSubject({ subjectId });
+    ))
+    dispatch({ type: "delete" });
   };
-
 
   const itemsPerPage = 5;
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const subjects = programsList.flatMap(prog => prog.subjects || []);
-  const currentSubjects = subjects.slice(indexOfFirstItem, indexOfLastItem);
+  const subjects = programsList?.flatMap(prog => prog.subjects || []);
+  const currentSubjects = subjects?.slice(indexOfFirstItem, indexOfLastItem);
 
-  const totalPages = Math.ceil(subjects.length / itemsPerPage);
+  const totalPages = Math.ceil(subjects?.length / itemsPerPage);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -71,7 +80,7 @@ const Subjects = () => {
     navigate(path);
   };
 
-  const subjectProgramMap = programsList.reduce((acc, prog) => {
+  const subjectProgramMap = programsList?.reduce((acc, prog) => {
     prog.subjects?.forEach((sub) => {
       // @ts-ignore
       acc[sub.id] = prog.name;
@@ -86,7 +95,7 @@ const Subjects = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  if (loading || isLoadingPrograms || isDeletingSubject) {
+  if (loading || isDeletingSubject) {
     return <Loader />;
   }
 
@@ -122,14 +131,14 @@ const Subjects = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentSubjects.map((subject, key) => (
+                {currentSubjects?.map((subject, key) => (
                   <tr
                     key={key + subject.name + subject?.noOfCredits}
                     className={'hover:bg-gray-200 dark:hover:bg-gray-800'}
                   >
                     <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                       <h5 className="font-medium text-black dark:text-white">
-                        {subject.name}
+                        {subject?.name}
                       </h5>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-4">
@@ -166,7 +175,7 @@ const Subjects = () => {
                           className="hover:text-primary"
                           title="View"
                           onClick={() =>
-                            handleNavigation(`/app/subjects/${subject.id}`)
+                            handleNavigation(`/app/subjects/${subject?.id}`)
                           }
                         >
                           <svg
@@ -191,7 +200,7 @@ const Subjects = () => {
                           className="hover:text-warning"
                           title="Edit"
                           onClick={() =>
-                            handleNavigation(`/app/subjects/add-subject`)
+                            handleNavigation(`/app/subjects/update-subject/${subject?.id}`)
                           }
                         >
                           <svg
@@ -222,7 +231,7 @@ const Subjects = () => {
                           onClick={() => {
                             setIsModalOpen(true);
                             // @ts-ignore
-                            setSelectedSubject(subject.id);
+                            setSelectedSubject(subject?.id);
                           }}
                           className="hover:text-danger"
                           title="Delete"

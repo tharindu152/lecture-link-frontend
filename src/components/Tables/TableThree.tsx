@@ -1,5 +1,5 @@
-import { Program } from '../../types/program.ts';
-import { Level } from '../../types/level.ts';
+import { Program } from '../../types/instituteTypes/program.ts';
+import { Level } from '../../types/enums/level.ts';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 

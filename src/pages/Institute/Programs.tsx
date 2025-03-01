@@ -1,12 +1,14 @@
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
 import { Link, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Loader from '../../common/Loader/Loader.tsx';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation } from 'react-query';
 import programService from '../../services/programService.ts';
 import { Program } from '../../types/instituteTypes/program.ts';
-import Toast from '../../components/Toast.tsx';
-import ConfirmationModal from '../../components/ConfirmationModal.tsx';
+import Toast from '../../components/Miscellaneous/Toast.tsx';
+import ConfirmationModal from '../../components/Miscellaneous/ConfirmationModal.tsx';
+import { useData } from '../../context/MainContext.tsx';
+import { InstituteRes } from '../../types/instituteTypes/instituteRes.ts';
 
 const Programs = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -15,16 +17,14 @@ const Programs = () => {
   const navigate = useNavigate();
   const [programsList, setProgramsList] = useState<Program[]>([]);
   const [toast, setToast] = useState(null);
+  // @ts-ignore
+  const data:InstituteRes = useData();
 
-  const { isLoading: isLoadingPrograms, refetch } = useQuery(
-    ['getPrograms'],
-    () => programService.getAllPrograms(),
-    {
-      onSuccess: (data) => {
-        setProgramsList(data);
-      },
-    },
-  );
+  useEffect(() => {
+    // @ts-ignore
+    setProgramsList(data?.programs);
+    localStorage.removeItem('program');
+  }, []);
 
   const { mutate: deleteProgram, isLoading: isDeletingProgram } = useMutation(
     programService.deleteProgramById,
@@ -32,7 +32,6 @@ const Programs = () => {
       onSuccess: () => {
         // @ts-ignore
         setToast({ message: "Program deleted successfully!", type: "success" });
-        refetch()
       },
       onError: () => {
         // @ts-ignore
@@ -45,9 +44,9 @@ const Programs = () => {
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentPrograms = programsList.slice(indexOfFirstItem, indexOfLastItem);
+  const currentPrograms = programsList?.slice(indexOfFirstItem, indexOfLastItem);
 
-  const totalPages = Math.ceil(programsList.length / itemsPerPage);
+  const totalPages = Math.ceil(programsList?.length / itemsPerPage);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -64,7 +63,7 @@ const Programs = () => {
     deleteProgram({programId: programId})
   }
 
-  if (isLoadingPrograms || isDeletingProgram) {
+  if (isDeletingProgram) {
     return <Loader />;
   }
 
@@ -96,7 +95,7 @@ const Programs = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentPrograms.map((program, key) => (
+                {currentPrograms?.map((program, key) => (
                   <tr
                     key={(program.id ?? 0) + key}
                     className={'hover:bg-gray-200 dark:hover:bg-gray-800'}
@@ -166,7 +165,7 @@ const Programs = () => {
                           className="hover:text-warning"
                           title="Edit"
                           onClick={() =>
-                            handleNavigation(`/app/programs/add-program`)
+                            handleNavigation(`/app/programs/update-program/${program.id}`)
                           }
                         >
                           <svg

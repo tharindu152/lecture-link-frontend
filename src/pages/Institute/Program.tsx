@@ -1,20 +1,57 @@
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
 import { Link, useLocation } from 'react-router-dom';
 import Loader from '../../common/Loader/Loader.tsx';
-import { useQuery } from 'react-query';
-import ProgramService from '../../services/programService.ts';
+import { useData, useDispatcher } from '../../context/MainContext.tsx';
+import { useEffect, useState } from 'react';
+import { Subject } from '../../types/instituteTypes/subject.ts';
+import { InstituteRes } from '../../types/instituteTypes/instituteRes.ts';
+import { useMutation } from 'react-query';
+import programService from '../../services/programService.ts';
+import Toast from '../../components/Miscellaneous/Toast.tsx';
 
 const Program = () => {
 
   const location = useLocation();
+  // @ts-ignore
+  const institute: InstituteRes = useData()
+  const dispatch = useDispatcher();
+  const [toast, setToast] = useState(null);
+
   const { pathname } = location;
 
-  const {
-    data: program,
-    isLoading: isLoadingProgram,
-  } = useQuery(['getProgramById'], () => ProgramService.getProgramById({programId:pathname.slice(14)}));
+  const program = institute?.programs?.find(prog => prog?.id === Number(pathname.slice(14)));
 
-  if (isLoadingProgram) {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    localStorage.setItem('program', JSON.stringify(program));
+    const timer = setTimeout(() => setLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const { mutate: updateProgram, isLoading: isUpdatingProgram } = useMutation(
+    programService.updateProgram,
+    {
+      onSuccess: () => {
+        // @ts-ignore
+        setToast({ message: "Subject unassigned from program successfully!", type: "success" });
+        dispatch({ type: "delete" });
+      },
+      onError: () => {
+        // @ts-ignore
+        setToast({ message: "Subject unassign from program is unsuccessful!", type: "error" });
+      },
+    },
+  );
+
+  const unassignProgram = (index:number) => {
+    program?.subjects?.splice(index, 1)
+    updateProgram({programId: program?.id, programData: program})
+    dispatch({ type: "delete" });
+    dispatch({ type: "view" });
+  }
+
+  if (loading || isUpdatingProgram) {
     return <Loader />;
   }
 
@@ -30,7 +67,9 @@ const Program = () => {
         <div className="space-y-4">
           {/* Level */}
           <div className="flex gap-4">
-            <h4 className="font-semibold text-black dark:text-white w-40">Level:</h4>
+            <h4 className="font-semibold text-black dark:text-white w-40">
+              Level:
+            </h4>
             <p className="flex-1">{program?.level}</p>
           </div>
 
@@ -39,7 +78,9 @@ const Program = () => {
             <h4 className="font-semibold text-black dark:text-white w-40">
               Duration (Months):
             </h4>
-            <p className="flex-1">{Math.ceil(program?.durationInDays ?? 0 / 30)}</p>
+            <p className="flex-1">
+              {Math.ceil(program?.durationInDays ?? 0 / 30)}
+            </p>
           </div>
 
           {/* Student Count */}
@@ -53,23 +94,27 @@ const Program = () => {
           {/* Batch ID */}
           {program?.batchId && (
             <div className="flex gap-4">
-              <h4 className="font-semibold text-black dark:text-white w-40">Batch ID:</h4>
+              <h4 className="font-semibold text-black dark:text-white w-40">
+                Batch ID:
+              </h4>
               <p className="flex-1">{program?.batchId}</p>
             </div>
           )}
 
           {/* Payment */}
           <div className="flex gap-4">
-            <h4 className="font-semibold text-black dark:text-white w-40">Payment:</h4>
-            <p className="flex-1">${program?.payment.toFixed(2)}</p>
+            <h4 className="font-semibold text-black dark:text-white w-40">
+              Payment:
+            </h4>
+            <p className="flex-1">${program?.payment?.toFixed(2)}</p>
           </div>
 
           {/* Institute ID */}
           <div className="flex gap-4">
             <h4 className="font-semibold text-black dark:text-white w-40">
-              Institute ID:
+              Institute Name:
             </h4>
-            <p className="flex-1">{program?.instituteId}</p>
+            <p className="flex-1">{institute?.name}</p>
           </div>
 
           {/* Subjects */}
@@ -78,13 +123,27 @@ const Program = () => {
               <h4 className="font-semibold text-black dark:text-white w-full sm:w-40">
                 Subjects:
               </h4>
-              <ul className="list-disc flex-1 pl-4">
-                {program?.subjects.map((subject) => (
-                  <li key={subject.id} className="flex-1">
-                    {subject.name} ({subject?.noOfCredits} Credits)
-                  </li>
-                ))}
-              </ul>
+              <table>
+                <tbody>
+                  {program?.subjects.map((subject: Subject, i) => (
+                    <tr key={subject.id} className="flex-1">
+                      <td>
+                        {subject.name} ({subject?.noOfCredits} Credits)
+                      </td>
+                      <td>
+                        <button
+                          onClick={() => {
+                            unassignProgram(i);
+                          }}
+                          className=" mx-3 hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 px-1 text-center text-sm text-gray-500 transition duration-150 ease-in-out hover:bg-warning hover:border-warning hover:text-white"
+                        >
+                          Unassign
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
 
@@ -97,8 +156,8 @@ const Program = () => {
           </div>
         </div>
         <Link
-          to="/app/programs/add-program"
-          className="mt-4 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
+          to={`/app/programs/update-program/${program?.id}`}
+          className="mt-4 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 mx-5 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
         >
           <svg
             width="20"
@@ -124,8 +183,36 @@ const Program = () => {
               ></path>
             </g>
           </svg>
-          Update Program
+          Update This Program
         </Link>
+        {/* Add New Subject Button */}
+        <Link
+          to="/app/subjects/add-subject"
+          className="mt-4 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
+        >
+          <svg
+            width="18"
+            viewBox="0 0 32 32"
+            xmlSpace="preserve"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M28 14H18V4a2 2 0 0 0-4 0v10H4a2 2 0 0 0 0 4h10v10a2 2 0 0 0 4 0V18h10a2 2 0 0 0 0-4z"
+              fill="currentColor"
+              className="fill-current"
+            ></path>
+          </svg>
+          Add New Subject To This Program
+        </Link>
+        {toast && (
+          <Toast
+            {
+              // @ts-ignore
+              ...toast
+            }
+            onClose={() => setToast(null)}
+          />
+        )}
       </div>
     </>
   );

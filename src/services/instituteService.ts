@@ -1,5 +1,6 @@
 import { lectureLinkAxios } from './axiosConfig.ts';
 import { InstituteRes } from '../types/instituteTypes/instituteRes.ts';
+import { Institute } from '../types/instituteTypes/institute.ts';
 
 const InstituteService = {
   getAllInstitutes: async (_key: string): Promise<InstituteRes[]> => {
@@ -58,9 +59,20 @@ const InstituteService = {
     return data;
   },
 
-  updateInstitute: async (payload: {
-    instituteId: string;
+  updateInstituteMultipart: async (payload: {
+    instituteId: number | undefined;
     instituteConfig: FormData;
+  }): Promise<{ id: string; name: string }> => {
+    const { data } = await lectureLinkAxios.patch(
+      `/institutes/${payload.instituteId}`,
+      payload.instituteConfig,
+    );
+    return data;
+  },
+
+  updateInstituteJson: async (payload: {
+    instituteId: number | undefined;
+    instituteConfig: Institute;
   }): Promise<{ id: string; name: string }> => {
     const { data } = await lectureLinkAxios.patch(
       `/institutes/${payload.instituteId}`,

@@ -26,12 +26,12 @@ const LecturerService = {
     return data;
   },
 
-  updateLecturerJson: async (payload: { lecturerId: number; lecturerData: Partial<Lecturer> }): Promise<{ id: string; name: string }> => {
+  updateLecturerJson: async (payload: { lecturerId: number; lecturerData: Lecturer }): Promise<{ id: string; name: string }> => {
     const { data } = await lectureLinkAxios.patch(`/lecturers/${payload.lecturerId}`, payload.lecturerData);
     return data;
   },
 
-  getLecturersForInstitute: async (payload: { instituteId: number }): Promise<LecturerRes[]> => {
+  getLecturersForInstitute: async (payload: { instituteId: number | undefined }): Promise<LecturerRes[]> => {
     const { data } = await lectureLinkAxios.get(`/lecturers/institutes/${payload.instituteId}`);
     return data;
   },
@@ -41,7 +41,8 @@ const LecturerService = {
     hourlyRate?: string;
     qualification?: string;
     isAssigned?: boolean;
-    languages?: string;
+    language?: string;
+    globalSearch?: string;
     size?: number;
     page?: number;
     sort?: string;
@@ -53,7 +54,8 @@ const LecturerService = {
     if (payload.hourlyRate !== undefined) params.append('payRateUpper', payload.hourlyRate.split("-")[1].toString());
     if (payload.qualification) params.append('qualification', payload.qualification);
     if (payload.isAssigned !== undefined) params.append('isAssigned', payload.isAssigned.toString());
-    if (payload.languages) params.append('languages', payload.languages);
+    if (payload.language) params.append('language', payload.language);
+    if (payload.globalSearch) params.append('globalSearch', payload.globalSearch);
     if (payload.size !== undefined) params.append('size', payload.size.toString());
     if (payload.page !== undefined) params.append('page', payload.page.toString());
     if (payload.sort) params.append('sort', payload.sort);

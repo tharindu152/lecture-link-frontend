@@ -5,8 +5,8 @@ import Loader from '../../common/Loader/Loader.tsx';
 import { useMutation, useQuery } from 'react-query';
 import qualificationService from '../../services/qualificationService.ts';
 import { Qualification } from '../../types/lecturerTypes/qualification.ts';
-import ConfirmationModal from '../../components/ConfirmationModal.tsx';
-import Toast from '../../components/Toast.tsx';
+import ConfirmationModal from '../../components/Miscellaneous/ConfirmationModal.tsx';
+import Toast from '../../components/Miscellaneous/Toast.tsx';
 
 const Qualifications = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -191,7 +191,7 @@ const Qualifications = () => {
                           title="Edit"
                           onClick={() =>
                             handleNavigation(
-                              `/app/qualifications/add-qualification`,
+                              `/app/qualifications/update-qualification`,
                             )
                           }
                         >

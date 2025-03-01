@@ -4,7 +4,7 @@ const AuthService = {
   signIn: async (payload: {
     email: string;
     password: string;
-  }): Promise<string> => {
+  }): Promise<{ id:string; role:string; token:string }> => {
     const { data } = await lectureLinkAxios.post('/login', payload);
     return data;
   }

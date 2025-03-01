@@ -88,7 +88,7 @@ const Qualification = () => {
           </div>
         </div>
         <Link
-          to="/app/qualifications/add-qualification"
+          to="/app/qualifications/update-qualification"
           className="mt-4 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
         >
           <svg

@@ -4,7 +4,7 @@ import LogoDark from '../../images/logo/LectureLinkLogoDark.png';
 import Logo from '../../images/logo/LectureLinkLogo.png';
 import { useFormik } from 'formik';
 import { useMutation } from 'react-query';
-import Toast from '../../components/Toast.tsx';
+import Toast from '../../components/Miscellaneous/Toast.tsx';
 import Loader from '../../common/Loader/Loader.tsx';
 import lecturerService from '../../services/lecturerService.ts';
 import * as Yup from 'yup';
@@ -144,6 +144,11 @@ const SignUp: React.FC = () => {
               <img className="hidden dark:block" src={Logo} alt="Logo" />
               <img className="dark:hidden" src={LogoDark} alt="Logo" />
             </Link>
+            <div className="mt-6 text-center">
+              <p>
+                Connect with top lecturers or institutes in the academic world.<br/> Sign Up to start!
+              </p>
+            </div>
           </div>
         </div>
 

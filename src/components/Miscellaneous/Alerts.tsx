@@ -1,4 +1,4 @@
-import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
+import Breadcrumb from '../Breadcrumbs/Breadcrumb.tsx';
 
 const Alerts = () => {
   return (

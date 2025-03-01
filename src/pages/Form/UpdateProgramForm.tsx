@@ -7,11 +7,21 @@ import { Program } from '../../types/instituteTypes/program.ts';
 import { useEffect, useState } from 'react';
 import Loader from '../../common/Loader/Loader.tsx';
 import { Level } from '../../types/enums/level.ts';
-import Toast from '../../components/Toast.tsx';
+import Toast from '../../components/Miscellaneous/Toast.tsx';
+import { useData, useDispatcher } from '../../context/MainContext.tsx';
+import { useLocation } from 'react-router-dom';
+import { InstituteRes } from '../../types/instituteTypes/instituteRes.ts';
+import { Language } from '../../types/enums/language.ts';
 
 const UpdateProgramForm = () => {
-
+  // @ts-ignore
+  const institute: InstituteRes = useData()
+  const dispatch = useDispatcher();
+  const location = useLocation();
   const [toast, setToast] = useState(null);
+
+  const { pathname } = location;
+  const program = institute?.programs?.find(prog => prog?.id === Number(pathname.slice(29)));
 
   const { mutate: createProgram, isLoading: isCreatingProgram } = useMutation(
     programService.createProgram,
@@ -19,6 +29,7 @@ const UpdateProgramForm = () => {
       onSuccess: () => {
         // @ts-ignore
         setToast({ message: "Program created successfully!", type: "success" });
+        formik.resetForm()
       },
       onError: () => {
         // @ts-ignore
@@ -27,18 +38,49 @@ const UpdateProgramForm = () => {
     },
   );
 
-  const formik = useFormik<Program>({
-    initialValues: {
-      id: 0,
-      name: '',
-      description: '',
-      level: Level.PGD,
-      durationInDays: 0,
-      studentCount: 0,
-      batchId: '',
-      payment: 0,
-      instituteId: 3,
+  const { mutate: updateProgram, isLoading: isUpdatingProgram } = useMutation(
+    programService.updateProgram,
+    {
+      onSuccess: () => {
+        // @ts-ignore
+        setToast({ message: "Program updated successfully!", type: "success" });
+        dispatch({ type: "delete" });
+      },
+      onError: () => {
+        // @ts-ignore
+        setToast({ message: "Program update is unsuccessful!", type: "error" });
+      },
     },
+  );
+
+  const formik = useFormik<Program>({
+    initialValues:
+      pathname?.includes('update')
+        ? {
+            id: program?.id,
+            name: program?.name ?? '',
+            description: program?.description,
+            level: program?.level ?? Level.PGD,
+            language: program?.language ?? Language.ENGLISH,
+            durationInDays: program?.durationInDays ?? 0,
+            studentCount: program?.studentCount ?? 0,
+            batchId: program?.batchId,
+            payment: program?.payment ?? 0,
+            instituteId: institute?.id,
+            subjects: program?.subjects
+          }
+        : {
+            id: 0,
+            name: '',
+            description: '',
+            level: Level.PGD,
+            language: Language.ENGLISH,
+            durationInDays: 0,
+            studentCount: 0,
+            batchId: '',
+            payment: 0,
+            instituteId: institute?.id,
+          },
     validationSchema: Yup.object({
       name: Yup.string()
         .required('Program name is required')
@@ -48,7 +90,10 @@ const UpdateProgramForm = () => {
         .nullable(),
       level: Yup.string()
         .required('Level is required')
-        .oneOf(['MSC', 'BSC', 'HND', 'PGD'], 'Invalid level'),
+        .oneOf(['MSC', 'BSC', 'HND', 'PGD', 'PHD'], 'Invalid level'),
+      language: Yup.string()
+        .required('Language is required')
+        .oneOf(['TAMIL', 'SINHALA', 'ENGLISH'], 'Invalid Language'),
       durationInDays: Yup.number()
         .required('Duration is required')
         .integer('Duration must be an integer')
@@ -63,11 +108,15 @@ const UpdateProgramForm = () => {
       payment: Yup.number()
         .required('Payment is required')
         .positive('Payment must be greater than 0'),
-      // instituteId: Yup.number().required('Institute ID is required').default(2),
-      instituteId: Yup.number().nullable()
+      instituteId: Yup.number().required('Institute ID is required').default(2),
     }),
     onSubmit: (values) => {
-      createProgram({ programData: values });
+      pathname.slice(14, 20) === 'update'
+        ? updateProgram({
+            programId: program?.id,
+            programData: values,
+          })
+        : createProgram({ programData: values });
     },
   });
 
@@ -78,13 +127,17 @@ const UpdateProgramForm = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  if (isCreatingProgram || loading) {
+  if (isCreatingProgram || isUpdatingProgram || loading) {
     return <Loader />;
   }
 
   return (
     <>
-      <Breadcrumb pageName="Add/Update Program" />
+      <Breadcrumb
+        pageName={`${
+          pathname.slice(14, 20) === 'update' ? 'Update' : 'Add'
+        } Program`}
+      />
       <form
         onSubmit={formik.handleSubmit}
         className="p-6 rounded-lg border border-stroke bg-white shadow-md dark:border-strokedark dark:bg-boxdark"
@@ -95,7 +148,12 @@ const UpdateProgramForm = () => {
 
         {/* Name */}
         <div className="mb-4 flex items-center">
-          <label className="block w-40 text-black dark:text-white" htmlFor="name">Name</label>
+          <label
+            className="block w-40 text-black dark:text-white"
+            htmlFor="name"
+          >
+            Name
+          </label>
           <input
             id="name"
             name="name"
@@ -117,7 +175,12 @@ const UpdateProgramForm = () => {
 
         {/* Level Dropdown */}
         <div className="mb-4 flex items-center">
-          <label className="block w-40 text-black dark:text-white" htmlFor="level">Level</label>
+          <label
+            className="block w-40 text-black dark:text-white"
+            htmlFor="level"
+          >
+            Level
+          </label>
           <select
             id="level"
             name="level"
@@ -130,7 +193,16 @@ const UpdateProgramForm = () => {
             onBlur={formik.handleBlur}
             value={formik.values.level}
           >
-            <option className="text-center" value="MSC">
+            <option
+              className="text-center rounded-md border-[1.5px]"
+              value="PHD"
+            >
+              PHD
+            </option>
+            <option
+              className="text-center rounded-md border-[1.5px]"
+              value="MSC"
+            >
               MSC
             </option>
             <option
@@ -157,9 +229,56 @@ const UpdateProgramForm = () => {
           <p className="text-red-500 text-sm mb-4">{formik.errors.level}</p>
         )}
 
+        {/* Language Dropdown */}
+        <div className="mb-4 flex items-center">
+          <label
+            className="block w-40 text-black dark:text-white"
+            htmlFor="language"
+          >
+            Language
+          </label>
+          <select
+            id="language"
+            name="language"
+            className={`w-40 text-center rounded-md border-[1.5px] py-2 px-3 outline-none transition ${
+              formik.touched.language && formik.errors.language
+                ? 'border-red-500'
+                : 'border-gray-300 focus:border-primary'
+            } dark:bg-gray-800`}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.language}
+          >
+            <option
+              className="text-center rounded-md border-[1.5px]"
+              value="SINHALA"
+            >
+              SINHALA
+            </option>
+            <option
+              className="text-center rounded-md border-[1.5px]"
+              value="ENGLISH"
+            >
+              ENGLISH
+            </option>
+            <option
+              className="text-center rounded-md border-[1.5px]"
+              value="TAMIL"
+            >
+              TAMIL
+            </option>
+          </select>
+        </div>
+        {formik.touched.language && formik.errors.language && (
+          <p className="text-red-500 text-sm mb-4">{formik.errors.language}</p>
+        )}
+
         {/* Duration in Days (Counter) */}
         <div className="mb-4 flex items-center">
-          <label className="block w-40 text-black dark:text-white" htmlFor="durationInDays">
+          <label
+            className="block w-40 text-black dark:text-white"
+            htmlFor="durationInDays"
+          >
             Duration (Days)
           </label>
           <div className="flex items-center">
@@ -176,7 +295,10 @@ const UpdateProgramForm = () => {
 
         {/* Student Count (Counter) */}
         <div className="mb-4 flex items-center">
-          <label className="block w-40 text-black dark:text-white" htmlFor="studentCount">
+          <label
+            className="block w-40 text-black dark:text-white"
+            htmlFor="studentCount"
+          >
             Student Count
           </label>
           <div className="flex items-center">
@@ -193,7 +315,10 @@ const UpdateProgramForm = () => {
 
         {/* Batch ID */}
         <div className="mb-4 flex items-center">
-          <label className="block w-40 text-black dark:text-white" htmlFor="batchId">
+          <label
+            className="block w-40 text-black dark:text-white"
+            htmlFor="batchId"
+          >
             Batch ID
           </label>
           <input
@@ -217,7 +342,10 @@ const UpdateProgramForm = () => {
 
         {/* Payment */}
         <div className="mb-4 flex items-center">
-          <label className="block w-40 text-black dark:text-white" htmlFor="payment">
+          <label
+            className="block w-40 text-black dark:text-white"
+            htmlFor="payment"
+          >
             Payment
           </label>
           <input
@@ -259,7 +387,7 @@ const UpdateProgramForm = () => {
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values.description}
-            rows={6} // Allows multi-line support
+            rows={6}
           />
         </div>
         {formik.touched.description && formik.errors.description && (
@@ -271,17 +399,23 @@ const UpdateProgramForm = () => {
         {/* Submit Button */}
         <button
           onClick={() => {
-            return formik.handleSubmit
+            return formik.handleSubmit;
           }}
           className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
           type="submit"
+          disabled={!formik.isValid}
         >
-          Update Program
+          {`${pathname.slice(14, 20) === 'update' ? 'Update' : 'Add'} `}
+          Program
         </button>
       </form>
-      {toast && <Toast
-        // @ts-ignore
-        {...toast} onClose={() => setToast(null)} />}
+      {toast && (
+        <Toast
+          // @ts-ignore
+          {...toast}
+          onClose={() => setToast(null)}
+        />
+      )}
     </>
   );
 };

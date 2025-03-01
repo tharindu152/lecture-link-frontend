@@ -1,31 +1,39 @@
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
 import { Link, useLocation } from 'react-router-dom';
 import Loader from '../../common/Loader/Loader.tsx';
-import { useQuery } from 'react-query';
-import SubjectService from '../../services/subjectService.ts';
+import { useEffect, useState } from 'react';
+import { useData } from '../../context/MainContext.tsx';
+import { Program } from '../../types/instituteTypes/program.ts';
 
 const Subject = () => {
-
+  const [programsList, setProgramsList] = useState<Program[]>([]);
   const location = useLocation();
+  const data = useData()
   const { pathname } = location;
 
-  const {
-    data: subject,
-    isLoading: isLoadingSubject,
-  } = useQuery(['getSubjectById'], () => SubjectService.getSubjectById({subjectId:pathname.slice(14)}));
+  useEffect(() => {
+    // @ts-ignore
+    setProgramsList(data?.programs);
+  }, []);
 
-  if (!subject) {
-    return (
-      <>
-        <Breadcrumb pageName="Subject Details" />
-        <div className="p-6 rounded-md border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-          <h3 className="text-2xl font-semibold text-red-600">Subject Not Found</h3>
-        </div>
-      </>
-    );
-  }
+  const subject = programsList?.flatMap(prog => prog.subjects || []).find(sub => sub?.id === Number(pathname.slice(14)));
 
-  if (isLoadingSubject) {
+  const subjectProgramMap = programsList.reduce((acc, prog) => {
+    prog.subjects?.forEach((sub) => {
+      // @ts-ignore
+      acc[sub.id] = prog.name;
+    });
+    return acc;
+  }, {} as Record<number, string>);
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
     return <Loader />;
   }
 
@@ -35,7 +43,7 @@ const Subject = () => {
 
       <div className="rounded-md border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark p-6">
         <h3 className="text-3xl font-semibold text-black dark:text-white mb-6">
-          {subject.name}
+          {subject?.name}
         </h3>
 
         <div className="space-y-4">
@@ -44,7 +52,9 @@ const Subject = () => {
             <h4 className="font-semibold text-black dark:text-white w-40">
               Program:
             </h4>
-            <p className="flex-1">{subject.noOfCredits}</p>
+            <p className="flex-1">{
+              // @ts-ignore
+              subjectProgramMap[subject?.id]}</p>
           </div>
 
           {/* Number of Credits */}
@@ -52,7 +62,7 @@ const Subject = () => {
             <h4 className="font-semibold text-black dark:text-white w-40">
               No. of Credits:
             </h4>
-            <p className="flex-1">{subject.noOfCredits}</p>
+            <p className="flex-1">{subject?.noOfCredits}</p>
           </div>
 
           {/* Assigned Status */}
@@ -61,7 +71,7 @@ const Subject = () => {
               Assigned:
             </h4>
             <p className="flex-1">
-              {subject.isAssigned ? (
+              {subject?.isAssigned ? (
                 <span className="text-green-500">Yes</span>
               ) : (
                 <span className="text-red-500">No</span>
@@ -70,27 +80,27 @@ const Subject = () => {
           </div>
 
           {/* Lecturer ID */}
-          {subject.lecturerId && (
+          {subject?.lecturerId && (
             <div className="flex gap-4">
               <h4 className="font-semibold text-black dark:text-white w-40">
                 Lecturer ID:
               </h4>
-              <p className="flex-1">{subject.lecturerId}</p>
+              <p className="flex-1">{subject?.lecturerId}</p>
             </div>
           )}
 
           {/* Description */}
-          {subject.description && (
+          {subject?.description && (
             <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
               <h4 className="font-semibold text-black dark:text-white w-full sm:w-40">
                 Description:
               </h4>
-              <p className="flex-1 break-words">{subject.description}</p>
+              <p className="flex-1 break-words">{subject?.description}</p>
             </div>
           )}
         </div>
         <Link
-          to="/app/subjects/add-subject"
+          to={`/app/subjects/update-subject/${subject?.id}`}
           className="mt-4 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
         >
           <svg

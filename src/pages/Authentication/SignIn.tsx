@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import LogoDark from '../../images/logo/LectureLinkLogoDark.png';
 import Logo from '../../images/logo/LectureLinkLogo.png';
 import { useFormik } from 'formik';
@@ -7,19 +7,21 @@ import * as Yup from 'yup';
 import { useMutation } from 'react-query';
 import authService from '../../services/authService.ts';
 import Loader from '../../common/Loader/Loader.tsx';
-import Toast from '../../components/Toast.tsx';
+import Toast from '../../components/Miscellaneous/Toast.tsx';
 import { jwtDecode } from 'jwt-decode';
+import { useData, useDispatcher } from '../../context/MainContext.tsx';
 
 const SignIn: React.FC = () => {
   const [toast, setToast] = useState(null);
-  const navigate = useNavigate();
+  const dispatcher = useDispatcher()
+  useData()
 
   const { mutate: signInUser, isLoading: isSigningIn } = useMutation(
     authService.signIn,
     {
       onSuccess: (data) => {
         try {
-          const decodedToken = jwtDecode(data);
+          const decodedToken = jwtDecode(data.token);
 
           if (decodedToken.iss !== import.meta
             // @ts-ignore
@@ -29,12 +31,15 @@ const SignIn: React.FC = () => {
             return;
           }
 
-          localStorage.setItem("token", data);
+          localStorage.setItem("token", data.token);
           localStorage.setItem("issuer", decodedToken.iss ?? '');
+          localStorage.setItem("userId", data.id ?? '');
+          localStorage.setItem("role", data.role ?? '');
+          dispatcher({ type: 'view'});
           // @ts-ignore
           setToast({ message: 'User Signed In Successfully', type: 'success' });
           setTimeout(() => {
-            navigate('/app/dashboard');
+            window.location.href = '/app/dashboard';
           }, 3000);
         } catch (error) {
           // @ts-ignore
@@ -67,6 +72,7 @@ const SignIn: React.FC = () => {
     }),
     onSubmit: async (values) => {
       signInUser({ email: values.email, password: values.password });
+      formik.resetForm()
     },
   });
 
@@ -90,6 +96,11 @@ const SignIn: React.FC = () => {
                 <img className="hidden dark:block" src={Logo} alt="Logo" />
                 <img className="dark:hidden" src={LogoDark} alt="Logo" />
               </Link>
+              <div className="mt-6 text-center">
+                <p>
+                  Connect with top lecturers or institutes in the academic world.<br/>Sign In to start!
+                </p>
+              </div>
             </div>
           </div>
 
@@ -193,6 +204,7 @@ const SignIn: React.FC = () => {
                   <button
                     type="submit"
                     onClick={()=>formik.handleSubmit()}
+                    disabled={!formik.isValid}
                     className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
                   >Sign In</button>
                 </div>

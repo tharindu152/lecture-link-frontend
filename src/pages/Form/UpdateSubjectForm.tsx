@@ -6,18 +6,37 @@ import { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
 import Loader from '../../common/Loader/Loader.tsx';
 import subjectService from '../../services/subjectService.ts';
-import Toast from '../../components/Toast.tsx';
+import Toast from '../../components/Miscellaneous/Toast.tsx';
+import { useData, useDispatcher } from '../../context/MainContext.tsx';
+import { InstituteRes } from '../../types/instituteTypes/instituteRes.ts';
+import { useLocation } from 'react-router-dom';
+import programService from '../../services/programService.ts';
+import { Program } from '../../types/instituteTypes/program.ts';
 
 const UpdateSubjectForm = () => {
-
+  const data: InstituteRes | null = useData()
+  const dispatch = useDispatcher();
+  const location = useLocation();
   const [toast, setToast] = useState(null);
+
+  const { pathname } = location;
+  const subject = data?.programs?.flatMap(prog => prog.subjects || []).find(sub => sub?.id === Number(pathname.slice(29)));
+  let prog:Program = pathname.slice(14, 20) !== 'update' && JSON.parse(localStorage?.getItem('program') ?? '');
 
   const { mutate: createSubject, isLoading: isCreatingSubject } = useMutation(
     subjectService.createSubject,
     {
-      onSuccess: () => {
+      onSuccess: (data) => {
         // @ts-ignore
         setToast({ message: "Subject created successfully!", type: "success" });
+        // @ts-ignore
+        prog?.subjects?.push({ id: data.id });
+        console.log(prog)
+        updateProgram({
+          programId: prog?.id,
+          programData: prog
+        })
+        formik.resetForm()
       },
       onError: () => {
         // @ts-ignore
@@ -26,15 +45,56 @@ const UpdateSubjectForm = () => {
     },
   );
 
-  const formik = useFormik<Subject>({
-    initialValues: {
-      id: undefined,
-      name: '',
-      noOfCredits: 1,
-      description: '',
-      isAssigned: false,
-      lecturerId: undefined,
+  const { mutate: updateSubject, isLoading: isUpdatingSubject } = useMutation(
+    subjectService.updateSubject,
+    {
+      onSuccess: () => {
+        // @ts-ignore
+        setToast({ message: "Subject updated successfully!", type: "success" });
+        dispatch({ type: "delete" });
+      },
+      onError: () => {
+        // @ts-ignore
+        setToast({ message: "Subject update is unsuccessful!", type: "error" });
+      },
     },
+  );
+
+  const { mutate: updateProgram, isLoading: isUpdatingProgram } = useMutation(
+    programService.updateProgram,
+    {
+      onSuccess: () => {
+        // @ts-ignore
+        setToast({ message: "Subject added to the program successfully!", type: "success" });
+        dispatch({ type: "delete" });
+      },
+      onError: () => {
+        // @ts-ignore
+        setToast({ message: "Subject addition to the program is unsuccessful!", type: "error" });
+      },
+    },
+  );
+
+  const formik = useFormik<Subject>({
+    initialValues:
+      pathname?.includes('update')
+        ? {
+            id: subject?.id,
+            name: subject?.name ?? '',
+            noOfCredits: subject?.noOfCredits ?? 0,
+            description: subject?.description,
+            isAssigned: subject?.isAssigned ?? false,
+            lecturerId: subject?.lecturerId,
+
+          }
+        : {
+            id: undefined,
+            name: '',
+            noOfCredits: 1,
+            description: '',
+            isAssigned: false,
+            lecturerId: undefined,
+          },
     validationSchema: Yup.object({
       name: Yup.string()
         .required('Subject name is required')
@@ -48,11 +108,12 @@ const UpdateSubjectForm = () => {
         .max(1000, 'Description must not exceed 1000 characters')
         .nullable(),
       isAssigned: Yup.boolean().required('Assignment status is required'),
-      lecturerId: Yup.number()
-        .nullable(),
+      lecturerId: Yup.number().nullable(),
     }),
     onSubmit: (values) => {
-      createSubject({ subjectData: values });
+      pathname.slice(14, 20) === 'update'
+        ? updateSubject({ subjectId: subject?.id, subjectData: values })
+        : createSubject({ subjectData: values });
     },
   });
 
@@ -63,13 +124,13 @@ const UpdateSubjectForm = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  if (isCreatingSubject || loading) {
+  if (isCreatingSubject || isUpdatingSubject || isUpdatingProgram || loading) {
     return <Loader />;
   }
 
   return (
     <>
-      <Breadcrumb pageName="Add/Update Subject" />
+      <Breadcrumb pageName={`${pathname.slice(14, 20) === 'update' ? "Update" : "Add"} Subject`} />
       <form
         onSubmit={formik.handleSubmit}
         className="p-6 rounded-lg border border-stroke bg-white shadow-md dark:border-strokedark dark:bg-boxdark"
@@ -105,6 +166,7 @@ const UpdateSubjectForm = () => {
           <label className="block w-40 text-black dark:text-white" htmlFor="isAssigned">
             Is Assigned
           </label>
+
           <div
             id="isAssigned"
             onClick={() =>
@@ -127,7 +189,7 @@ const UpdateSubjectForm = () => {
           <label className="block w-40 text-black dark:text-white" htmlFor="lecturerId">
             Lecturer ID
           </label>
-          <select
+          <input
             id="lecturerId"
             name="lecturerId"
             className={`w-40 text-center rounded-md border-[1.5px] py-2 px-3 outline-none transition ${
@@ -139,12 +201,7 @@ const UpdateSubjectForm = () => {
             onBlur={formik.handleBlur}
             value={formik.values.lecturerId}
             disabled={!formik.values.isAssigned}
-          >
-            <option value={1}>1</option>
-            <option value={2}>2</option>
-            <option value={3}>3</option>
-            <option value={4}>4</option>
-          </select>
+          ></input>
         </div>
         {formik.touched.lecturerId && formik.errors.lecturerId && (
           <p className="text-red-500 text-sm mb-4">{formik.errors.lecturerId}</p>
@@ -210,9 +267,10 @@ const UpdateSubjectForm = () => {
         <div className="mt-6">
           <button
             type="submit"
+            disabled={!formik.isValid}
             className="w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
           >
-            Update Subject
+            {`${pathname.slice(14, 20) === 'update' ? 'Update' : 'Add'} `} Subject
           </button>
         </div>
       </form>

@@ -1,4 +1,4 @@
-import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
+import Breadcrumb from '../Breadcrumbs/Breadcrumb.tsx';
 import userThree from '../../images/user/user-03.png';
 
 const Settings = () => {

@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
 import qualificationService from '../../services/qualificationService.ts';
 import Loader from '../../common/Loader/Loader.tsx';
-import Toast from '../../components/Toast.tsx';
+import Toast from '../../components/Miscellaneous/Toast.tsx';
 
 const UpdateQualificationForm = () => {
 

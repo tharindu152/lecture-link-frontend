@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { useMutation } from 'react-query';
 import Loader from '../../common/Loader/Loader.tsx';
 import lecturerService from '../../services/lecturerService.ts';
-import Toast from '../../components/Toast.tsx';
+import Toast from '../../components/Miscellaneous/Toast.tsx';
 
 const UpdateLecturerForm = () => {
 
@@ -36,7 +36,7 @@ const UpdateLecturerForm = () => {
       contactNo: '',
       payRate: 0,
       dob: '',
-      review: 0,
+      rating: 0,
       isAssigned: false,
       status: 'ACTIVE',
       picture: null,
@@ -67,7 +67,7 @@ const UpdateLecturerForm = () => {
           .required('Date of birth is required')
           .nullable()
           .max(new Date(), 'Date of birth cannot be in the future'),
-        review: Yup.number()
+        rating: Yup.number()
           .required('Rating is required')
           .min(0, 'Rating must be non-negative')
           .max(5, 'Rating cannot exceed 5'),
@@ -89,7 +89,7 @@ const UpdateLecturerForm = () => {
       formData.append('contactNo', values.contactNo);
       formData.append('payRate', values.payRate.toString());
       formData.append('dob', values.dob);
-      formData.append('review', values.review?.toString() ?? '0');
+      formData.append('rating', values.rating?.toString() ?? '0');
       formData.append('isAssigned', String(values.isAssigned));
       formData.append('status', values.status);
       formData.append('preference', values.preference);
@@ -301,11 +301,11 @@ const UpdateLecturerForm = () => {
           </label>
           {[1, 2, 3, 4, 5].map((star) => (
             <span
-              id={`rating-${star}`}
+              id={`rating`}
               key={star}
-              onClick={() => formik.setFieldValue('review', star)}
+              onClick={() => formik.setFieldValue('rating', star)}
               className={`mx-1 cursor-pointer text-2xl ${
-                formik.values.review >= star
+                formik.values.rating >= star
                   ? 'text-yellow-400'
                   : 'text-gray-500'
               }`}
