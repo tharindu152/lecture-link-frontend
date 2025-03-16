@@ -6,7 +6,7 @@ import { useQuery } from 'react-query';
 import lecturerService from '../../services/lecturerService.ts';
 import { LecturerRes } from '../../types/lecturerTypes/lecturerRes.ts';
 import Toast from '../../components/Miscellaneous/Toast.tsx';
-import dummyProfileImg from '../../images/user/profile.png';
+import dummyProfileImg from '../../images/user/profile_dummy.png';
 import { useData } from '../../context/MainContext.tsx';
 import { InstituteRes } from '../../types/instituteTypes/instituteRes.ts';
 

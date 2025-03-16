@@ -1,13 +1,13 @@
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { FaStar } from 'react-icons/fa';
-import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
-import DatePickerTwo from '../../components/Forms/DatePicker/DatePickerTwo.tsx';
+import Breadcrumb from '../Breadcrumbs/Breadcrumb.tsx';
+import DatePicker from './DatePicker/DatePicker.tsx';
 import { useState } from 'react';
 import { useMutation } from 'react-query';
 import Loader from '../../common/Loader/Loader.tsx';
 import lecturerService from '../../services/lecturerService.ts';
-import Toast from '../../components/Miscellaneous/Toast.tsx';
+import Toast from '../Miscellaneous/Toast.tsx';
 
 const UpdateLecturerForm = () => {
 
@@ -57,7 +57,10 @@ const UpdateLecturerForm = () => {
         district: Yup.string().required('District is required'),
         contactNo: Yup.string()
           .required('Contact number is required')
-          .matches(/^\d{10}$/, 'Telephone must be a valid 10-digit number'),
+          .matches(
+            /^(?:\+94|0)?(?:7[01245678]\d{7}|1\d{8})$/,
+            'Invalid Sri Lankan telephone number',
+          ),
         payRate: Yup.number()
           .required('Hourly rate is required')
           .integer('Hourly rate must be an integer')
@@ -130,7 +133,7 @@ const UpdateLecturerForm = () => {
             className={`flex-1 rounded-md border-[1.5px] py-2 px-3 outline-none transition ${
               formik.touched.name && formik.errors.name
                 ? 'border-red-500'
-                : 'border-gray-300 focus:border-primary'
+                : 'border-gray-800 focus:border-primary'
             } dark:bg-gray-800`}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -157,7 +160,7 @@ const UpdateLecturerForm = () => {
             className={`flex-1 rounded-md border-[1.5px] py-2 px-3 outline-none transition ${
               formik.touched.password && formik.errors.password
                 ? 'border-red-500'
-                : 'border-gray-300 focus:border-primary'
+                : 'border-gray-800 focus:border-primary'
             } dark:bg-gray-800`}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -184,7 +187,7 @@ const UpdateLecturerForm = () => {
             className={`flex-1 rounded-md border-[1.5px] py-2 px-3 outline-none transition ${
               formik.touched.email && formik.errors.email
                 ? 'border-red-500'
-                : 'border-gray-300 focus:border-primary'
+                : 'border-gray-800 focus:border-primary'
             } dark:bg-gray-800`}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -211,7 +214,7 @@ const UpdateLecturerForm = () => {
             className={`flex-1 rounded-md border-[1.5px] py-2 px-3 outline-none transition ${
               formik.touched.district && formik.errors.district
                 ? 'border-red-500'
-                : 'border-gray-300 focus:border-primary'
+                : 'border-gray-800 focus:border-primary'
             } dark:bg-gray-800`}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -238,7 +241,7 @@ const UpdateLecturerForm = () => {
             className={`flex-1 rounded-md border-[1.5px] py-2 px-3 outline-none transition ${
               formik.touched.contactNo && formik.errors.contactNo
                 ? 'border-red-500'
-                : 'border-gray-300 focus:border-primary'
+                : 'border-gray-800 focus:border-primary'
             } dark:bg-gray-800`}
             onChange={(e) => {
               formik.setFieldValue('contactNo', e.target.value);
@@ -264,7 +267,7 @@ const UpdateLecturerForm = () => {
             className={`rounded-md border-[1.5px] py-2 px-3 outline-none w-52 text-center transition ${
               formik.touched.payRate && formik.errors.payRate
                 ? 'border-red-500'
-                : 'border-gray-300 focus:border-primary'
+                : 'border-gray-800 focus:border-primary'
             } dark:bg-gray-800`}
             value={formik.values.payRate}
             onChange={(e) => {
@@ -283,7 +286,7 @@ const UpdateLecturerForm = () => {
           <label className="block w-40 text-black dark:text-white" htmlFor="dob">
             Date of Birth
           </label>
-          <DatePickerTwo
+          <DatePicker
             id="dob"
             value={formik.values.dob}
             onChange={(date) => formik.setFieldValue('dob', date)}
@@ -325,7 +328,7 @@ const UpdateLecturerForm = () => {
             onClick={() =>
               formik.setFieldValue('isAssigned', !formik.values.isAssigned)
             }
-            className={`w-12 h-6 rounded-full cursor-pointer p-1 transition border-gray-300 ${
+            className={`w-12 h-6 rounded-full cursor-pointer p-1 transition border-gray-800 ${
               formik.values.isAssigned ? 'bg-primary' : 'bg-gray-500'
             }`}
           >
@@ -348,7 +351,7 @@ const UpdateLecturerForm = () => {
             className={`flex-1 rounded-md border-[1.5px] px-3 py-2 outline-none transition ${
               formik.touched.status && formik.errors.status
                 ? 'border-red-500'
-                : 'border-gray-300 focus:border-primary'
+                : 'border-gray-800 focus:border-primary'
             } bg-white dark:bg-gray-800 dark:text-white`}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -379,7 +382,7 @@ const UpdateLecturerForm = () => {
             className={`relative h-full w-full sm:flex-1 cursor-pointer border rounded bg-gray-50 py-4 px-4 sm:py-7.5 dark:bg-gray-800 dark:text-white ${
               formik.touched.picture && formik.errors.picture
                 ? 'border-red-500'
-                : 'border-gray-300 hover:border-primary'
+                : 'border-gray-800 hover:border-primary'
             }`}
           >
             {/* File Input */}
@@ -457,7 +460,7 @@ const UpdateLecturerForm = () => {
             className={`w-full sm:flex-1 rounded-md border-[1.5px] py-2 px-3 outline-none transition resize-none ${
               formik.touched.preference && formik.errors.preference
                 ? 'border-red-500'
-                : 'border-gray-300 focus:border-primary'
+                : 'border-gray-800 focus:border-primary'
             } dark:bg-gray-800 dark:text-white h-32`}
             onChange={(e) => {
               formik.setFieldValue('preference', e.target.value);
@@ -478,6 +481,7 @@ const UpdateLecturerForm = () => {
           onClick={()=>formik.handleSubmit()}
           className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
           type="submit"
+          disabled={!formik.isValid}
         >
           Update Lecturer
         </button>

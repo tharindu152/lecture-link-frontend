@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { FaStar } from 'react-icons/fa';
 import Loader from '../../common/Loader/Loader.tsx';
-import dummyLogo from '../../images/brand/logo-dummy.jpg';
+import dummyLogo from '../../images/brand/logo_dummy.jpg';
 import { useData } from '../../context/MainContext.tsx';
 import { InstituteRes } from '../../types/instituteTypes/instituteRes.ts';
 

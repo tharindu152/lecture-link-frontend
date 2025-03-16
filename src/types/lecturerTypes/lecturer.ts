@@ -4,9 +4,9 @@ import { Language } from '../enums/language.ts';
 
 export type Lecturer = {
   id?: number;
-  name: string;
-  district: string;
-  email: string;
+  // name: string;
+  // district: string;
+  // email: string;
   password: string;
   dob?: string;
   contactNo?: string;

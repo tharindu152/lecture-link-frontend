@@ -1,17 +1,17 @@
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { FaStar } from 'react-icons/fa';
-import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
+import Breadcrumb from '../Breadcrumbs/Breadcrumb.tsx';
 import { useMutation } from 'react-query';
 import instituteService from '../../services/instituteService.ts';
 import Loader from '../../common/Loader/Loader.tsx';
 import { useEffect, useState } from 'react';
-import Toast from '../../components/Miscellaneous/Toast.tsx';
+import Toast from '../Miscellaneous/Toast.tsx';
 import { useData, useDispatcher } from '../../context/MainContext.tsx';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { InstituteRes } from '../../types/instituteTypes/instituteRes.ts';
 import { Status } from '../../types/enums/status.ts';
-import ConfirmationModal from '../../components/Miscellaneous/ConfirmationModal.tsx';
+import ConfirmationModal from '../Miscellaneous/ConfirmationModal.tsx';
 
 const UpdateInstituteForm = () => {
   const [toast, setToast] = useState(null);
@@ -32,9 +32,6 @@ const UpdateInstituteForm = () => {
           type: 'success',
         });
         dispatch({ type: 'delete' });
-        if (pathname.includes("settings")) {
-          //todo - fill
-        }
       },
       onError: () => {
         setToast({
@@ -50,18 +47,15 @@ const UpdateInstituteForm = () => {
       onSuccess: () => {
         setToast({
           // @ts-ignore
-          message: 'Institute updated successfully!',
+          message: `${pathname.includes("settings") ? 'Settings updated successfully!. Please login again' : 'Institute updated successfully!'}`,
           type: 'success',
         });
-        dispatch({ type: 'delete' });
-        if (pathname.includes("settings")) {
-          //todo - fill
-        }
+        !pathname.includes("settings") && dispatch({ type: 'delete' });
       },
       onError: () => {
         setToast({
           // @ts-ignore
-          message: 'Institute update is unsuccessful!',
+          message: `${pathname.includes("settings") ? 'Settings' : 'Institute'} update is unsuccessful!`,
           type: 'error',
         });
       },
@@ -92,7 +86,7 @@ const UpdateInstituteForm = () => {
       password: Yup.string()
         .matches(
           /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[_]?)[A-Za-z\d_]{15,16}$/,
-          'Password must be 15-16 characters long and include at least one uppercase letter, one lowercase letter,' +
+          'Password must be 16 characters long and include at least one uppercase letter, one lowercase letter,' +
             ' and one number. No special characters allowed other than underscore ',
         )
         .required('Password is required'),
@@ -137,7 +131,7 @@ const UpdateInstituteForm = () => {
       if (values.ugcRegNo) formData.append('ugcRegNo', values.ugcRegNo);
 
       // @ts-ignore
-      formik.values.logo.size > 0 ?
+      formik.values.logo?.size > 0 ?
       updateInstituteMultipart({
         instituteId: institute?.id,
         instituteConfig: formData,
@@ -195,7 +189,7 @@ const UpdateInstituteForm = () => {
                 className={`flex-1 rounded-md border-[1.5px] py-2 px-3 outline-none transition ${
                   formik.touched.name && formik.errors.name
                     ? 'border-red-500'
-                    : 'border-gray-300 focus:border-primary'
+                    : 'border-gray-800 focus:border-primary'
                 } dark:bg-gray-800`}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -226,7 +220,7 @@ const UpdateInstituteForm = () => {
                 className={`flex-1 rounded-md border-[1.5px] py-2 px-3 outline-none transition ${
                   formik.touched.password && formik.errors.password
                     ? 'border-red-500'
-                    : 'border-gray-300 focus:border-primary'
+                    : 'border-gray-800 focus:border-primary'
                 } dark:bg-gray-800`}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -254,7 +248,7 @@ const UpdateInstituteForm = () => {
                 className={`flex-1 rounded-md border-[1.5px] py-2 px-3 outline-none transition ${
                   formik.touched.email && formik.errors.email
                     ? 'border-red-500'
-                    : 'border-gray-300 focus:border-primary'
+                    : 'border-gray-800 focus:border-primary'
                 } dark:bg-gray-800`}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -285,7 +279,7 @@ const UpdateInstituteForm = () => {
                 className={`flex-1 rounded-md border-[1.5px] py-2 px-3 outline-none transition ${
                   formik.touched.district && formik.errors.district
                     ? 'border-red-500'
-                    : 'border-gray-300 focus:border-primary'
+                    : 'border-gray-800 focus:border-primary'
                 } dark:bg-gray-800`}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -314,7 +308,7 @@ const UpdateInstituteForm = () => {
                 className={`flex-1 rounded-md border-[1.5px] py-2 px-3 outline-none transition ${
                   formik.touched.telephone && formik.errors.telephone
                     ? 'border-red-500'
-                    : 'border-gray-300 focus:border-primary'
+                    : 'border-gray-800 focus:border-primary'
                 } dark:bg-gray-800`}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -343,7 +337,7 @@ const UpdateInstituteForm = () => {
                 className={`flex-1 rounded-md border-[1.5px] py-2 px-3 outline-none transition ${
                   formik.touched.ugcRegNo && formik.errors.ugcRegNo
                     ? 'border-red-500'
-                    : 'border-gray-300 focus:border-primary'
+                    : 'border-gray-800 focus:border-primary'
                 } dark:bg-gray-800`}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -396,7 +390,7 @@ const UpdateInstituteForm = () => {
               onClick={() =>
                 formik.setFieldValue('subscribed', !formik.values.subscribed)
               }
-              className={`w-12 h-6 rounded-full cursor-pointer p-1 transition border-gray-300 ${
+              className={`w-12 h-6 rounded-full cursor-pointer p-1 transition border-gray-800 ${
                 formik.values.subscribed ? 'bg-primary' : 'bg-gray-500'
               }`}
             >
@@ -423,7 +417,7 @@ const UpdateInstituteForm = () => {
             className={`flex-1 rounded-md border-[1.5px] px-3 py-2 outline-none transition ${
               formik.touched.status && formik.errors.status
                 ? 'border-red-500'
-                : 'border-gray-300 focus:border-primary'
+                : 'border-gray-800 focus:border-primary'
             } bg-white dark:bg-gray-800 dark:text-white`}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -459,7 +453,7 @@ const UpdateInstituteForm = () => {
                 className={`relative h-full w-full sm:flex-1 cursor-pointer border rounded bg-gray-50 py-4 px-4 sm:py-7.5 dark:bg-gray-800 dark:text-white ${
                   formik.touched.logo && formik.errors.logo
                     ? 'border-red-500'
-                    : 'border-gray-300 hover:border-primary'
+                    : 'border-gray-800 hover:border-primary'
                 }`}
               >
                 {/* File Input */}
@@ -540,7 +534,7 @@ const UpdateInstituteForm = () => {
                 className={`w-full sm:flex-1 rounded-md border-[1.5px] py-2 px-3 outline-none transition resize-none ${
                   formik.touched.description && formik.errors.description
                     ? 'border-red-500'
-                    : 'border-gray-300 focus:border-primary'
+                    : 'border-gray-800 focus:border-primary'
                 } dark:bg-gray-800 dark:text-white h-32`}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -557,30 +551,47 @@ const UpdateInstituteForm = () => {
         )}
 
         {/* Submit Button */}
-        <button
-          onClick={() => {
-            return formik.handleSubmit;
-          }}
-          className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
-          type="submit"
-        >
-          {`Update ${pathname.includes("settings") ? 'Settings' : 'Institute'}`}
-        </button>
+        {
+          pathname.includes('settings') ? (
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                setIsModalOpen(true);
+              }}
+              disabled={!formik.isValid}
+              className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
+              type="submit"
+            >
+              {`Update Settings`}
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                return formik.handleSubmit;
+              }}
+              disabled={!formik.isValid}
+              className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
+              type="submit"
+            >
+              {`Update Institute`}
+            </button>
+          )
+        }
+
       </form>
       <ConfirmationModal
         isOpen={isModalOpen}
         title={'Confirm Account Settings Change'}
-        message={'Are you sure that you want to change account settings?'}
+        message={`Account settings changes will log you out from LectureLink. You have to login again using new credentials. Do you want to continue?`}
         btnOne={'Yes'}
         btnTwo={'No'}
+        submit={true}
         onConfirm={() => {
+          formik.handleSubmit();
           localStorage.removeItem('token');
           localStorage.removeItem('issuer');
           localStorage.removeItem('role');
           localStorage.removeItem('userId');
-          dispatch({ type: 'delete' });
-          // @ts-ignore
-          setDropdownOpen(false);
           // @ts-ignore
           setToast({ message: 'User Logging Out!', type: 'error' });
           setTimeout(() => {
@@ -590,7 +601,7 @@ const UpdateInstituteForm = () => {
         onClose={() => {
           setIsModalOpen(false);
           // @ts-ignore
-          setToast({ message: 'Account settings reverted to last saved', type: 'success' });
+          setToast({ message: 'Account settings are reverted to last saved', type: 'success' });
         }}
       ></ConfirmationModal>
       {toast && (

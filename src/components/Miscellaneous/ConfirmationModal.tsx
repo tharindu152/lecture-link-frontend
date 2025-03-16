@@ -8,9 +8,10 @@ type Props = {
   btnTwo: string;
   onConfirm: (locale: string) => void;
   onClose: (locale: string) => void;
+  submit?:boolean;
 };
 
-const DeleteInstituteModal: FC<Props> = ({ isOpen, title, message, btnOne, btnTwo, onConfirm, onClose }) => {
+const ConfirmationModal: FC<Props> = ({ isOpen, title, message, btnOne, btnTwo, onConfirm, onClose, submit }) => {
   if (!isOpen) return null;
 
   // @ts-ignore
@@ -33,6 +34,7 @@ const DeleteInstituteModal: FC<Props> = ({ isOpen, title, message, btnOne, btnTw
           </button>
           <button
             className="px-4 py-2 bg-red-600 dark:bg-red-700 text-white rounded-lg transition border-2 border-white dark:border-gray-800 hover:border-red-900 dark:hover:border-red-400"
+            type={`${submit ? 'submit' : 'button'}`}
             onClick={() => {
               // @ts-ignore
               onConfirm();
@@ -48,4 +50,4 @@ const DeleteInstituteModal: FC<Props> = ({ isOpen, title, message, btnOne, btnTw
   );
 };
 
-export default DeleteInstituteModal;
+export default ConfirmationModal;

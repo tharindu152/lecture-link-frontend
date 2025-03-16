@@ -2,10 +2,9 @@ import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Loader from '../../common/Loader/Loader.tsx';
-import { LecturerRes } from '../../types/lecturerTypes/lecturerRes.ts';
-import dummyProfileImg from '../../images/user/profile.png';
+import dummyProfileImg from '../../images/user/profile_dummy.png';
 
-const lecturers: LecturerRes[] = [
+const lecturers = [
   {
     id: 1,
     name: 'John Doe',
@@ -191,9 +190,11 @@ const SmartMatchLecturers = () => {
     navigate(path); // Route navigation
   };
 
-  const getHighestQualification = (lecturer: LecturerRes) => {
+  // @ts-ignore
+  const getHighestQualification = (lecturer) => {
     const priority = ["PHD", "MSC", "BSC", "HND", "PGD"];
-    const qualifications = lecturer?.qualifications?.map(q => q.level.toUpperCase()) || [];
+    // @ts-ignore
+    const qualifications = lecturer?.qualifications?.map(q => q?.level?.toUpperCase()) || [];
 
     return priority.find(level => qualifications.includes(level)) ?? "N/A";
   };
@@ -275,7 +276,7 @@ const SmartMatchLecturers = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentLecturers.map((lecturer: LecturerRes, key) => (
+                {currentLecturers.map((lecturer, key) => (
                   <tr
                     key={key+lecturer.name}
                     className="hover:bg-gray-200 dark:hover:bg-gray-800"

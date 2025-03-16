@@ -1,6 +1,6 @@
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
 import { useState } from 'react';
-import dummyLogo from '../../images/brand/logo-dummy.jpg';
+import dummyLogo from '../../images/brand/logo_dummy.jpg';
 import { useNavigate } from 'react-router-dom';
 import Loader from '../../common/Loader/Loader.tsx';
 import { useMutation, useQuery } from 'react-query';

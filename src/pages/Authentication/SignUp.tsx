@@ -91,13 +91,13 @@ const SignUp: React.FC = () => {
       password: Yup.string()
         .matches(
           /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[_]?)[A-Za-z\d_]{15,16}$/,
-          'Password must be 15-16 characters long and include at least one uppercase letter, one lowercase letter,' +
+          'Password must be 16 characters long and include at least one uppercase letter, one lowercase letter,' +
           ' and one number. No special characters allowed other than underscore ')
         .required('Password is required'),
       re_password: Yup.string()
         .matches(
           /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*_?)[A-Za-z\d_]{15,16}$/,
-          'Password must be 15-16 characters long and include at least one uppercase letter, one lowercase letter, and one number. No special characters allowed other than underscore.'
+          'Password must be 16 characters long and include at least one uppercase letter, one lowercase letter, and one number. No special characters allowed other than underscore.'
         )
         .oneOf([Yup.ref('password')], 'Passwords must match')
         .required('Confirm Password is required'),

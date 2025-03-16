@@ -7,7 +7,7 @@ interface DatePickerTwoProps {
   id?: string;
 }
 
-const DatePickerTwo = ({ value, onChange, id }: DatePickerTwoProps) => {
+const DatePicker = ({ value, onChange, id }: DatePickerTwoProps) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -72,4 +72,4 @@ const DatePickerTwo = ({ value, onChange, id }: DatePickerTwoProps) => {
   );
 };
 
-export default DatePickerTwo;
+export default DatePicker;

@@ -7,7 +7,7 @@ import { useMutation } from 'react-query';
 import lecturerService from '../../services/lecturerService.ts';
 import { LecturerRes } from '../../types/lecturerTypes/lecturerRes.ts';
 import Toast from '../../components/Miscellaneous/Toast.tsx';
-import dummyProfileImg from '../../images/user/profile.png';
+import dummyProfileImg from '../../images/user/profile_dummy.png';
 
 // Dropdown options
 const districtOptions = ['Kandy', 'Colombo', 'Kurunagala', 'Matale', 'Nuwareliya', 'Galle'];

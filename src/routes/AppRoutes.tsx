@@ -5,26 +5,26 @@ import SignIn from './../pages/Authentication/SignIn';
 import SignUp from './../pages/Authentication/SignUp';
 import Dashboard from './../pages/Dashboard/Dashboard';
 import Institute from './../pages/Institute/Institute';
-import UpdateInstituteForm from './../pages/Form/UpdateInstituteForm';
+import UpdateInstituteForm from '../components/Forms/UpdateInstituteForm.tsx';
 import Institutes from './../pages/Institute/Institutes';
 import Programs from './../pages/Institute/Programs';
-import UpdateProgramForm from './../pages/Form/UpdateProgramForm';
+import UpdateProgramForm from '../components/Forms/UpdateProgramForm.tsx';
 import Subjects from './../pages/Institute/Subjects';
-import UpdateSubjectForm from './../pages/Form/UpdateSubjectForm';
+import UpdateSubjectForm from '../components/Forms/UpdateSubjectForm.tsx';
 import FilteredSubjects from './../pages/Institute/FilteredSubjects';
 import SmartMatchSubjects from './../pages/Institute/SmartMatchSubjects';
 import Lecturers from './../pages/Lecturer/Lecturers';
 import FilteredLecturers from './../pages/Lecturer/FilteredLecturers';
 import SmartMatchLecturers from './../pages/Lecturer/SmartMatchLecturers';
 import Qualifications from './../pages/Lecturer/Qualifications';
-import UpdateQualificationForm from './../pages/Form/UpdateQualificationForm';
-import Settings from '../components/Miscellaneous/Settings';
+import UpdateQualificationForm from '../components/Forms/UpdateQualificationForm.tsx';
 import NotFound from '../components/Miscellaneous/NotFound';
 import Program from '../pages/Institute/Program.tsx';
 import Subject from '../pages/Institute/Subject.tsx';
 import Qualification from '../pages/Lecturer/Qualification.tsx';
 import Lecturer from '../pages/Lecturer/Lecturer.tsx';
-import UpdateLecturerForm from '../pages/Form/UpdateLecturerForm.tsx';
+import UpdateLecturerForm from '../components/Forms/UpdateLecturerForm.tsx';
+import About from '../pages/Dashboard/About.tsx';
 
 export const routes: RouteObject[] = [
   { path: '/', element: <Navigate to="/auth/signin" /> },
@@ -41,6 +41,7 @@ export const routes: RouteObject[] = [
     children: [
       { index: true, element: <Navigate to="dashboard" /> },
       { path: 'dashboard', element: <><PageTitle title="Lecture Link | Dashboard" /><Dashboard /></> },
+      { path: 'about', element: <><PageTitle title="Lecture Link | Dashboard" /><About /></> },
 
       { path: 'profile', children: [
           { index: true, element: <><PageTitle title={`Lecture Link | ${localStorage.getItem("role") === 'INSTITUTE' ? "Institute" : "Lecturer"}`} />{localStorage.getItem("role") === 'INSTITUTE' ? <Institute /> : <Lecturer/>}</> },
@@ -81,7 +82,6 @@ export const routes: RouteObject[] = [
           { path: ':qualificationId', element: <><PageTitle title="Lecture Link | Qualification" /><Qualification /></> }
         ]},
 
-      { path: 'settings', element: <><PageTitle title="Settings" /><Settings /></> },
       { path: '*', element: <><PageTitle title="404 Not Found" /><NotFound /></> },
     ],
   },

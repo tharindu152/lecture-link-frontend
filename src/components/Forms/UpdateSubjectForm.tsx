@@ -1,12 +1,12 @@
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
+import Breadcrumb from '../Breadcrumbs/Breadcrumb.tsx';
 import { Subject } from '../../types/instituteTypes/subject.ts';
 import { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
 import Loader from '../../common/Loader/Loader.tsx';
 import subjectService from '../../services/subjectService.ts';
-import Toast from '../../components/Miscellaneous/Toast.tsx';
+import Toast from '../Miscellaneous/Toast.tsx';
 import { useData, useDispatcher } from '../../context/MainContext.tsx';
 import { InstituteRes } from '../../types/instituteTypes/instituteRes.ts';
 import { useLocation } from 'react-router-dom';
@@ -150,7 +150,7 @@ const UpdateSubjectForm = () => {
             className={`flex-1 rounded-md border-[1.5px] py-2 px-3 outline-none transition ${
               formik.touched.name && formik.errors.name
                 ? 'border-red-500'
-                : 'border-gray-300 focus:border-primary'
+                : 'border-gray-800 focus:border-primary'
             } dark:bg-gray-800`}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -172,7 +172,7 @@ const UpdateSubjectForm = () => {
             onClick={() =>
               formik.setFieldValue('isAssigned', !formik.values.isAssigned)
             }
-            className={`w-12 h-6 rounded-full cursor-pointer p-1 transition border-gray-300 ${
+            className={`w-12 h-6 rounded-full cursor-pointer p-1 transition border-gray-800 ${
               formik.values.isAssigned ? 'bg-primary' : 'bg-gray-500'
             }`}
           >
@@ -195,7 +195,7 @@ const UpdateSubjectForm = () => {
             className={`w-40 text-center rounded-md border-[1.5px] py-2 px-3 outline-none transition ${
               formik.touched.lecturerId && formik.errors.lecturerId
                 ? 'border-red-500'
-                : 'border-gray-300 focus:border-primary'
+                : 'border-gray-800 focus:border-primary'
             } dark:bg-gray-800 disabled:bg-gray-300 dark:disabled:bg-gray-600`}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -221,7 +221,7 @@ const UpdateSubjectForm = () => {
               className={`w-40 text-center rounded-md border-[1.5px] py-2 px-3 outline-none transition ${
                 formik.touched.noOfCredits && formik.errors.noOfCredits
                   ? 'border-red-500'
-                  : 'border-gray-300 focus:border-primary'
+                  : 'border-gray-800 focus:border-primary'
               } dark:bg-gray-800`}
               value={formik.values.noOfCredits}
               onChange={formik.handleChange}
@@ -250,7 +250,7 @@ const UpdateSubjectForm = () => {
             className={`w-full sm:flex-1 rounded-md border-[1.5px] py-2 px-3 outline-none transition resize-none ${
               formik.touched.description && formik.errors.description
                 ? 'border-red-500'
-                : 'border-gray-300 focus:border-primary'
+                : 'border-gray-800 focus:border-primary'
             } dark:bg-gray-800 dark:text-white h-32`}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}

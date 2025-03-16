@@ -1,13 +1,13 @@
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
+import Breadcrumb from '../Breadcrumbs/Breadcrumb.tsx';
 import { useMutation } from 'react-query';
 import programService from '../../services/programService.ts';
 import { Program } from '../../types/instituteTypes/program.ts';
 import { useEffect, useState } from 'react';
 import Loader from '../../common/Loader/Loader.tsx';
 import { Level } from '../../types/enums/level.ts';
-import Toast from '../../components/Miscellaneous/Toast.tsx';
+import Toast from '../Miscellaneous/Toast.tsx';
 import { useData, useDispatcher } from '../../context/MainContext.tsx';
 import { useLocation } from 'react-router-dom';
 import { InstituteRes } from '../../types/instituteTypes/instituteRes.ts';
@@ -29,6 +29,7 @@ const UpdateProgramForm = () => {
       onSuccess: () => {
         // @ts-ignore
         setToast({ message: "Program created successfully!", type: "success" });
+        dispatch({ type: "delete" });
         formik.resetForm()
       },
       onError: () => {
@@ -162,7 +163,7 @@ const UpdateProgramForm = () => {
             className={`flex-1 rounded-md border-[1.5px] py-2 px-3 outline-none transition ${
               formik.touched.name && formik.errors.name
                 ? 'border-red-500'
-                : 'border-gray-300 focus:border-primary'
+                : 'border-gray-800 focus:border-primary'
             } dark:bg-gray-800`}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -187,7 +188,7 @@ const UpdateProgramForm = () => {
             className={`w-40 text-center rounded-md border-[1.5px] py-2 px-3 outline-none transition ${
               formik.touched.level && formik.errors.level
                 ? 'border-red-500'
-                : 'border-gray-300 focus:border-primary'
+                : 'border-gray-800 focus:border-primary'
             } dark:bg-gray-800`}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -243,7 +244,7 @@ const UpdateProgramForm = () => {
             className={`w-40 text-center rounded-md border-[1.5px] py-2 px-3 outline-none transition ${
               formik.touched.language && formik.errors.language
                 ? 'border-red-500'
-                : 'border-gray-300 focus:border-primary'
+                : 'border-gray-800 focus:border-primary'
             } dark:bg-gray-800`}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -286,7 +287,7 @@ const UpdateProgramForm = () => {
               id="durationInDays"
               name="durationInDays"
               type="number"
-              className="w-40 text-center rounded-md border-[1.5px] py-2 px-3 outline-none transition dark:bg-gray-800"
+              className="w-40 text-center rounded-md border-[1.5px] py-2 px-3 outline-none transition border-gray-800 dark:bg-gray-800"
               value={formik.values.durationInDays}
               onChange={formik.handleChange}
             />
@@ -306,12 +307,19 @@ const UpdateProgramForm = () => {
               id="studentCount"
               name="studentCount"
               type="number"
-              className=" w-40 text-center rounded-md border-[1.5px] py-2 px-3 outline-none transition dark:bg-gray-800"
+              className={`rounded-md border-[1.5px] py-2 px-3 outline-none w-40 text-center transition ${
+                formik.touched.studentCount && formik.errors.studentCount
+                  ? 'border-red-500'
+                  : 'border-gray-800 focus:border-primary'
+              } dark:bg-gray-800`}
               value={formik.values.studentCount}
               onChange={formik.handleChange}
             />
           </div>
         </div>
+        {formik.touched.studentCount && formik.errors.studentCount && (
+          <p className="text-red-500 text-sm mb-4">{formik.errors.studentCount}</p>
+        )}
 
         {/* Batch ID */}
         <div className="mb-4 flex items-center">
@@ -329,7 +337,7 @@ const UpdateProgramForm = () => {
             className={`w-40 text-center rounded-md border-[1.5px] py-2 px-3 outline-none transition ${
               formik.touched.batchId && formik.errors.batchId
                 ? 'border-red-500'
-                : 'border-gray-300 focus:border-primary'
+                : 'border-gray-800 focus:border-primary'
             } dark:bg-gray-800`}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -356,7 +364,7 @@ const UpdateProgramForm = () => {
             className={`rounded-md border-[1.5px] py-2 px-3 outline-none w-40 text-center transition ${
               formik.touched.payment && formik.errors.payment
                 ? 'border-red-500'
-                : 'border-gray-300 focus:border-primary'
+                : 'border-gray-800 focus:border-primary'
             } dark:bg-gray-800`}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -382,7 +390,7 @@ const UpdateProgramForm = () => {
             className={`w-full sm:flex-1 rounded-md border-[1.5px] py-2 px-3 outline-none transition resize-none ${
               formik.touched.description && formik.errors.description
                 ? 'border-red-500'
-                : 'border-gray-300 focus:border-primary'
+                : 'border-gray-800 focus:border-primary'
             } dark:bg-gray-800 dark:text-white h-32`}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}

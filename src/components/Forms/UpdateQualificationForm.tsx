@@ -1,14 +1,14 @@
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
+import Breadcrumb from '../Breadcrumbs/Breadcrumb.tsx';
 import { Qualification } from '../../types/lecturerTypes/qualification.ts';
 import { Level } from '../../types/enums/level.ts';
-import DatePickerTwo from '../../components/Forms/DatePicker/DatePickerTwo.tsx';
+import DatePicker from './DatePicker/DatePicker.tsx';
 import { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
 import qualificationService from '../../services/qualificationService.ts';
 import Loader from '../../common/Loader/Loader.tsx';
-import Toast from '../../components/Miscellaneous/Toast.tsx';
+import Toast from '../Miscellaneous/Toast.tsx';
 
 const UpdateQualificationForm = () => {
 
@@ -108,7 +108,7 @@ const UpdateQualificationForm = () => {
             className={`flex-1 rounded-md border-[1.5px] py-2 px-3 outline-none transition ${
               formik.touched.name && formik.errors.name
                 ? 'border-red-500'
-                : 'border-gray-300 focus:border-primary'
+                : 'border-gray-800 focus:border-primary'
             } dark:bg-gray-800`}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -132,7 +132,7 @@ const UpdateQualificationForm = () => {
             className={`flex-1 rounded-md border-[1.5px] py-2 px-3 outline-none transition ${
               formik.touched.awardingBody && formik.errors.awardingBody
                 ? 'border-red-500'
-                : 'border-gray-300 focus:border-primary'
+                : 'border-gray-800 focus:border-primary'
             } dark:bg-gray-800`}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -179,7 +179,7 @@ const UpdateQualificationForm = () => {
             className={`flex-1 rounded-md border-[1.5px] py-2 px-3 outline-none transition ${
               formik.touched.discipline && formik.errors.discipline
                 ? 'border-red-500'
-                : 'border-gray-300 focus:border-primary'
+                : 'border-gray-800 focus:border-primary'
             } dark:bg-gray-800`}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -195,7 +195,7 @@ const UpdateQualificationForm = () => {
           <label className="block w-40 text-black dark:text-white" htmlFor="completedAt">
             Completed At
           </label>
-          <DatePickerTwo
+          <DatePicker
             id="completedAt"
             value={formik.values.completedAt}
             onChange={(date) => formik.setFieldValue('completedAt', date)}
@@ -214,7 +214,7 @@ const UpdateQualificationForm = () => {
             className={`w-40 text-center rounded-md border-[1.5px] py-2 px-3 outline-none transition ${
               formik.touched.level && formik.errors.level
                 ? 'border-red-500'
-                : 'border-gray-300 focus:border-primary'
+                : 'border-gray-800 focus:border-primary'
             } dark:bg-gray-800`}
             onChange={formik.handleChange}
             value={formik.values.level}
@@ -238,6 +238,7 @@ const UpdateQualificationForm = () => {
           }}
           className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
           type="submit"
+          disabled={!formik.isValid}
         >
           Update Qualification
         </button>
