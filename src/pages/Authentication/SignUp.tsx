@@ -192,7 +192,7 @@ const SignUp: React.FC = () => {
                   className="mb-2.5 block font-medium text-black dark:text-white"
                   htmlFor="name"
                 >
-                  Name
+                  {formik.values?.type === Role.LECTURER ? 'Full Name' : 'Institute Name'}
                 </label>
                 <div className="relative">
                   <input

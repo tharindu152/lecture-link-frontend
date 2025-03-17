@@ -131,7 +131,7 @@ const FilteredSubjects = () => {
                   : 'border-gray-300 focus:border-primary'
               } dark:bg-gray-800`}
             >
-              <option value="">All</option>
+              <option value="">Select District</option>
               {districtOptions.map((district, index) => (
                 <option key={index + district} value={district}>
                   {district}
@@ -156,7 +156,7 @@ const FilteredSubjects = () => {
                   : 'border-gray-300 focus:border-primary'
               } dark:bg-gray-800`}
             >
-              <option value="">All</option>
+              <option value="">Select Level</option>
               {levelOptions.map((level, index) => (
                 <option key={index + level} value={level}>
                   {level}
@@ -181,7 +181,7 @@ const FilteredSubjects = () => {
                   : 'border-gray-300 focus:border-primary'
               } dark:bg-gray-800`}
             >
-              <option value="">All</option>
+              <option value="">Select Credits</option>
               {creditOptions.map((credit, index) => (
                 <option key={index + credit} value={credit}>
                   {credit}
@@ -206,7 +206,7 @@ const FilteredSubjects = () => {
                   : 'border-gray-300 focus:border-primary'
               } dark:bg-gray-800`}
             >
-              <option value="">All</option>
+              <option value="">Select Rate</option>
               {hourlyRateOptions.map((rate, index) => (
                 <option key={index + rate} value={rate}>
                   {rate}
@@ -231,7 +231,7 @@ const FilteredSubjects = () => {
                   : 'border-gray-300 focus:border-primary'
               } dark:bg-gray-800`}
             >
-              <option value="">All</option>
+              <option value="">Select Duration</option>
               {durationOptions.map((duration, index) => (
                 <option key={index + duration} value={duration}>
                   {duration}
@@ -256,7 +256,7 @@ const FilteredSubjects = () => {
                   : 'border-gray-300 focus:border-primary'
               } dark:bg-gray-800`}
             >
-              <option value="">All</option>
+              <option value="">Select Count</option>
               {studentCountOptions.map((count, index) => (
                 <option key={index + count} value={count}>
                   {count}
@@ -266,7 +266,7 @@ const FilteredSubjects = () => {
           </div>
 
           {/*Global search term*/}
-          <div className="flex flex-col">
+          <div className="flex flex-col" title="Search term will be used to find matched from Subject name and description">
             <label className="block text-sm font-medium mb-2" htmlFor="globalSearch">
               Search Term
             </label>

@@ -354,7 +354,7 @@ const UpdateProgramForm = () => {
             className="block w-40 text-black dark:text-white"
             htmlFor="payment"
           >
-            Payment
+            Hourly payment to lecturer (LKR)
           </label>
           <input
             id="payment"
@@ -381,7 +381,7 @@ const UpdateProgramForm = () => {
             className="w-full sm:w-40 mb-2 sm:mb-0 text-black dark:text-white"
             htmlFor="description"
           >
-            Description
+            Program Description
           </label>
           <textarea
             id="description"

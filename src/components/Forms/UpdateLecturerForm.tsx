@@ -257,7 +257,7 @@ const UpdateLecturerForm = () => {
         {/* Payment */}
         <div className="mb-4 flex items-center">
           <label className="block w-40 text-black dark:text-white" htmlFor="payment">
-            Hourly Rate
+            Expected Hourly Payment
           </label>
           <input
             id="payment"
@@ -451,7 +451,7 @@ const UpdateLecturerForm = () => {
             className="w-full sm:w-40 mb-2 sm:mb-0 text-black dark:text-white"
             htmlFor="description"
           >
-            Description
+            Lecturer Description
           </label>
           <textarea
             id="description"

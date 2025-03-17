@@ -68,7 +68,7 @@ const Subject = () => {
           {/* Assigned Status */}
           <div className="flex gap-4">
             <h4 className="font-semibold text-black dark:text-white w-40">
-              Assigned:
+              Is a lecturer assigned?:
             </h4>
             <p className="flex-1">
               {subject?.isAssigned ? (

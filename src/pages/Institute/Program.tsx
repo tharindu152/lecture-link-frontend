@@ -104,7 +104,7 @@ const Program = () => {
           {/* Payment */}
           <div className="flex gap-4">
             <h4 className="font-semibold text-black dark:text-white w-40">
-              Payment:
+              Hourly Payment to Lecturer (LKR):
             </h4>
             <p className="flex-1">${program?.payment?.toFixed(2)}</p>
           </div>

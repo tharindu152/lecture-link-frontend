@@ -14,6 +14,7 @@ import programService from '../../services/programService.ts';
 import { Program } from '../../types/instituteTypes/program.ts';
 
 const UpdateSubjectForm = () => {
+  //@ts-ignore
   const data: InstituteRes | null = useData()
   const dispatch = useDispatcher();
   const location = useLocation();
@@ -31,11 +32,11 @@ const UpdateSubjectForm = () => {
         setToast({ message: "Subject created successfully!", type: "success" });
         // @ts-ignore
         prog?.subjects?.push({ id: data.id });
-        console.log(prog)
         updateProgram({
           programId: prog?.id,
           programData: prog
         })
+        dispatch({ type: "delete" });
         formik.resetForm()
       },
       onError: () => {
@@ -241,7 +242,7 @@ const UpdateSubjectForm = () => {
             className="w-full sm:w-40 mb-2 sm:mb-0 text-black dark:text-white"
             htmlFor="description"
           >
-            Description
+            Subject Description
           </label>
           <textarea
             id="description"

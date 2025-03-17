@@ -324,7 +324,7 @@ const Qualifications = () => {
 
       <ConfirmationModal
         isOpen={isModalOpen}
-        title={'Confirm Deletion'}
+        title={'Delete Confirmation'}
         message={'Are you sure that you want to delete this Qualification?'}
         btnOne={'Delete'}
         btnTwo={'Cancel'}

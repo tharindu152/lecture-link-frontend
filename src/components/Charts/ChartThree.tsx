@@ -14,12 +14,12 @@ const options: ApexOptions = {
     type: 'donut',
   },
   colors: ['#8FD0EF', '#6577F3'],
-  labels: ['Assigned', 'Unassigned'],
+  labels: ['Lecturer Assigned', 'Lecturer Unassigned'],
   legend: {
     show: false,
   },
   tooltip: {
-    enabled: true,
+    enabled: false,
   },
   plotOptions: {
     pie: {

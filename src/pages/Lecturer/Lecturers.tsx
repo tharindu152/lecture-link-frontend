@@ -123,7 +123,7 @@ const Lecturers = () => {
                     Hourly Rate (LKR)
                   </th>
                   <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                    Is Assigned
+                    Already assigned to a Subject
                   </th>
                   <th className="py-4 px-4 text-left font-medium text-black dark:text-white">
                     Actions

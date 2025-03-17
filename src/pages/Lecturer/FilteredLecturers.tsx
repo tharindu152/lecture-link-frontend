@@ -132,7 +132,7 @@ const FilteredLecturers = () => {
                   : 'border-gray-300 focus:border-primary'
               } dark:bg-gray-800`}
             >
-              <option value="">All</option>
+              <option value="">Select District</option>
               {districtOptions.map((district, index) => (
                 <option key={index+district} value={district}>
                   {district}
@@ -156,7 +156,7 @@ const FilteredLecturers = () => {
                   ? 'border-red-500'
                   : 'border-gray-300 focus:border-primary'
               } dark:bg-gray-800`}>
-              <option value="">All</option>
+              <option value="">Select Qualifications</option>
               {qualificationOptions.map((qualification, index) => (
                 <option key={index+qualification} value={qualification}>
                   {qualification}
@@ -180,7 +180,7 @@ const FilteredLecturers = () => {
                   ? 'border-red-500'
                   : 'border-gray-300 focus:border-primary'
               } dark:bg-gray-800`}>
-              <option value="">All</option>
+              <option value="">Select Hourly Rate</option>
               {hourlyRateOptions.map((rate, index) => (
                 <option key={index+rate} value={rate}>
                   {rate}
@@ -192,7 +192,7 @@ const FilteredLecturers = () => {
           {/* Is Assigned Filter */}
           <div className="flex flex-col">
             <label className="block text-sm font-medium mb-2" htmlFor="isAssigned">
-              Is Assigned
+              Already Assigned For a Subject
             </label>
             <select
               id="isAssigned"
@@ -204,7 +204,7 @@ const FilteredLecturers = () => {
                   ? 'border-red-500'
                   : 'border-gray-300 focus:border-primary'
               } dark:bg-gray-800`}>
-              <option value="">All</option>
+              <option value="">Select Option</option>
               {isAssignedOptions.map((option, index) => (
                 <option key={index+option} value={option}>
                   {option}
@@ -226,7 +226,7 @@ const FilteredLecturers = () => {
                   ? 'border-red-500'
                   : 'border-gray-500 focus:border-primary'
               } dark:bg-gray-800`}>
-              <option value="">All</option>
+              <option value="">Select Language</option>
               {languageOptions.map((language, index) => (
                 <option key={index+language} value={language}>
                   {language}
@@ -236,7 +236,7 @@ const FilteredLecturers = () => {
           </div>
 
           {/*Global search term*/}
-          <div className="flex flex-col">
+          <div className="flex flex-col" title="Search term will be used to find matches from Lecturer name and description">
             <label className="block text-sm font-medium mb-2" htmlFor="globalSearch">
               Search Term
             </label>
@@ -320,10 +320,10 @@ const FilteredLecturers = () => {
                     Contact Number
                   </th>
                   <th className="min-w-[100px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                    Hourly Rate (LKR)
+                    Expected Hourly Payment (LKR)
                   </th>
                   <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                    Is Assigned
+                    Already Assigned
                   </th>
                   <th className="py-4 px-4 text-left font-medium text-black dark:text-white">
                     Actions
