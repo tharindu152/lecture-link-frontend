@@ -6,9 +6,9 @@ interface SidebarLinkGroupProps {
 }
 
 const SidebarLinkGroup = ({
-  children,
-  activeCondition,
-}: SidebarLinkGroupProps) => {
+                            children,
+                            activeCondition,
+                          }: SidebarLinkGroupProps) => {
   const [open, setOpen] = useState<boolean>(activeCondition);
 
   const handleClick = () => {
