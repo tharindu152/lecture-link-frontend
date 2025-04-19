@@ -2,37 +2,35 @@ import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
 import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Loader from '../../common/Loader/Loader.tsx';
-import { useMutation, useQuery } from 'react-query';
-import qualificationService from '../../services/qualificationService.ts';
+import { useMutation } from 'react-query';
 import { Qualification } from '../../types/lecturerTypes/qualification.ts';
 import ConfirmationModal from '../../components/Miscellaneous/ConfirmationModal.tsx';
 import Toast from '../../components/Miscellaneous/Toast.tsx';
+import { LecturerRes } from '../../types/lecturerTypes/lecturerRes.ts';
+import { useData } from '../../context/MainContext.tsx';
+import QualificationService from '../../services/qualificationService.ts';
 
 const Qualifications = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
-
+  const data:LecturerRes | null = useData();
   const [qualificationList, setQualificationList] = useState<Qualification[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedQualification, setSelectedQualification] = useState(0);
   const [toast, setToast] = useState(null);
 
-  const {
-    isLoading: isLoadingQualifications,
-    refetch
-  } = useQuery(['getQualifications'], () => qualificationService.getAllQualifications(), {
-    onSuccess: (data) => {
-      setQualificationList(data)
-    }
-  });
+  useEffect(() => {
+    // @ts-ignore
+    setQualificationList(data?.qualifications);
+    localStorage.removeItem('qualification');
+  }, []);
 
   const { mutate: deleteQualification, isLoading: isDeletingQualification } = useMutation(
-    qualificationService.deleteQualificationById,
+    QualificationService.deleteQualificationById,
     {
       onSuccess: () => {
         // @ts-ignore
         setToast({ message: "Qualification deleted successfully!", type: "success" });
-        refetch()
       },
       onError: () => {
         // @ts-ignore
@@ -41,38 +39,36 @@ const Qualifications = () => {
     },
   );
 
-  const itemsPerPage = 5; // Define how many items to display per page.
+  const itemsPerPage = 5;
 
-  // Calculate the items for the current page
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentQualifications = qualificationList.slice(indexOfFirstItem, indexOfLastItem);
+  const currentQualifications = qualificationList?.slice(indexOfFirstItem, indexOfLastItem);
 
-  const totalPages = Math.ceil(qualificationList.length / itemsPerPage);
+  const totalPages = Math.ceil(qualificationList?.length / itemsPerPage);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
   const handleNavigation = (path: string) => {
-    navigate(path); // Navigate to the desired route
+    navigate(path);
   };
 
   const deleteOperation = (qualificationId:number) => {
-    setQualificationList((prev) =>
-      prev.filter((prog) => prog.id !== qualificationId),
-    );
     deleteQualification({qualificationId: qualificationId})
+    setQualificationList((prev) =>
+      prev.filter((qual) => qual.id !== qualificationId),
+    );
   }
-
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1000); // Simulating a loading state
-    return () => clearTimeout(timer); // Cleanup timer
+    const timer = setTimeout(() => setLoading(false), 1000);
+    return () => clearTimeout(timer);
   }, []);
 
-  if (loading || isLoadingQualifications || isDeletingQualification) {
+  if (isDeletingQualification) {
     return <Loader />;
   }
 
@@ -85,32 +81,39 @@ const Qualifications = () => {
           <div className="max-w-full overflow-x-auto">
             <table className="w-full table-auto">
               <thead>
-                <tr className="bg-gray-2 text-left dark:bg-meta-4">
-                  <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
-                    Title
-                  </th>
-                  <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
-                    Discipline
-                  </th>
-                  <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
-                    Awarding Body
-                  </th>
-                  <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
-                    Duration (Months)
-                  </th>
-                  <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
-                    Completed At
-                  </th>
-                  <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
-                    Level
-                  </th>
-                  <th className="py-4 px-4 font-medium text-black dark:text-white">
-                    Actions
-                  </th>
-                </tr>
+              <tr className="bg-gray-2 text-left dark:bg-meta-4">
+                <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+                  Title
+                </th>
+                <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+                  Discipline
+                </th>
+                <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
+                  Awarding Body
+                </th>
+                <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
+                  Duration (Months)
+                </th>
+                <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+                  Completed At
+                </th>
+                <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+                  Level
+                </th>
+                <th className="py-4 px-4 font-medium text-black dark:text-white">
+                  Actions
+                </th>
+              </tr>
               </thead>
               <tbody>
-                {currentQualifications.map((qual, key) => (
+              {currentQualifications?.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="text-center py-5">
+                    <p className="text-gray-500">No Qualifications Found</p>
+                  </td>
+                </tr>
+              ) : (
+                currentQualifications?.map((qual, key) => (
                   <tr
                     key={key + qual?.name}
                     className={'hover:bg-gray-200 dark:hover:bg-gray-800'}
@@ -143,17 +146,19 @@ const Qualifications = () => {
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <p
                         className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium ${
-                          qual.level?.toLowerCase() === 'phd'
+                          qual.level?.toLowerCase() === 'doctorate'
                             ? 'bg-meta-7 text-meta-7'
-                            : qual.level?.toLowerCase() === 'msc'
-                            ? 'bg-danger text-danger'
-                            : qual.level?.toLowerCase() === 'bsc'
-                            ? 'bg-primary text-primary'
-                            : qual.level?.toLowerCase() === 'pgd'
-                            ? 'bg-warning text-warning'
-                            : qual.level?.toLowerCase() === 'hnd'
-                            ? 'bg-success text-success'
-                            : ''
+                            : qual.level?.toLowerCase() === 'masters'
+                              ? 'bg-danger text-danger'
+                              : qual.level?.toLowerCase() === 'bachelors'
+                                ? 'bg-primary text-primary'
+                                : qual.level?.toLowerCase() === 'postgraduate'
+                                  ? 'bg-warning text-warning'
+                                  : qual.level?.toLowerCase() === 'hnd'
+                                    ? 'bg-success text-success'
+                                    : qual.level?.toLowerCase() === 'hnc'
+                                      ? 'bg-success text-success'
+                                      : ''
                         }`}
                       >
                         {qual?.level}
@@ -191,7 +196,7 @@ const Qualifications = () => {
                           title="Edit"
                           onClick={() =>
                             handleNavigation(
-                              `/app/qualifications/update-qualification`,
+                              `/app/qualifications/update-qualification/${qual.id}`,
                             )
                           }
                         >
@@ -257,7 +262,8 @@ const Qualifications = () => {
                       </div>
                     </td>
                   </tr>
-                ))}
+                ))
+              )}
               </tbody>
             </table>
             {/* Pagination Controls */}
@@ -330,6 +336,7 @@ const Qualifications = () => {
         btnTwo={'Cancel'}
         onConfirm={() => {
           deleteOperation(selectedQualification);
+          setIsModalOpen(false);
         }}
         onClose={() => setIsModalOpen(false)}
       ></ConfirmationModal>

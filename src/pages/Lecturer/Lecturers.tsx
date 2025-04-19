@@ -15,6 +15,8 @@ const Lecturers = () => {
   const navigate = useNavigate();
   const [lecturerList, setLecturerList] = useState<LecturerRes[]>([]);
   const [toast, setToast] = useState(null);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [sortColumn, setSortColumn] = useState<string>('');
   // @ts-ignore
   const institute: InstituteRes = useData();
 
@@ -31,40 +33,10 @@ const Lecturers = () => {
     },
   );
 
-  //todo: use in manage acct drop down option of DropDown User
-
-  // const [isModalOpen, setIsModalOpen] = useState(false);
-  // const [selectedLecturer, setSelectedLecturer] = useState(0);
-
-  // const { mutate: deleteLecturer, isLoading: isDeletingLecturer } = useMutation(
-  //   lecturerService.deleteLecturerById,
-  //   {
-  //     onSuccess: () => {
-  //       // @ts-ignore
-  //       setToast({ message: "Lecturer deleted successfully!", type: "success" });
-  //       refetch()
-  //     },
-  //     onError: () => {
-  //       // @ts-ignore
-  //       setToast({ message: "Lecturer deletion unsuccessful!", type: "error" });
-  //     },
-  //   },
-  // );
-
-  //todo: use in manage acct drop down option of DropDown User
-
-  // const deleteOperation = (lecturerId:number) => {
-  //   setLecturerList((prev) =>
-  //     prev.filter((prog) => prog.id !== lecturerId),
-  //   );
-  //   deleteLecturer({lecturerId: lecturerId})
-  // }
-
   const itemsPerPage = 5;
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentLecturers = lecturerList?.slice(indexOfFirstItem, indexOfLastItem);
 
   const totalPages = Math.ceil(lecturerList?.length / itemsPerPage);
 
@@ -77,7 +49,7 @@ const Lecturers = () => {
   };
 
   const getHighestQualification = (lecturer: LecturerRes) => {
-    const priority = ["PHD", "MSC", "BSC", "HND", "PGD"];
+    const priority = ["DOCTORATE", "MASTERS", "BACHELORS", "HND", "POSTGRADUATE", "HNC"];
     const qualifications = lecturer?.qualifications?.map(q => q.level.toUpperCase()) || [];
 
     return priority.find(level => qualifications.includes(level)) ?? "N/A";
@@ -89,6 +61,26 @@ const Lecturers = () => {
     const timer = setTimeout(() => setLoading(false), 1000);
     return () => clearTimeout(timer);
   }, []);
+
+  const sortLecturers = (lecturers: LecturerRes[]) => {
+    return [...lecturers].sort((a, b) => {
+      const rateA = a.hourlyPayRate || 0;
+      const rateB = b.hourlyPayRate || 0;
+      return sortOrder === 'asc' ? rateA - rateB : rateB - rateA;
+    });
+  };;
+
+  const currentLecturers = sortLecturers(lecturerList)?.slice(indexOfFirstItem, indexOfLastItem);
+
+  const handleSort = (column: string) => {
+    if (sortColumn === column) {
+      setSortOrder(prev => (prev === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortColumn(column);
+      setSortOrder('asc');
+    }
+  };
+
 
   if (loading || isLoadingLecturers) {
     return <Loader />;
@@ -103,35 +95,45 @@ const Lecturers = () => {
           <div className="max-w-full overflow-x-auto">
             <table className="w-full table-auto">
               <thead>
-                <tr className="bg-gray-2 dark:bg-meta-4">
-                  <th className="min-w-[120px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                    Picture
-                  </th>
-                  <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                    Name
-                  </th>
-                  <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                    Highest Qualification
-                  </th>
-                  <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                    District
-                  </th>
-                  <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                    Contact Number
-                  </th>
-                  <th className="min-w-[100px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                    Hourly Rate (LKR)
-                  </th>
-                  <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                    Already assigned to a Subject
-                  </th>
-                  <th className="py-4 px-4 text-left font-medium text-black dark:text-white">
-                    Actions
-                  </th>
-                </tr>
+              <tr className="bg-gray-2 dark:bg-meta-4">
+                <th className="min-w-[120px] py-4 px-4 text-left font-medium text-black dark:text-white">
+                  Picture
+                </th>
+                <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
+                  Name
+                </th>
+                <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
+                  Highest Qualification
+                </th>
+                <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
+                  District
+                </th>
+                <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
+                  Contact Number
+                </th>
+                <th
+                  className="min-w-[100px] py-4 px-4 text-left font-medium text-black dark:text-white cursor-pointer"
+                  onClick={() => handleSort('hourlyRate')}
+                >
+                  Hourly Rate (LKR) {sortColumn === 'hourlyRate' ? (sortOrder === 'asc' ? '↑' : '↓') : ''}
+                </th>
+                <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
+                  Already assigned to a Subject
+                </th>
+                <th className="py-4 px-4 text-left font-medium text-black dark:text-white">
+                  Actions
+                </th>
+              </tr>
               </thead>
               <tbody>
-                {currentLecturers?.map((lecturer, key) => (
+              {lecturerList.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="text-center py-5">
+                    <p className="text-gray-500">No Lecturers Found</p>
+                  </td>
+                </tr>
+              ) : (
+                currentLecturers?.map((lecturer, key) => (
                   <tr
                     key={key + lecturer?.name}
                     className="hover:bg-gray-200 dark:hover:bg-gray-800"
@@ -153,22 +155,22 @@ const Lecturers = () => {
                           'phd'
                             ? 'bg-meta-7 text-meta-7'
                             : getHighestQualification(
+                              lecturer,
+                            )?.toLowerCase() === 'masters'
+                              ? 'bg-danger text-danger'
+                              : getHighestQualification(
                                 lecturer,
-                              )?.toLowerCase() === 'msc'
-                            ? 'bg-danger text-danger'
-                            : getHighestQualification(
-                                lecturer,
-                              )?.toLowerCase() === 'bsc'
-                            ? 'bg-primary text-primary'
-                            : getHighestQualification(
-                                lecturer,
-                              )?.toLowerCase() === 'pgd'
-                            ? 'bg-warning text-warning'
-                            : getHighestQualification(
-                                lecturer,
-                              )?.toLowerCase() === 'hnd'
-                            ? 'bg-success text-success'
-                            : ''
+                              )?.toLowerCase() === 'bachelors'
+                                ? 'bg-primary text-primary'
+                                : getHighestQualification(
+                                  lecturer,
+                                )?.toLowerCase() === 'pgd'
+                                  ? 'bg-warning text-warning'
+                                  : getHighestQualification(
+                                    lecturer,
+                                  )?.toLowerCase() === 'hnd'
+                                    ? 'bg-success text-success'
+                                    : ''
                         }`}
                       >
                         {getHighestQualification(lecturer)}
@@ -181,7 +183,7 @@ const Lecturers = () => {
                       {lecturer?.contactNo ?? 'N/A'}
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      ${lecturer?.payRate?.toFixed(2)}
+                      ${lecturer?.hourlyPayRate?.toLocaleString()}
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <span
@@ -224,7 +226,8 @@ const Lecturers = () => {
                       </div>
                     </td>
                   </tr>
-                ))}
+                ))
+              )}
               </tbody>
             </table>
 

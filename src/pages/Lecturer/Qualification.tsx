@@ -50,35 +50,37 @@ const Qualification = () => {
 
           </div>
 
-            <div className="flex gap-4">
-              <h4 className="font-semibold text-black dark:text-white w-40">
-                Duration (Months):
-              </h4>
-              <p className="flex-1">{Math.ceil((qualification?.durationInDays ?? 0) / 30)}</p>
-            </div>
+          <div className="flex gap-4">
+            <h4 className="font-semibold text-black dark:text-white w-40">
+              Duration (Months):
+            </h4>
+            <p className="flex-1">{Math.ceil((qualification?.durationInDays ?? 0) / 30)}</p>
+          </div>
 
-            <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
-              <h4 className="font-semibold text-black dark:text-white w-full sm:w-40">
-                Level:
-              </h4>
-              <p
-                className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium ${
-                  qualification?.level === 'PhD'
-                    ? 'bg-meta-7 text-meta-7'
-                    : qualification?.level === 'MSc'
-                      ? 'bg-danger text-danger'
-                      : qualification?.level === 'BSc'
-                        ? 'bg-primary text-primary'
-                        : qualification?.level === 'PGD'
-                          ? 'bg-warning text-warning'
-                          : qualification?.level === 'HND'
+          <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
+            <h4 className="font-semibold text-black dark:text-white w-full sm:w-40">
+              Level:
+            </h4>
+            <p
+              className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium ${
+                qualification?.level === 'DOCTORATE'
+                  ? 'bg-meta-7 text-meta-7'
+                  : qualification?.level === 'MASTERS'
+                    ? 'bg-danger text-danger'
+                    : qualification?.level === 'BACHELORS'
+                      ? 'bg-primary text-primary'
+                      : qualification?.level === 'POSTGRADUATE'
+                        ? 'bg-warning text-warning'
+                        : qualification?.level === 'HND'
+                          ? 'bg-success text-success'
+                          : qualification?.level === 'HNC'
                             ? 'bg-success text-success'
                             : ''
-                }`}
-              >
-                {qualification?.level}
-              </p>
-            </div>
+              }`}
+            >
+              {qualification?.level}
+            </p>
+          </div>
 
           <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
             <h4 className="font-semibold text-black dark:text-white w-full sm:w-40">
@@ -88,7 +90,7 @@ const Qualification = () => {
           </div>
         </div>
         <Link
-          to="/app/qualifications/update-qualification"
+          to={`/app/qualifications/update-qualification/${qualification?.id}`}
           className="mt-4 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
         >
           <svg

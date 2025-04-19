@@ -3,114 +3,28 @@ import { Link, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Loader from '../../common/Loader/Loader.tsx';
 import dummyLogo from '../../images/brand/logo_dummy.jpg';
+import { useData } from '../../context/MainContext.tsx';
 import { Subject } from '../../types/instituteTypes/subject.ts';
-import LecturerService from '../../services/lecturerService.ts';
-import { useMutation, useQuery } from 'react-query';
-import StarRating from '../../components/StarRate/StarRating.tsx';
-import SubjectService from '../../services/subjectService.ts';
-import { InstituteRes } from '../../types/instituteTypes/instituteRes.ts';
-import { useData, useDispatcher } from '../../context/MainContext.tsx';
-import { Role } from '../../types/enums/role.ts';
+import { LecturerRes } from '../../types/lecturerTypes/lecturerRes.ts';
 import { Rating } from '@mui/material';
-import EmailService from '../../services/emailService.ts';
-import Toast from '../../components/Miscellaneous/Toast.tsx';
 
 const Lecturer = () => {
+  const lecturer : LecturerRes | null = useData();
   const location = useLocation();
   const { pathname } = location;
   const [loading, setLoading] = useState(true);
-  const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
-  const institute: InstituteRes | null = useData() as InstituteRes;
-  const [toast, setToast] = useState(null);
-  const dispatch = useDispatcher();
 
-  const { data: lecturer, isLoading: isLoadingLecturer } = useQuery(
-    ['getLecturerById', pathname.slice(15)],
-    () => LecturerService.getLecturerById({ lecturerId: pathname.slice(15) }),
-  );
-
-  const { mutate: updateSubject, isLoading: isUpdatingSubject } = useMutation(
-    SubjectService.updateSubject,
-    {
-      onSuccess: () => {
-        // @ts-ignore
-        setToast({ message: "Subject updated successfully!", type: "success" });
-        dispatch({ type: "delete" });
-      },
-      onError: () => {
-        // @ts-ignore
-        setToast({ message: "Subject update is unsuccessful!", type: "error" });
-      },
-    },
-  );
-
-  const { mutate: sendEmail, isLoading: isSendingEmail } = useMutation(
-    EmailService.sendEmailLecturer,
-    {
-      onSuccess: () => {
-        // @ts-ignore
-        setToast({ message: "Assigned Subject to Lecturer successfully, Email has send successfully", type: "success" });
-        dispatch({ type: "delete" });
-      },
-      onError: () => {
-        // @ts-ignore
-        setToast({ message: "Assigned Subject to Lecturer unsuccessfull!", type: "error" });
-      },
-    }
-  );
-
-  function getUniqueSubjects(institute: InstituteRes | null): Subject[] {
-    if (!institute) {
-      return [];
-    }
-
-    const uniqueSubjects = new Set<Subject>();
-    institute.programs?.forEach(program => {
-      program.subjects?.forEach(subject => {
-        uniqueSubjects.add(subject);
-      });
-    });
-    return Array.from(uniqueSubjects);
-  }
-
-  const handleSubjectAssign = async () => {
-    try {
-      if (selectedSubject) {
-        const subjectData = {
-          ...selectedSubject,
-          isAssigned: true,
-          lecturerId: lecturer?.id,
-        };
-
-        const updatePayload = {
-          subjectId: selectedSubject.id,
-          subjectData: subjectData,
-        };
-
-        const lecturerId = lecturer?.id;
-
-        const lecturerData = await LecturerService.getLecturerById({ lecturerId });
-        const lecturerEmail = lecturerData.email;
-        await updateSubject(updatePayload);
-        await sendEmail({
-          lecturerEmail,
-          name: selectedSubject?.name,
-          data: institute?.name,
-        });
-      }
-      dispatch({ type: "delete" });
-    } catch (error) {
-      // @ts-ignore
-      setToast({ message: "An error occurred while assigning the subject.", type: "error" });
-    }
-  };
+  document.addEventListener('mousemove', () => {
+    // @ts-ignore
+    setCurrentRating(lecturer?.currentRating);
+  });
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1000);
-    return () => clearTimeout(timer);
-  }, []);
+      const timer = setTimeout(() => setLoading(false), 1000);
+      return () => clearTimeout(timer);
+    }, []);
 
-  if (isLoadingLecturer || isUpdatingSubject || loading) {
+  if (loading) {
     return <Loader />;
   }
 
@@ -214,9 +128,9 @@ const Lecturer = () => {
                   Rating:
                 </h4>
                 <div className="flex items-center">
-                  <Rating
+                <Rating
                     value={lecturer?.currentRating}
-                  />
+                    />
                 </div>
               </div>
 
@@ -247,41 +161,7 @@ const Lecturer = () => {
                   </ul>
                 </div>
               )}
-
-              {localStorage.getItem('role') === Role.INSTITUTE && (
-                <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
-                  <h4 className="font-semibold text-black dark:text-white w-full sm:w-40">
-                    Assign Subject to Lecturer:
-                  </h4>
-                  <select
-                    value={selectedSubject ? selectedSubject.id : ''}
-                    onChange={(e) => {
-                      const subject = getUniqueSubjects(institute).find(sub => sub?.id === Number(e.target.value));
-                      setSelectedSubject(subject || null);
-                    }}
-                    className="w-half border border-gray-300 rounded-md p-2 bg-gray-800"
-                  >
-                    <option value="" disabled>Select a subject</option>
-                    {getUniqueSubjects(institute).map(subject => (
-                      <option key={subject?.id + subject?.name} value={subject?.id}>
-                        {subject?.name} ({subject?.noOfCredits} Credits)
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    onClick={handleSubjectAssign}
-                    disabled={isSendingEmail}
-                    className="mt-2 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 px-3 py-2 text-center text-sm text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
-                  >
-                    {isSendingEmail ? 'Sending...' : 'Assign Subject'}
-                  </button>
-                </div>
-              )}
-
-              <StarRating lecturerId={lecturer?.id}/>
             </div>
-
-            {pathname.includes('profile') && (
               <Link
                 to={`/app/profile/update-lecturer/${lecturer?.id}`}
                 className="mt-4 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
@@ -312,13 +192,9 @@ const Lecturer = () => {
                 </svg>
                 Update Lecturer
               </Link>
-            )}
           </div>
         </div>
       </div>
-      {toast && <Toast
-        // @ts-ignore
-        {...toast} onClose={() => setToast(null)} />}
     </>
   );
 };

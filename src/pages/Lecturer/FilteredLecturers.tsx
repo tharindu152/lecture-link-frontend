@@ -10,8 +10,34 @@ import Toast from '../../components/Miscellaneous/Toast.tsx';
 import dummyProfileImg from '../../images/user/profile_dummy.png';
 
 // Dropdown options
-const districtOptions = ['Kandy', 'Colombo', 'Kurunagala', 'Matale', 'Nuwareliya', 'Galle'];
-const qualificationOptions = ['PhD', 'MSc', 'BSc', 'PGD', 'HND'];
+const districtOptions = [
+  'Ampara',
+  'Anuradhapura',
+  'Badulla',
+  'Batticaloa',
+  'Colombo',
+  'Galle',
+  'Gampaha',
+  'Hambantota',
+  'Jaffna',
+  'Kalutara',
+  'Kandy',
+  'Kegalle',
+  'Kilinochchi',
+  'Kurunegala',
+  'Mannar',
+  'Matale',
+  'Matara',
+  'Monaragala',
+  'Mullaitivu',
+  'Nuwara Eliya',
+  'Polonnaruwa',
+  'Puttalam',
+  'Ratnapura',
+  'Trincomalee',
+  'Vavuniya',
+];
+const qualificationOptions = ['DOCTORATE', 'MASTERS', 'BACHELORS', 'POSTGRADUATE', 'HND', 'HNC'];
 const hourlyRateOptions = ['500-1000', '1000-1500', '1500-2000', '2000-3000', '3000<'];
 const isAssignedOptions = ["true", "false"];
 const languageOptions = ['ENGLISH', 'SINHALA', 'TAMIL'];
@@ -22,6 +48,8 @@ const FilteredLecturers = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
   const [toast, setToast] = useState(null);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [sortColumn, setSortColumn] = useState<string>('');
 
   const { mutate: filterLecturer, isLoading: isFilteringLecturer } = useMutation(
     lecturerService.getFilteredLecturers,
@@ -76,6 +104,7 @@ const FilteredLecturers = () => {
       sort: 'id',
     },
     onSubmit: (values) => {
+      console.log(values);
       filterLecturer({
         district: values.district ?? null,
         hourlyRate: values.hourlyRate ?? null,
@@ -90,8 +119,25 @@ const FilteredLecturers = () => {
     },
   });
 
+  const sortLecturers = (lecturers: LecturerRes[]) => {
+    return [...lecturers].sort((a, b) => {
+      const rateA = a.hourlyPayRate || 0;
+      const rateB = b.hourlyPayRate || 0;
+      return sortOrder === 'asc' ? rateA - rateB : rateB - rateA;
+    });
+  };;
+
+  const handleSort = (column: string) => {
+    if (sortColumn === column) {
+      setSortOrder(prev => (prev === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortColumn(column);
+      setSortOrder('asc');
+    }
+  };
+
   const getHighestQualification = (lecturer: LecturerRes) => {
-    const priority = ["PHD", "MSC", "BSC", "HND", "PGD"];
+    const priority = ["DOCTORATE", "MASTERS", "BACHELORS", "HND", "POSTGRADUATE", "HNC",];
     const qualifications = lecturer?.qualifications?.map(q => q.level.toUpperCase()) || [];
 
     return priority.find(level => qualifications.includes(level)) ?? "N/A";
@@ -100,8 +146,8 @@ const FilteredLecturers = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1000); // Simulating a loading state
-    return () => clearTimeout(timer); // Cleanup timer
+    const timer = setTimeout(() => setLoading(false), 1000);
+    return () => clearTimeout(timer);
   }, []);
 
   if (loading || isFilteringLecturer) {
@@ -303,35 +349,45 @@ const FilteredLecturers = () => {
           <div className="max-w-full overflow-x-auto">
             <table className="w-full table-auto">
               <thead>
-                <tr className="bg-gray-2 dark:bg-meta-4">
-                  <th className="min-w-[120px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                    Picture
-                  </th>
-                  <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                    Name
-                  </th>
-                  <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                    Highest Qualification
-                  </th>
-                  <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                    District
-                  </th>
-                  <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                    Contact Number
-                  </th>
-                  <th className="min-w-[100px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                    Expected Hourly Payment (LKR)
-                  </th>
-                  <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                    Already Assigned
-                  </th>
-                  <th className="py-4 px-4 text-left font-medium text-black dark:text-white">
-                    Actions
-                  </th>
-                </tr>
+              <tr className="bg-gray-2 dark:bg-meta-4">
+                <th className="min-w-[120px] py-4 px-4 text-left font-medium text-black dark:text-white">
+                  Picture
+                </th>
+                <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
+                  Name
+                </th>
+                <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
+                  Highest Qualification
+                </th>
+                <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
+                  District
+                </th>
+                <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
+                  Contact Number
+                </th>
+                <th
+                  className="min-w-[100px] py-4 px-4 text-left font-medium text-black dark:text-white cursor-pointer"
+                  onClick={() => handleSort('hourlyRate')}
+                >
+                  Expected Hourly Payment (LKR) {sortColumn === 'hourlyRate' ? (sortOrder === 'asc' ? '↑' : '↓') : ''}
+                </th>
+                <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
+                  Already Assigned
+                </th>
+                <th className="py-4 px-4 text-left font-medium text-black dark:text-white">
+                  Actions
+                </th>
+              </tr>
               </thead>
               <tbody>
-                {filteredLecturers?.map((lecturer: LecturerRes, key) => (
+              {filteredLecturers.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="text-center py-5">
+                    <p className="text-gray-500">No Lecturers Found</p>
+                  </td>
+                </tr>
+              ) : (
+                filteredLecturers?.map((lecturer: LecturerRes, key) => (
                   <tr
                     key={key+lecturer?.name}
                     className="hover:bg-gray-200 dark:hover:bg-gray-800"
@@ -349,17 +405,19 @@ const FilteredLecturers = () => {
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <p
                         className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium ${
-                          getHighestQualification(lecturer)?.toLowerCase() === 'phd'
+                          getHighestQualification(lecturer)?.toLowerCase() === 'doctorate'
                             ? 'bg-meta-7 text-meta-7'
-                            : getHighestQualification(lecturer)?.toLowerCase() === 'msc'
+                            : getHighestQualification(lecturer)?.toLowerCase() === 'masters'
                               ? 'bg-danger text-danger'
-                              : getHighestQualification(lecturer)?.toLowerCase() === 'bsc'
+                              : getHighestQualification(lecturer)?.toLowerCase() === 'bachelors'
                                 ? 'bg-primary text-primary'
-                                :getHighestQualification(lecturer)?.toLowerCase() === 'pgd'
+                                :getHighestQualification(lecturer)?.toLowerCase() === 'postgraduate'
                                   ? 'bg-warning text-warning'
                                   : getHighestQualification(lecturer)?.toLowerCase() === 'hnd'
                                     ? 'bg-success text-success'
-                                    : ''
+                                    : getHighestQualification(lecturer)?.toLowerCase() === 'hnc'
+                                      ? 'bg-success text-success'
+                                      : ''
                         }`}
                       >
                         {getHighestQualification(lecturer)}
@@ -372,7 +430,7 @@ const FilteredLecturers = () => {
                       {lecturer?.contactNo ?? 'N/A'}
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      ${lecturer?.payRate?.toFixed(2)}
+                      ${lecturer?.hourlyPayRate?.toLocaleString()}
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <span
@@ -417,7 +475,8 @@ const FilteredLecturers = () => {
                       </div>
                     </td>
                   </tr>
-                ))}
+                ))
+              )}
               </tbody>
             </table>
 
