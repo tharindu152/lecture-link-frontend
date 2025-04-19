@@ -8,6 +8,8 @@ import { InstituteRes } from '../../types/instituteTypes/instituteRes.ts';
 import instituteService from '../../services/instituteService.ts';
 import ConfirmationModal from '../../components/Miscellaneous/ConfirmationModal.tsx';
 import Toast from '../../components/Miscellaneous/Toast.tsx';
+import { useData, useDispatcher } from '../../context/MainContext.tsx';
+import { LecturerRes } from '../../types/lecturerTypes/lecturerRes.ts';
 
 const Institutes = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -16,11 +18,14 @@ const Institutes = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedInstitute, setSelectedInstitute] = useState(0);
   const [toast, setToast] = useState(null);
+  const dispatch = useDispatcher();
+
+  const lecturer: LecturerRes | null= useData();
 
   const {
     isLoading: isLoadingInstitutes,
     refetch
-  } = useQuery(['getInstitutes'], () => instituteService.getAllInstitutes("institutes"), {
+  } = useQuery(['getInstitutes',(lecturer?.id)], () => instituteService.getInstitutesForLecturer("institutes",{lecturerId: lecturer?.id}), {
     onSuccess: (data) => {
       setInstitutesList(data)
     }
@@ -33,6 +38,7 @@ const Institutes = () => {
         // @ts-ignore
         setToast({ message: "Institute deleted successfully!", type: "success" });
         refetch()
+        dispatch({ type: "delete" });
       },
       onError: () => {
         // @ts-ignore
@@ -79,32 +85,36 @@ const Institutes = () => {
           <div className="max-w-full overflow-x-auto">
             <table className="w-full table-auto">
               <thead>
-                <tr className="bg-gray-2 dark:bg-meta-4">
-                  <th className="min-w-[120px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                    Logo
-                  </th>
-                  <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                    Name
-                  </th>
-                  <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                    E-mail
-                  </th>
-                  <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                    Contact Number
-                  </th>
-                  <th className="min-w-[100px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                    District
-                  </th>
-                  <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                    UGC Reg No
-                  </th>
-                  <th className="py-4 px-4 text-left font-medium text-black dark:text-white">
-                    Actions
-                  </th>
-                </tr>
+              <tr className="bg-gray-2 dark:bg-meta-4">
+                <th className="min-w-[120px] py-4 px-4 text-left font-medium text-black dark:text-white">
+                  Logo
+                </th>
+                <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
+                  Name
+                </th>
+                <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
+                  E-mail
+                </th>
+                <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
+                  Contact Number
+                </th>
+                <th className="min-w-[100px] py-4 px-4 text-left font-medium text-black dark:text-white">
+                  District
+                </th>
+                <th className="py-4 px-4 text-left font-medium text-black dark:text-white">
+                  Actions
+                </th>
+              </tr>
               </thead>
               <tbody>
-                {currentInstitutes?.map(
+              {institutesList.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="text-center py-5">
+                    <p className="text-gray-500">No Institutes Found</p>
+                  </td>
+                </tr>
+              ) : (
+                currentInstitutes?.map(
                   (institute: InstituteRes, key: number) => (
                     <tr
                       key={key + institute?.name}
@@ -130,16 +140,13 @@ const Institutes = () => {
                         {institute.district ?? 'N/A'}
                       </td>
                       <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                        {institute?.ugcRegNo ?? 'N/A'}
-                      </td>
-                      <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                         <div className="flex items-center space-x-3.5">
                           <button
                             className="hover:text-primary"
                             title="View"
                             onClick={() =>
                               handleNavigation(
-                                `/app/profile/institutes/${institute.id}`,
+                                `/app/institutes/${institute.id}`,
                               )
                             }
                           >
@@ -161,77 +168,11 @@ const Institutes = () => {
                               />
                             </svg>
                           </button>
-                          <button
-                            className="hover:text-warning"
-                            title="Edit"
-                            onClick={() =>
-                              handleNavigation(`/app/institutes/add-institute`)
-                            }
-                          >
-                            <svg
-                              className="fill-current"
-                              width="18"
-                              viewBox="0 0 32 32"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <g data-name="Layer 18">
-                                <path
-                                  d="M2 31a1 1 0 0 1-1-1.11l.9-8.17a1 1 0 0 1 .29-.6L21.27 2.05a3.56 3.56 0 0 1 5.05 0L30 5.68a3.56 3.56 0 0 1 0 5.05L10.88 29.8a1 1 0 0 1-.6.29L2.11 31Zm8.17-1.91Zm-6.31-6.81-.73 6.59 6.59-.73L28.54 9.31a1.58 1.58 0 0 0 0-2.22l-3.63-3.63a1.58 1.58 0 0 0-2.22 0Z"
-                                  className="fill-101820"
-                                ></path>
-                                <path
-                                  d="M26.52 13.74a1 1 0 0 1-.7-.29l-7.27-7.27A1 1 0 0 1 20 4.77L27.23 12a1 1 0 0 1 0 1.41 1 1 0 0 1-.71.33Z"
-                                  className="fill-101820"
-                                ></path>
-                                <path
-                                  transform="rotate(-45 14.719 17.283)"
-                                  d="M8.29 16.28h12.84v2H8.29z"
-                                  className="fill-101820"
-                                ></path>
-                              </g>
-                            </svg>
-                          </button>
-                          <button
-                            onClick={() => {
-                              setIsModalOpen(true)
-                              // @ts-ignore
-                              setSelectedInstitute(institute.id)
-                            }}
-                            className="hover:text-danger"
-                            title="Delete"
-                          >
-                            <svg
-                              className="fill-current"
-                              width="18"
-                              height="18"
-                              viewBox="0 0 18 18"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M13.7535 2.47502H11.5879V1.9969C11.5879 1.15315 10.9129 0.478149 10.0691 0.478149H7.90352C7.05977 0.478149 6.38477 1.15315 6.38477 1.9969V2.47502H4.21914C3.40352 2.47502 2.72852 3.15002 2.72852 3.96565V4.8094C2.72852 5.42815 3.09414 5.9344 3.62852 6.1594L4.07852 15.4688C4.13477 16.6219 5.09102 17.5219 6.24414 17.5219H11.7004C12.8535 17.5219 13.8098 16.6219 13.866 15.4688L14.3441 6.13127C14.8785 5.90627 15.2441 5.3719 15.2441 4.78127V3.93752C15.2441 3.15002 14.5691 2.47502 13.7535 2.47502ZM7.67852 1.9969C7.67852 1.85627 7.79102 1.74377 7.93164 1.74377H10.0973C10.2379 1.74377 10.3504 1.85627 10.3504 1.9969V2.47502H7.70664V1.9969H7.67852ZM4.02227 3.96565C4.02227 3.85315 4.10664 3.74065 4.24727 3.74065H13.7535C13.866 3.74065 13.9785 3.82502 13.9785 3.96565V4.8094C13.9785 4.9219 13.8941 5.0344 13.7535 5.0344H4.24727C4.13477 5.0344 4.02227 4.95002 4.02227 4.8094V3.96565ZM11.7285 16.2563H6.27227C5.79414 16.2563 5.40039 15.8906 5.37227 15.3844L4.95039 6.2719H13.0785L12.6566 15.3844C12.6004 15.8625 12.2066 16.2563 11.7285 16.2563Z"
-                                fill=""
-                              />
-                              <path
-                                d="M9.00039 9.11255C8.66289 9.11255 8.35352 9.3938 8.35352 9.75942V13.3313C8.35352 13.6688 8.63477 13.9782 9.00039 13.9782C9.33789 13.9782 9.64727 13.6969 9.64727 13.3313V9.75942C9.64727 9.3938 9.33789 9.11255 9.00039 9.11255Z"
-                                fill=""
-                              />
-                              <path
-                                d="M11.2502 9.67504C10.8846 9.64692 10.6033 9.90004 10.5752 10.2657L10.4064 12.7407C10.3783 13.0782 10.6314 13.3875 10.9971 13.4157C11.0252 13.4157 11.0252 13.4157 11.0533 13.4157C11.3908 13.4157 11.6721 13.1625 11.6721 12.825L11.8408 10.35C11.8408 9.98442 11.5877 9.70317 11.2502 9.67504Z"
-                                fill=""
-                              />
-                              <path
-                                d="M6.72245 9.67504C6.38495 9.70317 6.1037 10.0125 6.13182 10.35L6.3287 12.825C6.35683 13.1625 6.63808 13.4157 6.94745 13.4157C6.97558 13.4157 6.97558 13.4157 7.0037 13.4157C7.3412 13.3875 7.62245 13.0782 7.59433 12.7407L7.39745 10.2657C7.39745 9.90004 7.08808 9.64692 6.72245 9.67504Z"
-                                fill=""
-                              />
-                            </svg>
-                          </button>
                         </div>
                       </td>
                     </tr>
                   ),
-                )}
+                ))}
               </tbody>
             </table>
 
@@ -268,8 +209,8 @@ const Institutes = () => {
           </div>
         </div>
         {toast && <Toast {
-          // @ts-ignore
-          ...toast} onClose={() => setToast(null)} />}
+                           // @ts-ignore
+                           ...toast} onClose={() => setToast(null)} />}
       </div>
 
       <ConfirmationModal
@@ -280,6 +221,7 @@ const Institutes = () => {
         btnTwo={'Cancel'}
         onConfirm={() => {
           deleteOperation(selectedInstitute)
+          setIsModalOpen(false)
         }}
         onClose={() => setIsModalOpen(false)}
       ></ConfirmationModal>

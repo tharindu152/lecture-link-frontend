@@ -7,7 +7,7 @@ import programService from '../../services/programService.ts';
 import { Program } from '../../types/instituteTypes/program.ts';
 import Toast from '../../components/Miscellaneous/Toast.tsx';
 import ConfirmationModal from '../../components/Miscellaneous/ConfirmationModal.tsx';
-import { useData } from '../../context/MainContext.tsx';
+import { useData, useDispatcher } from '../../context/MainContext.tsx';
 import { InstituteRes } from '../../types/instituteTypes/instituteRes.ts';
 
 const Programs = () => {
@@ -19,7 +19,7 @@ const Programs = () => {
   const [toast, setToast] = useState(null);
   // @ts-ignore
   const data:InstituteRes = useData();
-
+  const dispatch = useDispatcher();
   useEffect(() => {
     // @ts-ignore
     setProgramsList(data?.programs);
@@ -32,6 +32,7 @@ const Programs = () => {
       onSuccess: () => {
         // @ts-ignore
         setToast({ message: "Program deleted successfully!", type: "success" });
+        dispatch({ type: "delete" });
       },
       onError: () => {
         // @ts-ignore
@@ -44,7 +45,6 @@ const Programs = () => {
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentPrograms = programsList?.slice(indexOfFirstItem, indexOfLastItem);
 
   const totalPages = Math.ceil(programsList?.length / itemsPerPage);
 
@@ -56,11 +56,13 @@ const Programs = () => {
     navigate(path);
   };
 
+  const currentPrograms = programsList?.slice(indexOfFirstItem, indexOfLastItem);
+
   const deleteOperation = (programId:number) => {
+    deleteProgram({programId: programId})
     setProgramsList((prev) =>
       prev.filter((prog) => prog.id !== programId),
     );
-    deleteProgram({programId: programId})
   }
 
   if (isDeletingProgram) {
@@ -76,33 +78,43 @@ const Programs = () => {
           <div className="max-w-full overflow-x-auto">
             <table className="w-full table-auto">
               <thead>
-                <tr className="bg-gray-2 text-left dark:bg-meta-4">
-                  <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
-                    Program
-                  </th>
-                  <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
-                    Student Count
-                  </th>
-                  <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
-                    Duration (Months)
-                  </th>
-                  <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
-                    Level
-                  </th>
-                  <th className="py-4 px-4 font-medium text-black dark:text-white">
-                    Actions
-                  </th>
-                </tr>
+              <tr className="bg-gray-2 text-left dark:bg-meta-4">
+                <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+                  Program
+                </th>
+                <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+                  Student Count
+                </th>
+                <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+                  Duration (Months)
+                </th>
+                <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+                  Level
+                </th>
+                <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+                  Time Preference
+                </th>
+                <th className="py-4 px-4 font-medium text-black dark:text-white">
+                  Actions
+                </th>
+              </tr>
               </thead>
               <tbody>
-                {currentPrograms?.map((program, key) => (
+              {programsList?.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="text-center py-5">
+                    <p className="text-gray-500">No Programs Found</p>
+                  </td>
+                </tr>
+              ) : (
+                currentPrograms?.map((program, key) => (
                   <tr
-                    key={(program.id ?? 0) + key}
+                    key={(program?.id ?? 0) + key}
                     className={'hover:bg-gray-200 dark:hover:bg-gray-800'}
                   >
                     <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                       <h5 className="font-medium text-black dark:text-white">
-                        {program.name}
+                        {program?.name}
                       </h5>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
@@ -118,20 +130,28 @@ const Programs = () => {
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <p
                         className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium ${
-                          program?.level?.toLowerCase() === 'phd'
+                          program?.level?.toLowerCase() === 'doctorate'
                             ? 'bg-meta-7 text-meta-7'
-                            : program?.level?.toLowerCase() === 'msc'
-                            ? 'bg-danger text-danger'
-                            : program?.level?.toLowerCase() === 'bsc'
-                            ? 'bg-primary text-primary'
-                            : program?.level?.toLowerCase() === 'pgd'
-                            ? 'bg-warning text-warning'
-                            : program?.level?.toLowerCase() === 'hnd'
-                            ? 'bg-success text-success'
-                            : ''
+                            : program?.level?.toLowerCase() === 'masters'
+                              ? 'bg-danger text-danger'
+                              : program?.level?.toLowerCase() === 'bachelors'
+                                ? 'bg-primary text-primary'
+                                : program?.level?.toLowerCase() === 'postgraduate'
+                                  ? 'bg-warning text-warning'
+                                  : program?.level?.toLowerCase() === 'hnd'
+                                    ? 'bg-success text-success'
+                                    : program?.level?.toLowerCase() === 'hnc'
+                                      ? 'bg-success text-success'
+                                      : ''
                         }`}
                       >
                         {program?.level}
+                      </p>
+                    </td>
+                    <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                      <p
+                        className="text-black dark:text-white">
+                        {program?.timePreference}
                       </p>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
@@ -230,7 +250,8 @@ const Programs = () => {
                       </div>
                     </td>
                   </tr>
-                ))}
+                ))
+              )}
               </tbody>
             </table>
             {/* Pagination Controls */}
@@ -303,6 +324,7 @@ const Programs = () => {
         btnTwo={'Cancel'}
         onConfirm={() => {
           deleteOperation(selectedProgram);
+          setIsModalOpen(false)
         }}
         onClose={() => setIsModalOpen(false)}
       ></ConfirmationModal>

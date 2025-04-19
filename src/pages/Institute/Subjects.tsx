@@ -8,6 +8,7 @@ import subjectService from '../../services/subjectService.ts';
 import Toast from '../../components/Miscellaneous/Toast.tsx';
 import ConfirmationModal from '../../components/Miscellaneous/ConfirmationModal.tsx';
 import { useData, useDispatcher } from '../../context/MainContext.tsx';
+import { Subject } from '../../types/instituteTypes/subject.ts';
 
 const Subjects = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -19,10 +20,13 @@ const Subjects = () => {
   const [toast, setToast] = useState(null);
   const data = useData();
   const dispatch = useDispatcher();
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [sortColumn, setSortColumn] = useState<string>('');
 
   useEffect(() => {
     // @ts-ignore
     setProgramsList(data?.programs);
+    localStorage.removeItem('programs');
   }, []);
 
   const { mutate: deleteSubject, isLoading: isDeletingSubject } = useMutation(
@@ -33,7 +37,7 @@ const Subjects = () => {
         setToast({ message: "Subject deleted successfully!", type: "success" });
         // @ts-ignore
         setDeleteErrCode(data.message)
-        console.log(data)
+        dispatch({ type: "delete" });
       },
       onError: (data) => {
         setToast({
@@ -44,7 +48,6 @@ const Subjects = () => {
         });
         // @ts-ignore
         setDeleteErrCode(data.code)
-        console.log(deleteErrCode);
       },
     },
   );
@@ -68,7 +71,6 @@ const Subjects = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const subjects = programsList?.flatMap(prog => prog.subjects || []);
-  const currentSubjects = subjects?.slice(indexOfFirstItem, indexOfLastItem);
 
   const totalPages = Math.ceil(subjects?.length / itemsPerPage);
 
@@ -90,6 +92,24 @@ const Subjects = () => {
 
   const [loading, setLoading] = useState(true);
 
+  const sortSubjects = (subject: Subject[]) => {
+    return [...subject]?.sort((a, b) => {
+      const rateA = a.noOfCredits || 0;
+      const rateB = b.noOfCredits || 0;
+      return sortOrder === 'asc' ? rateA - rateB : rateB - rateA;
+    });
+  };;
+  const currentSubjects = sortSubjects(subjects)?.slice(indexOfFirstItem, indexOfLastItem);
+
+  const handleSort = (column: string) => {
+    if (sortColumn === column) {
+      setSortOrder(prev => (prev === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortColumn(column);
+      setSortOrder('asc');
+    }
+  };
+
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1000);
     return () => clearTimeout(timer);
@@ -109,29 +129,39 @@ const Subjects = () => {
           <div className="max-w-full overflow-x-auto">
             <table className="w-full table-auto">
               <thead>
-                <tr className="bg-gray-2 text-left dark:bg-meta-4">
-                  <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
-                    Subject
-                  </th>
-                  <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
-                    Program
-                  </th>
-                  <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
-                    No of Credits
-                  </th>
-                  <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
-                    Is Assigned
-                  </th>
-                  <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
-                    Lecturer ID
-                  </th>
-                  <th className="py-4 px-4 font-medium text-black dark:text-white">
-                    Actions
-                  </th>
-                </tr>
+              <tr className="bg-gray-2 text-left dark:bg-meta-4">
+                <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+                  Subject
+                </th>
+                <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+                  Program
+                </th>
+                <th
+                  className="min-w-[100px] py-4 px-4 text-left font-medium text-black dark:text-white cursor-pointer"
+                  onClick={() => handleSort('noOfCredits')}
+                >
+                  No of Credits {sortColumn === 'noOfCredits' ? (sortOrder === 'asc' ? '↑' : '↓') : ''}
+                </th>
+                <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
+                  Is Assigned
+                </th>
+                <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+                  Lecturer ID
+                </th>
+                <th className="py-4 px-4 font-medium text-black dark:text-white">
+                  Actions
+                </th>
+              </tr>
               </thead>
               <tbody>
-                {currentSubjects?.map((subject, key) => (
+              {currentSubjects?.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="text-center py-5">
+                    <p className="text-gray-500">No Subjects Found</p>
+                  </td>
+                </tr>
+              ) : (
+                currentSubjects?.map((subject, key) => (
                   <tr
                     key={key + subject.name + subject?.noOfCredits}
                     className={'hover:bg-gray-200 dark:hover:bg-gray-800'}
@@ -265,7 +295,8 @@ const Subjects = () => {
                       </div>
                     </td>
                   </tr>
-                ))}
+                ))
+              )}
               </tbody>
             </table>
             {/* Pagination Controls */}
@@ -319,6 +350,7 @@ const Subjects = () => {
         btnTwo={'Cancel'}
         onConfirm={() => {
           deleteOperation(selectedSubject);
+          setIsModalOpen(false)
         }}
         onClose={() => setIsModalOpen(false)}
       ></ConfirmationModal>

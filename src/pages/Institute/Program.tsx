@@ -8,26 +8,40 @@ import { InstituteRes } from '../../types/instituteTypes/instituteRes.ts';
 import { useMutation } from 'react-query';
 import programService from '../../services/programService.ts';
 import Toast from '../../components/Miscellaneous/Toast.tsx';
+import ConfirmationModal from '../../components/Miscellaneous/ConfirmationModal.tsx';
 
 const Program = () => {
-
   const location = useLocation();
-  // @ts-ignore
-  const institute: InstituteRes = useData()
+  const institute: InstituteRes | null = useData() as InstituteRes;
   const dispatch = useDispatcher();
   const [toast, setToast] = useState(null);
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedSubjectIndex, setSelectedSubjectIndex] = useState<number | null>(null);
   const { pathname } = location;
+  const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const program = institute?.programs?.find(prog => prog?.id === Number(pathname.slice(14)));
 
-  const [loading, setLoading] = useState(true);
-
   useEffect(() => {
-    localStorage.setItem('program', JSON.stringify(program));
+    if (program) {
+      localStorage.setItem('program', JSON.stringify(program));
+    }
     const timer = setTimeout(() => setLoading(false), 1000);
     return () => clearTimeout(timer);
-  }, []);
+  }, [program]);
+
+  function getUniqueSubjects(institute:InstituteRes): Subject[] {
+    const uniqueSubjects = new Set<Subject>();
+
+    institute.programs?.forEach(program => {
+      program.subjects?.forEach(subject => {
+        uniqueSubjects.add(subject);
+      });
+    });
+    const uniqueSubjectsList = Array.from(uniqueSubjects);
+    return uniqueSubjectsList;
+  }
 
   const { mutate: updateProgram, isLoading: isUpdatingProgram } = useMutation(
     programService.updateProgram,
@@ -44,14 +58,16 @@ const Program = () => {
     },
   );
 
-  const unassignProgram = (index:number) => {
-    program?.subjects?.splice(index, 1)
-    updateProgram({programId: program?.id, programData: program})
-    dispatch({ type: "delete" });
-    dispatch({ type: "view" });
-  }
+  const unassignProgram = (index: number) => {
+    if (program && program.subjects) {
+      program.subjects.splice(index, 1);
+      updateProgram({ programId: program.id, programData: program });
+      dispatch({ type: "delete" });
+      dispatch({ type: "view" });
+    }
+  };
 
-  if (loading || isUpdatingProgram) {
+  if (loading || isUpdatingProgram || !institute) {
     return <Loader />;
   }
 
@@ -73,9 +89,17 @@ const Program = () => {
             <p className="flex-1">{program?.level}</p>
           </div>
 
-          {/* Duration in Days */}
+          {/* Time Preference */}
           <div className="flex gap-4">
             <h4 className="font-semibold text-black dark:text-white w-40">
+              Time Preference:
+            </h4>
+            <p className="flex-1">{program?.timePreference}</p>
+          </div>
+
+          {/* Duration in Days */}
+          <div className="flex gap-4">
+            < h4 className="font-semibold text-black dark:text-white w-40">
               Duration (Months):
             </h4>
             <p className="flex-1">
@@ -104,9 +128,9 @@ const Program = () => {
           {/* Payment */}
           <div className="flex gap-4">
             <h4 className="font-semibold text-black dark:text-white w-40">
-              Hourly Payment to Lecturer (LKR):
+              Hourly Payment to Lecturer:
             </h4>
-            <p className="flex-1">${program?.payment?.toFixed(2)}</p>
+            <p className="flex-1">LKR {program?.hourlyPayRate?.toLocaleString()}</p>
           </div>
 
           {/* Institute ID */}
@@ -123,29 +147,69 @@ const Program = () => {
               <h4 className="font-semibold text-black dark:text-white w-full sm:w-40">
                 Subjects:
               </h4>
-              <table>
-                <tbody>
-                  {program?.subjects.map((subject: Subject, i) => (
+              {program.subjects.length > 0 ? (
+                <table>
+                  <tbody>
+                  {program.subjects.map((subject: Subject, i) => (
                     <tr key={subject.id} className="flex-1">
                       <td>
-                        {subject.name} ({subject?.noOfCredits} Credits)
+                        {subject.name} ({subject.noOfCredits} Credits)
                       </td>
                       <td>
                         <button
                           onClick={() => {
-                            unassignProgram(i);
+                            setSelectedSubjectIndex(i);
+                            setIsModalOpen(true);
                           }}
-                          className=" mx-3 hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 px-1 text-center text-sm text-gray-500 transition duration-150 ease-in-out hover:bg-warning hover:border-warning hover:text-white"
+                          className="mx-3 hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 px-1 text-center text-sm text-gray-500 transition duration-150 ease-in-out hover:bg-warning hover:border-warning hover:text-white"
                         >
                           Unassign
                         </button>
                       </td>
                     </tr>
                   ))}
-                </tbody>
-              </table>
+                  </tbody>
+                </table>
+              ) : (
+                <div className="flex flex-col items-start">
+                  <p className="text-gray-500">No subjects assigned. Please add a subject.</p>
+                </div>
+              )}
             </div>
           )}
+
+          <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
+            <h4 className="font-semibold text-black dark:text-white w-full sm:w-40">
+              Add Subject:
+            </h4>
+            <select
+              value={selectedSubject ? selectedSubject.id : ''}
+              onChange={(e) => {
+                const subject = getUniqueSubjects(institute).find(sub => sub?.id === Number(e.target.value));
+                setSelectedSubject(subject || null);
+              }}
+              className="w-half border border-gray-300 rounded-md p-2 bg-gray-800"
+            >
+              <option value="" disabled>Select a subject</option>
+              {getUniqueSubjects(institute).map(subject => (
+                <option key={subject?.id + subject?.name} value={subject?.id}>
+                  {subject?.name} ({subject?.noOfCredits} Credits)
+                </option>
+              ))}
+            </select>
+            <button
+              onClick={() => {
+                if (selectedSubject) {
+                  program?.subjects?.push(selectedSubject);
+                  updateProgram({ programId: program?.id, programData: program });
+                  setSelectedSubject(null);
+                }
+              }}
+              className="mt-2 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 px-3 py-2 text-center text-sm text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
+            >
+              Add Subject
+            </button>
+          </div>
 
           {/* Description */}
           <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
@@ -214,6 +278,20 @@ const Program = () => {
           />
         )}
       </div>
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        title={'Unassign Confirmation'}
+        message={'Are you sure that you want to unassign this Program?'}
+        btnOne={'Unassign'}
+        btnTwo={'Cancel'}
+        onConfirm={() => {
+          if (selectedSubjectIndex !== null) {
+            unassignProgram(selectedSubjectIndex);
+          }
+          setIsModalOpen(false);
+        }}
+        onClose={() => setIsModalOpen(false)}
+      ></ConfirmationModal>
     </>
   );
 };
