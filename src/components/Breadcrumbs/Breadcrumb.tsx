@@ -15,14 +15,14 @@ const Breadcrumb = ({ pageName }: BreadcrumbProps) => {
             <Link className="font-medium hover:underline" to="/app/dashboard">
               Dashboard /
             </Link>
-            {pageName === 'Add/Update Profile' ? (
+            {pageName === 'Update Institute' || pageName === 'Update Lecturer' ? (
               <Link className="font-medium hover:underline" to="/app/profile">
                 Profile /
               </Link>
             ) : (
               ''
             )}
-            {pageName === 'Add/Update Program' ||
+            {pageName === 'Add Program' || pageName === 'Update Program' || pageName === 'Add Subject' ||
             pageName === 'Program Details' ? (
               <Link className="font-medium hover:underline" to="/app/programs">
                 Programs /
@@ -30,7 +30,7 @@ const Breadcrumb = ({ pageName }: BreadcrumbProps) => {
             ) : (
               ''
             )}
-            {pageName === 'Add/Update Subject' ||
+            {pageName === 'Update Subject' ||
             pageName === 'Subject Details' ? (
               <Link className="font-medium hover:underline" to="/app/subjects">
                 Subjects /
@@ -38,7 +38,7 @@ const Breadcrumb = ({ pageName }: BreadcrumbProps) => {
             ) : (
               ''
             )}
-            {pageName === 'Add/Update Lecturer' ||
+            {pageName === 'Add Lecturer' || pageName === 'Update Lecturer' ||
             pageName === 'Lecturer Profile' ? (
               <Link className="font-medium hover:underline" to="/app/lecturers">
                 Lecturers /
@@ -52,7 +52,7 @@ const Breadcrumb = ({ pageName }: BreadcrumbProps) => {
             ) : (
               ''
             )}
-            {pageName === 'Add/Update Qualification' ||
+            {pageName === 'Add Qualification' || pageName === 'Update Qualification' ||
             pageName === 'Qualification Details' ? (
               <Link className="font-medium hover:underline" to="/app/qualifications">
                 Qualifications /
