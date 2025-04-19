@@ -10,45 +10,43 @@ import qualificationService from '../../services/qualificationService.ts';
 import Loader from '../../common/Loader/Loader.tsx';
 import Toast from '../Miscellaneous/Toast.tsx';
 import NavigateModal from '../Miscellaneous/NavigateModal.tsx';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { LecturerRes } from '../../types/lecturerTypes/lecturerRes.ts';
 import { useData, useDispatcher } from '../../context/MainContext.tsx';
 
-const UpdateQualificationForm = () => {
+const AddQualificationForm = () => {
+
   const navigate = useNavigate();
-  const { qualificationId } = useParams();
   const [toast, setToast] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const lecturer: LecturerRes | null = useData();
+  const lecturer: LecturerRes | null = useData()
   const dispatch = useDispatcher();
 
-  const qualification = lecturer?.qualifications?.find(qual => qual?.id === Number(qualificationId));
-
-  const { mutate: updateQualification, isLoading: isUpdatingQualification } = useMutation(
-    qualificationService.updateQualification,
+  const { mutate: createQualification, isLoading: isCreatingQualification } = useMutation(
+    qualificationService.createQualification,
     {
       onSuccess: () => {
         // @ts-ignore
-        setToast({ message: "Qualification updated successfully!", type: "success" });
+        setToast({ message: "Qualification created successfully!", type: "success" });
         dispatch({ type: 'delete' });
+        formik.resetForm()
       },
       onError: () => {
         // @ts-ignore
-        setToast({ message: "Qualification update was unsuccessful!", type: "error" });
+        setToast({ message: "Qualification creation is unsuccessful!", type: "error" });
       },
     },
   );
 
   const formik = useFormik<Qualification>({
     initialValues: {
-      id: qualification?.id ?? 0,
-      name: qualification?.name ?? '',
-      awardingBody: qualification?.awardingBody ?? '',
-      durationInDays: qualification?.durationInDays ?? 0,
-      discipline: qualification?.discipline ?? '',
-      completedAt: qualification?.completedAt ?? '',
-      level: qualification?.level ?? '' as Level,
-      lecturerId: lecturer?.id,
+      name: '',
+      awardingBody: '',
+      durationInDays: 1,
+      discipline: '',
+      completedAt: '',
+      level: '' as Level,
+      lecturerId: lecturer?.id ?? 0,
     },
     validationSchema: Yup.object({
       name: Yup.string()
@@ -72,11 +70,8 @@ const UpdateQualificationForm = () => {
           'Invalid level',
         )
     }),
-    onSubmit: async (values) => {
-      updateQualification({
-        qualificationId: qualification?.id,
-        qualificationData: values
-      });
+    onSubmit: (values) => {
+      createQualification({ qualificationData: values });
     },
   });
 
@@ -96,13 +91,13 @@ const UpdateQualificationForm = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  if (isUpdatingQualification || loading) {
+  if (isCreatingQualification || loading) {
     return <Loader />;
   }
 
   return (
     <>
-      <Breadcrumb pageName={'Update Qualification'} />
+      <Breadcrumb pageName={"Add Qualification"} />
       <form
         onSubmit={formik.handleSubmit}
         className="p-6 rounded-lg border border-stroke bg-white shadow-md dark:border-strokedark dark:bg-boxdark"
@@ -249,18 +244,19 @@ const UpdateQualificationForm = () => {
         {/* Submit Button */}
         <button
           onClick={() => {
+            formik.handleSubmit;
             setShowModal(true);
           }}
           className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
           type="submit"
           disabled={!formik.isValid}
         >
-          {'Update Qualification'}
+          {'Add Qualification'}
         </button>
       </form>
       {showModal && (
-        <NavigateModal onClose={handleModalClose} onConfirm={handleModalConfirm} message={'Qualification Updated'} btnOne={'Keep Updating'} btnTwo={'Go to Qualification List'} />
-      )}
+      <NavigateModal onClose={handleModalClose} onConfirm={handleModalConfirm} message={'Qualification Added'} btnOne={'Keep Adding'}  btnTwo={'Go To Qualification list'}/>
+      )}''
       {toast && <Toast
         // @ts-ignore
         {...toast} onClose={() => setToast(null)} />}
@@ -268,4 +264,4 @@ const UpdateQualificationForm = () => {
   );
 };
 
-export default UpdateQualificationForm;
+export default AddQualificationForm;

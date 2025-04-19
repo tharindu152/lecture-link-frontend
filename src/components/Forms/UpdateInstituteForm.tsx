@@ -1,6 +1,5 @@
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { FaStar } from 'react-icons/fa';
 import Breadcrumb from '../Breadcrumbs/Breadcrumb.tsx';
 import { useMutation } from 'react-query';
 import instituteService from '../../services/instituteService.ts';
@@ -8,20 +7,54 @@ import Loader from '../../common/Loader/Loader.tsx';
 import { useEffect, useState } from 'react';
 import Toast from '../Miscellaneous/Toast.tsx';
 import { useData, useDispatcher } from '../../context/MainContext.tsx';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { InstituteRes } from '../../types/instituteTypes/instituteRes.ts';
 import { Status } from '../../types/enums/status.ts';
 import ConfirmationModal from '../Miscellaneous/ConfirmationModal.tsx';
+import NavigateModal from '../Miscellaneous/NavigateModal.tsx';
 
 const UpdateInstituteForm = () => {
   const [toast, setToast] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isNewModalOpen, setIsNewModalOpen] = useState(false);
   // @ts-ignore
   const institute: InstituteRes = useData();
   const navigate = useNavigate();
   const dispatch = useDispatcher();
   const location = useLocation();
+  const [showpassword, setShowpassword] = useState(false);
   const { pathname } = location;
+  const [showModal, setShowModal] = useState(false);
+  const [oldPassword, setOldPassword] = useState('');
+  const [isImgModalOpen, setIsImgModalOpen] = useState(false);
+
+  const districtOptions = [
+    'Ampara',
+    'Anuradhapura',
+    'Badulla',
+    'Batticaloa',
+    'Colombo',
+    'Galle',
+    'Gampaha',
+    'Hambantota',
+    'Jaffna',
+    'Kalutara',
+    'Kandy',
+    'Kegalle',
+    'Kilinochchi',
+    'Kurunegala',
+    'Mannar',
+    'Matale',
+    'Matara',
+    'Monaragala',
+    'Mullaitivu',
+    'Nuwara Eliya',
+    'Polonnaruwa',
+    'Puttalam',
+    'Ratnapura',
+    'Trincomalee',
+    'Vavuniya',
+  ];
 
   const { mutate: updateInstituteMultipart, isLoading: isUpdatingInstituteMultipart } =
     useMutation(instituteService.updateInstituteMultipart, {
@@ -61,17 +94,38 @@ const UpdateInstituteForm = () => {
       },
     });
 
+  const { mutate: deactivateInstitute, isLoading: isDeactivating } = useMutation(
+    instituteService.deactivateInstitute, // This should be the function that calls your API
+    {
+      onSuccess: () => {
+        setToast({
+          // @ts-ignore
+          message: 'Account deactivated successfully!',
+          type: 'success',
+        });
+        // Optionally, navigate to login or home page
+        navigate('/auth/signin'); // Adjust the path as necessary
+      },
+      onError: () => {
+        setToast({
+          // @ts-ignore
+          message: 'Failed to deactivate account. Please try again.',
+          type: 'error',
+        });
+      },
+    }
+  );
+
   const formik = useFormik({
     initialValues: {
       id: institute?.id,
       name: institute?.name,
       password: institute?.password,
+      mapsLocation:institute?.mapsLocation,
       email: institute?.email,
       district: institute?.district,
       telephone: institute?.telephone ?? '',
-      ugcRegNo: institute?.ugcRegNo ?? '',
       description: institute?.description ?? '',
-      rating: institute?.rating ?? 0,
       subscribed: institute?.subscribed ?? false,
       logo: undefined,
       status: institute?.status ?? Status.ACTIVE,
@@ -87,7 +141,7 @@ const UpdateInstituteForm = () => {
         .matches(
           /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[_]?)[A-Za-z\d_]{15,16}$/,
           'Password must be 16 characters long and include at least one uppercase letter, one lowercase letter,' +
-            ' and one number. No special characters allowed other than underscore ',
+          ' and one number. No special characters allowed other than underscore ',
         )
         .required('Password is required'),
       district: Yup.string()
@@ -99,17 +153,11 @@ const UpdateInstituteForm = () => {
           'Invalid Sri Lankan telephone number',
         )
         .nullable(),
-      ugcRegNo: Yup.string()
-        .max(100, 'UGC Registration Number must not exceed 100 characters')
-        .nullable(),
       description: Yup.string()
         .max(1000, 'Description must not exceed 1000 characters')
         .nullable(),
-      rating: Yup.number()
-        .required('Rating is required')
-        .min(1, 'Rating must be at least 1 star')
-        .max(5, 'Rating must be at most 5 stars'),
       subscribed: Yup.boolean().required('Subscribed status is required'),
+      mapsLocation: Yup.string().required('Map Location is required'),
       logo: Yup.mixed().nullable(),
       status: Yup.string()
         .required('Status is required')
@@ -122,39 +170,49 @@ const UpdateInstituteForm = () => {
       formData.append('password', values.password);
       formData.append('district', values.district);
       formData.append('description', values.description);
-      formData.append('rating', values.rating.toString());
       formData.append('subscribed', values.subscribed.toString());
       formData.append('status', values.status);
+      formData.append('mapsLocation', values.mapsLocation);
       // @ts-ignore
       formData.append('logo', values.logo);
       if (values.telephone) formData.append('telephone', values.telephone);
-      if (values.ugcRegNo) formData.append('ugcRegNo', values.ugcRegNo);
 
       // @ts-ignore
       formik.values.logo?.size > 0 ?
-      updateInstituteMultipart({
-        instituteId: institute?.id,
-        instituteConfig: formData,
-      }) :
-      updateInstituteJson({
-        instituteId: institute?.id,
-        instituteConfig: values,
-      });
+        updateInstituteMultipart({
+          instituteId: institute?.id,
+          instituteConfig: formData,
+        }) :
+        updateInstituteJson({
+          instituteId: institute?.id,
+          instituteConfig: values,
+        });
     },
   });
 
-  useEffect(() => {
-    console.log(formik.values)
-  }, [formik.values]);
-
   const [loading, setLoading] = useState(true);
+
+  const handleDeactivate = () => {
+    deactivateInstitute({ instituteId: institute.id });
+    navigate('/auth/signin');
+    setShowModal(false);
+  };
+
+  const handleModalConfirm = () => {
+    setShowModal(false);
+    navigate('/app/profile');
+  };
+
+  const handleModalClose = () => {
+    setShowModal(false);
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1000);
     return () => clearTimeout(timer);
   }, []);
 
-  if (isUpdatingInstituteMultipart || isUpdatingInstituteJson ||  loading) {
+  if (isUpdatingInstituteMultipart || isUpdatingInstituteJson ||  isDeactivating || loading) {
     return <Loader />;
   }
 
@@ -206,32 +264,32 @@ const UpdateInstituteForm = () => {
         {!pathname?.includes('update') && (
           <>
             <div className="mb-4 flex items-center">
-              <label
-                className="block w-40 text-black dark:text-white"
-                htmlFor="password"
-              >
+              <label className="block w-40 mr-4.5 text-black dark:text-white" htmlFor="password">
                 Password
               </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                placeholder="Enter password"
-                className={`flex-1 rounded-md border-[1.5px] py-2 px-3 outline-none transition ${
-                  formik.touched.password && formik.errors.password
-                    ? 'border-red-500'
-                    : 'border-gray-800 focus:border-primary'
-                } dark:bg-gray-800`}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.password}
-              />
+              <div className="relative w-full">
+                <input
+                  id="password"
+                  name="password"
+                  type= 'password'
+                  placeholder="Enter current password"
+                  className={`w-full rounded-md border border-stroke py-2 pl-4 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary ${
+                    formik.touched.password && formik.errors.password
+                      ? 'border-red-500'
+                      : 'border-gray-300 focus:border-primary'
+                  }dark:bg-gray-800`}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.password}
+                />
+              </div>
             </div>
             {formik.touched.password && formik.errors.password && (
               <p className="text-red-500 text-sm mb-4">
                 {formik.errors.password}
               </p>
             )}
+
             {/* Email */}
             <div className="mb-4 flex items-center">
               <label
@@ -271,26 +329,25 @@ const UpdateInstituteForm = () => {
               >
                 District
               </label>
-              <input
+              <select
                 id="district"
                 name="district"
-                type="text"
-                placeholder="Enter district"
-                className={`flex-1 rounded-md border-[1.5px] py-2 px-3 outline-none transition ${
-                  formik.touched.district && formik.errors.district
+                className={`flex-1 rounded-md border-[1.5px] px-3 py-2 outline-none transition ${
+                  formik.touched.status && formik.errors.district
                     ? 'border-red-500'
                     : 'border-gray-800 focus:border-primary'
-                } dark:bg-gray-800`}
+                } bg-white dark:bg-gray-800 dark:text-white`}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.district}
-              />
+              >
+                {districtOptions.map((district, index) => (
+                  <option key={index + district} value={district}>
+                    {district}
+                  </option>
+                ))}
+              </select>
             </div>
-            {formik.touched.district && formik.errors.district && (
-              <p className="text-red-500 text-sm mb-4">
-                {formik.errors.district}
-              </p>
-            )}
 
             {/* Telephone */}
             <div className="mb-4 flex items-center">
@@ -321,58 +378,33 @@ const UpdateInstituteForm = () => {
               </p>
             )}
 
-            {/* ugcRegNo */}
             <div className="mb-4 flex items-center">
               <label
                 className="block w-40 text-black dark:text-white"
-                htmlFor="ugcRegNo"
+                htmlFor="mapsLocation"
               >
-                UGC Reg Number
+                Location
               </label>
               <input
-                id="ugcRegNo"
-                name="ugcRegNo"
+                id="mapsLocation"
+                name="mapsLocation"
                 type="text"
-                placeholder="Enter UGC Registration Number"
+                placeholder="Enter Location Coodinates"
                 className={`flex-1 rounded-md border-[1.5px] py-2 px-3 outline-none transition ${
-                  formik.touched.ugcRegNo && formik.errors.ugcRegNo
+                  formik.touched.mapsLocation && formik.errors.mapsLocation
                     ? 'border-red-500'
                     : 'border-gray-800 focus:border-primary'
                 } dark:bg-gray-800`}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                value={formik.values.ugcRegNo}
+                value={formik.values.mapsLocation}
               />
             </div>
-            {formik.touched.ugcRegNo && formik.errors.ugcRegNo && (
+            {formik.touched.mapsLocation && formik.errors.mapsLocation && (
               <p className="text-red-500 text-sm mb-4">
-                {formik.errors.ugcRegNo}
+                {formik.errors.mapsLocation}
               </p>
             )}
-
-            {/* Rating */}
-            <div className="mb-4 flex items-center">
-              <label
-                className="block w-40 text-black dark:text-white"
-                htmlFor="rating"
-              >
-                Rating
-              </label>
-              {[1, 2, 3, 4, 5].map((star) => (
-                <span
-                  id={`rating`}
-                  key={star}
-                  onClick={() => formik.setFieldValue('rating', star)}
-                  className={`mx-1 cursor-pointer text-2xl ${
-                    formik.values.rating >= star
-                      ? 'text-yellow-400'
-                      : 'text-gray-500'
-                  }`}
-                >
-                  <FaStar />
-                </span>
-              ))}
-            </div>
           </>
         )}
 
@@ -387,10 +419,7 @@ const UpdateInstituteForm = () => {
             </label>
             <div
               id="subscribed"
-              onClick={() =>
-                formik.setFieldValue('subscribed', !formik.values.subscribed)
-              }
-              className={`w-12 h-6 rounded-full cursor-pointer p-1 transition border-gray-800 ${
+              className={`w-12 h-6 rounded-full cursor-pointer p-1 transition border-gray-800  ${
                 formik.values.subscribed ? 'bg-primary' : 'bg-gray-500'
               }`}
             >
@@ -440,6 +469,34 @@ const UpdateInstituteForm = () => {
 
         {pathname.includes('update') && (
           <>
+            {/* Description */}
+            <div className="mb-4 flex flex-wrap sm:flex-nowrap items-start">
+              <label
+                className="w-full sm:w-40 mb-2 sm:mb-0 text-black dark:text-white"
+                htmlFor="description"
+              >
+                Institute Description
+              </label>
+              <textarea
+                id="description"
+                name="description"
+                placeholder="Enter Description"
+                className={`w-full sm:flex-1 rounded-md border-[1.5px] py-2 px-3 outline-none transition resize-none ${
+                  formik.touched.description && formik.errors.description
+                    ? 'border-red-500'
+                    : 'border-gray-800 focus:border-primary'
+                } dark:bg-gray-800 dark:text-white h-32`}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.description}
+                rows={6}
+              />
+            </div>
+            {formik.touched.description && formik.errors.description && (
+              <p className="text-red-500 text-sm mb-4">
+                {formik.errors.description}
+              </p>
+            )}
             {/* Logo Upload */}
             <div className="mb-4 flex flex-wrap sm:flex-nowrap">
               <label
@@ -471,12 +528,12 @@ const UpdateInstituteForm = () => {
                 <div className="flex flex-col items-center justify-center space-y-2">
                   {/* Placeholder or File Name */}
                   {formik.values.logo ? (
-                    <p className="text-sm text-primary truncate">
+                    <><p className="text-sm text-primary truncate">
                       {
                         // @ts-ignore
-                        formik.values.logo.name
-                      }
+                        formik.values.logo.name}
                     </p>
+                    </>
                   ) : (
                     <>
                       <span className="flex items-center justify-center h-10 w-10 rounded-full border dark:border-strokedark bg-white dark:bg-boxdark">
@@ -517,57 +574,50 @@ const UpdateInstituteForm = () => {
                   )}
                 </div>
               </div>
-            </div>
-
-            {/* Description */}
-            <div className="mb-4 flex flex-wrap sm:flex-nowrap items-start">
-              <label
-                className="w-full sm:w-40 mb-2 sm:mb-0 text-black dark:text-white"
-                htmlFor="description"
+              <button
+                type="button"
+                onClick={() => {
+                  setIsImgModalOpen(true);
+                } }
+                className="text-red-500 hover:text-red-700"
               >
-                Institute Description
-              </label>
-              <textarea
-                id="description"
-                name="description"
-                placeholder="Enter Description"
-                className={`w-full sm:flex-1 rounded-md border-[1.5px] py-2 px-3 outline-none transition resize-none ${
-                  formik.touched.description && formik.errors.description
-                    ? 'border-red-500'
-                    : 'border-gray-800 focus:border-primary'
-                } dark:bg-gray-800 dark:text-white h-32`}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.description}
-                rows={6} // Allows multi-line support
-              />
+                Remove Added<br/> Logo
+              </button>
             </div>
-            {formik.touched.description && formik.errors.description && (
-              <p className="text-red-500 text-sm mb-4">
-                {formik.errors.description}
-              </p>
-            )}
           </>
         )}
 
         {/* Submit Button */}
         {
           pathname.includes('settings') ? (
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                setIsModalOpen(true);
-              }}
-              disabled={!formik.isValid}
-              className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
-              type="submit"
-            >
-              {`Update Settings`}
-            </button>
+            <>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsModalOpen(true);
+                }}
+                disabled={!formik.isValid}
+                className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
+              >
+                Update Settings
+              </button>
+              <Link to={'/app/profile/pricing-card'}>
+                <button className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-success hover:border-success hover:text-white">
+                  Update Your Plan
+                </button>
+              </Link>
+              <button
+                onClick={() => setIsNewModalOpen(true)}
+                className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-red-500 py-2 px-5 text-center font-medium text-red-500 transition duration-150 ease-in-out hover:bg-red-600 hover:border-red-600 hover:text-white"
+              >
+                Deactivate Account
+              </button>
+            </>
           ) : (
             <button
               onClick={() => {
-                return formik.handleSubmit;
+                formik.handleSubmit;
+                setShowModal(true);
               }}
               disabled={!formik.isValid}
               className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
@@ -580,30 +630,82 @@ const UpdateInstituteForm = () => {
 
       </form>
       <ConfirmationModal
-        isOpen={isModalOpen}
+        isOpen={isNewModalOpen}
         title={'Confirm Account Settings Change'}
-        message={`Account settings changes will log you out from LectureLink. You have to login again using new credentials. Do you want to continue?`}
+        message={`Account settings changes will log you out from LectureLink. You have to login again using new credentials. Enter Confirm to continue?`}
         btnOne={'Yes'}
         btnTwo={'No'}
         submit={true}
-        onConfirm={() => {
-          formik.handleSubmit();
-          localStorage.removeItem('token');
-          localStorage.removeItem('issuer');
-          localStorage.removeItem('role');
-          localStorage.removeItem('userId');
-          // @ts-ignore
-          setToast({ message: 'User Logging Out!', type: 'error' });
-          setTimeout(() => {
-            navigate('/');
-          }, 3000);
-        }}
+        onConfirm={handleDeactivate}
         onClose={() => {
-          setIsModalOpen(false);
+          setIsNewModalOpen(false);
           // @ts-ignore
           setToast({ message: 'Account settings are reverted to last saved', type: 'success' });
         }}
-      ></ConfirmationModal>
+      />
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        title={'Confirm Old Password'}
+        message={`Please enter your old password to confirm the update.`}
+        btnOne={'Confirm'}
+        btnTwo={'Cancel'}
+        submit={true}
+        onConfirm={() => {
+          if (oldPassword === formik.values.password) {
+            formik.handleSubmit();
+            setIsModalOpen(false);
+          } else {
+            // @ts-ignore
+            setToast({ message: 'Old password is incorrect!', type: 'error' });
+          }
+        }}
+        onClose={() => {
+          setIsModalOpen(false);
+          setOldPassword('');
+        }}
+      >
+        <div className="relative w-full">
+          <input
+            type={showpassword ? 'text' : 'password'}
+            placeholder="Enter old password"
+            value={oldPassword}
+            onChange={(e) => setOldPassword(e.target.value)}
+            className="mt-2 p-2 border rounded"
+          />
+          <span className="absolute right-4 top-2.5 cursor-pointer" onClick={() => setShowpassword(!showpassword)}>
+          {showpassword ? (
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+            </svg>
+          ):(
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
+            </svg>
+          )}
+        </span>
+        </div>
+      </ConfirmationModal>
+      <ConfirmationModal
+        isOpen={isImgModalOpen}
+        title={'Delete Confirmation'}
+        message={`This will remove selected Image. Enter Confirm to continue?`}
+        btnOne={'Confirm'}
+        btnTwo={'Cancel'}
+        submit={true}
+        onConfirm={() => {
+          formik.setFieldValue('logo', null);
+          setIsImgModalOpen(false);
+        }}
+        onClose={() => {
+          setIsImgModalOpen(false);
+          // @ts-ignore
+          setToast({ message: 'Account settings are reverted to last saved', type: 'success' });
+        }}
+      />
+      {showModal && (
+        <NavigateModal onClose={handleModalClose} onConfirm={handleModalConfirm} message={'Institute Updated Successfuly'} btnOne={'Keep Updating'} btnTwo={'Go To Profile'}/>
+      )}
       {toast && (
         <Toast
           {

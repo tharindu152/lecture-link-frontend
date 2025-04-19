@@ -9,16 +9,20 @@ import Loader from '../../common/Loader/Loader.tsx';
 import { Level } from '../../types/enums/level.ts';
 import Toast from '../Miscellaneous/Toast.tsx';
 import { useData, useDispatcher } from '../../context/MainContext.tsx';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { InstituteRes } from '../../types/instituteTypes/instituteRes.ts';
 import { Language } from '../../types/enums/language.ts';
+import { PrefferedTimeSlot } from '../../types/enums/prefferedTimeSlot.ts';
+import NavigateModal from '../Miscellaneous/NavigateModal.tsx';
 
 const UpdateProgramForm = () => {
   // @ts-ignore
   const institute: InstituteRes = useData()
   const dispatch = useDispatcher();
   const location = useLocation();
+  const navigate = useNavigate();
   const [toast, setToast] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   const { pathname } = location;
   const program = institute?.programs?.find(prog => prog?.id === Number(pathname.slice(29)));
@@ -58,30 +62,32 @@ const UpdateProgramForm = () => {
     initialValues:
       pathname?.includes('update')
         ? {
-            id: program?.id,
-            name: program?.name ?? '',
-            description: program?.description,
-            level: program?.level ?? Level.PGD,
-            language: program?.language ?? Language.ENGLISH,
-            durationInDays: program?.durationInDays ?? 0,
-            studentCount: program?.studentCount ?? 0,
-            batchId: program?.batchId,
-            payment: program?.payment ?? 0,
-            instituteId: institute?.id,
-            subjects: program?.subjects
-          }
+          id: program?.id,
+          name: program?.name ?? '',
+          description: program?.description,
+          level: program?.level ?? Level.POSTGRADUATE,
+          timePreference: program?.timePreference ?? PrefferedTimeSlot.WEEKDAY,
+          language: program?.language ?? Language.ENGLISH,
+          durationInDays: program?.durationInDays ?? 0,
+          studentCount: program?.studentCount ?? 0,
+          batchId: program?.batchId,
+          hourlyPayRate: program?.hourlyPayRate ?? 0,
+          instituteId: institute?.id,
+          subjects: program?.subjects
+        }
         : {
-            id: 0,
-            name: '',
-            description: '',
-            level: Level.PGD,
-            language: Language.ENGLISH,
-            durationInDays: 0,
-            studentCount: 0,
-            batchId: '',
-            payment: 0,
-            instituteId: institute?.id,
-          },
+          id: 0,
+          name: '',
+          description: '',
+          level: Level.POSTGRADUATE,
+          timePreference: PrefferedTimeSlot.WEEKDAY,
+          language: Language.ENGLISH,
+          durationInDays: 0,
+          studentCount: 0,
+          batchId: '',
+          hourlyPayRate: 0,
+          instituteId: institute?.id,
+        },
     validationSchema: Yup.object({
       name: Yup.string()
         .required('Program name is required')
@@ -91,7 +97,10 @@ const UpdateProgramForm = () => {
         .nullable(),
       level: Yup.string()
         .required('Level is required')
-        .oneOf(['MSC', 'BSC', 'HND', 'PGD', 'PHD'], 'Invalid level'),
+        .oneOf(['MASTERS', 'BACHELORS', 'HND', 'POSTGRADUATE', 'DOCTORATE', 'HNC'], 'Invalid level'),
+      timePreference: Yup.string()
+        .required('Time Preference is required')
+        .oneOf(['WEEKDAY', 'WEEKEND', 'FLEXIBLE'], 'Invalid Time Preference'),
       language: Yup.string()
         .required('Language is required')
         .oneOf(['TAMIL', 'SINHALA', 'ENGLISH'], 'Invalid Language'),
@@ -106,22 +115,31 @@ const UpdateProgramForm = () => {
       batchId: Yup.string()
         .max(255, 'Batch ID must not exceed 255 characters')
         .nullable(),
-      payment: Yup.number()
-        .required('Payment is required')
-        .positive('Payment must be greater than 0'),
+      hourlyPayRate: Yup.number()
+        .required('hourlyPayRate is required')
+        .positive('hourlyPayRate must be greater than 0'),
       instituteId: Yup.number().required('Institute ID is required').default(2),
     }),
     onSubmit: (values) => {
       pathname.slice(14, 20) === 'update'
         ? updateProgram({
-            programId: program?.id,
-            programData: values,
-          })
+          programId: program?.id,
+          programData: values,
+        })
         : createProgram({ programData: values });
     },
   });
 
   const [loading, setLoading] = useState(true);
+
+  const handleModalConfirm = () => {
+    setShowModal(false);
+    navigate('/app/programs');
+  };
+
+  const handleModalClose = () => {
+    setShowModal(false);
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1000);
@@ -144,7 +162,9 @@ const UpdateProgramForm = () => {
         className="p-6 rounded-lg border border-stroke bg-white shadow-md dark:border-strokedark dark:bg-boxdark"
       >
         <h2 className="text-lg font-medium mb-6 text-black dark:text-white">
-          Update Program
+          {`${
+            pathname.slice(14, 20) === 'update' ? 'Update' : 'Add'
+          } Program`}
         </h2>
 
         {/* Name */}
@@ -196,21 +216,21 @@ const UpdateProgramForm = () => {
           >
             <option
               className="text-center rounded-md border-[1.5px]"
-              value="PHD"
+              value="DOCTORATE"
             >
-              PHD
+              DOCTORATE
             </option>
             <option
               className="text-center rounded-md border-[1.5px]"
-              value="MSC"
+              value="MASTERS"
             >
-              MSC
+              MASTERS
             </option>
             <option
               className="text-center rounded-md border-[1.5px]"
-              value="BSC"
+              value="BACHELORS"
             >
-              BSC
+              BACHELORS
             </option>
             <option
               className="text-center rounded-md border-[1.5px]"
@@ -220,14 +240,63 @@ const UpdateProgramForm = () => {
             </option>
             <option
               className="text-center rounded-md border-[1.5px]"
-              value="PGD"
+              value="POSTGRADUATE"
             >
-              PGD
+              POSTGRADUATE
+            </option>
+            <option
+              className="text-center rounded-md border-[1.5px]"
+              value="HNC"
+            >
+              HNC
             </option>
           </select>
         </div>
         {formik.touched.level && formik.errors.level && (
           <p className="text-red-500 text-sm mb-4">{formik.errors.level}</p>
+        )}
+
+        <div className="mb-4 flex items-center">
+          <label
+            className="block w-40 text-black dark:text-white"
+            htmlFor="timePreference"
+          >
+            Time Preference
+          </label>
+          <select
+            id="timePreference"
+            name="timePreference"
+            className={`w-40 text-center rounded-md border-[1.5px] py-2 px-3 outline-none transition ${
+              formik.touched.timePreference && formik.errors.timePreference
+                ? 'border-red-500'
+                : 'border-gray-800 focus:border-primary'
+            } dark:bg-gray-800`}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.timePreference}
+          >
+            <option
+              className="text-center rounded-md border-[1.5px]"
+              value="WEEKDAY"
+            >
+              WEEKDAY
+            </option>
+            <option
+              className="text-center rounded-md border-[1.5px]"
+              value="WEEKEND"
+            >
+              WEEKEND
+            </option>
+            <option
+              className="text-center rounded-md border-[1.5px]"
+              value="FLEXIBLE"
+            >
+              FLEXIBLE
+            </option>
+          </select>
+        </div>
+        {formik.touched.timePreference && formik.errors.timePreference && (
+          <p className="text-red-500 text-sm mb-4">{formik.errors.timePreference}</p>
         )}
 
         {/* Language Dropdown */}
@@ -348,31 +417,31 @@ const UpdateProgramForm = () => {
           <p className="text-red-500 text-sm mb-4">{formik.errors.batchId}</p>
         )}
 
-        {/* Payment */}
+        {/* hourlyPayRate */}
         <div className="mb-4 flex items-center">
           <label
             className="block w-40 text-black dark:text-white"
-            htmlFor="payment"
+            htmlFor="hourlyPayRate"
           >
-            Hourly payment to lecturer (LKR)
+            Hourly PayRate to lecturer (LKR)
           </label>
           <input
-            id="payment"
-            name="payment"
+            id="hourlyPayRate"
+            name="hourlyPayRate"
             type="number"
-            placeholder="Enter payment amount"
+            placeholder="Enter hourlyPayRate amount"
             className={`rounded-md border-[1.5px] py-2 px-3 outline-none w-40 text-center transition ${
-              formik.touched.payment && formik.errors.payment
+              formik.touched.hourlyPayRate && formik.errors.hourlyPayRate
                 ? 'border-red-500'
                 : 'border-gray-800 focus:border-primary'
             } dark:bg-gray-800`}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            value={formik.values.payment}
+            value={formik.values.hourlyPayRate}
           />
         </div>
-        {formik.touched.payment && formik.errors.payment && (
-          <p className="text-red-500 text-sm mb-4">{formik.errors.payment}</p>
+        {formik.touched.hourlyPayRate && formik.errors.hourlyPayRate && (
+          <p className="text-red-500 text-sm mb-4">{formik.errors.hourlyPayRate}</p>
         )}
 
         {/* Description */}
@@ -407,7 +476,8 @@ const UpdateProgramForm = () => {
         {/* Submit Button */}
         <button
           onClick={() => {
-            return formik.handleSubmit;
+            formik.handleSubmit;
+            setShowModal(true);
           }}
           className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
           type="submit"
@@ -417,6 +487,14 @@ const UpdateProgramForm = () => {
           Program
         </button>
       </form>
+      {showModal && (
+        <NavigateModal
+          onClose={handleModalClose}
+          onConfirm={handleModalConfirm}
+          message={`${pathname.slice(14, 20) === 'update' ? 'Program Updated Successfuly' : 'Program Added Successfuly'} `}
+          btnOne={`${pathname.slice(14, 20) === 'update' ? 'Keep Updating Program' : 'Keep Adding Program'} `}
+          btnTwo={'View Program List'}/>
+      )}
       {toast && (
         <Toast
           // @ts-ignore

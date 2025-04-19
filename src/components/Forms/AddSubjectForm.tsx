@@ -8,16 +8,18 @@ import Loader from '../../common/Loader/Loader.tsx';
 import subjectService from '../../services/subjectService.ts';
 import Toast from '../Miscellaneous/Toast.tsx';
 import { useData, useDispatcher } from '../../context/MainContext.tsx';
-import { InstituteRes } from '../../types/instituteTypes/instituteRes.ts';
 import { useLocation, useNavigate } from 'react-router-dom';
+import programService from '../../services/programService.ts';
+import { Program } from '../../types/instituteTypes/program.ts';
 import NavigateModal from '../Miscellaneous/NavigateModal.tsx';
 import EmailService from '../../services/emailService.ts';
-import ProgramService from '../../services/programService.ts';
 import LecturerService from '../../services/lecturerService.ts';
+import { LecturerRes } from '../../types/lecturerTypes/lecturerRes.ts';
 
-const UpdateSubjectForm = () => {
+const AddSubjectForm = () => {
   //@ts-ignore
-  const data: InstituteRes | null = useData()
+  const data = useData();
+  const lecturer: LecturerRes | null = useData() as LecturerRes;
   const dispatch = useDispatcher();
   const location = useLocation();
   const [toast, setToast] = useState(null);
@@ -26,24 +28,36 @@ const UpdateSubjectForm = () => {
 
   const { pathname } = location;
   const subject = data?.programs?.flatMap(prog => prog.subjects || []).find(sub => sub?.id === Number(pathname.slice(29)));
+  let prog: Program | null = pathname.slice(14, 20) !== 'update' ? JSON.parse(localStorage.getItem('program') || 'null') : null;
 
-  const { mutate: updateSubject, isLoading: isUpdatingSubject } = useMutation(
-    subjectService.updateSubject,
+  if (!prog) {
+    console.error("Program not found in local storage");
+    return; 
+  }
+  const { mutate: createSubject, isLoading: isCreatingSubject } = useMutation(
+    subjectService.createSubject,
     {
-      onSuccess: () => {
+      onSuccess: (data) => {
         // @ts-ignore
-        setToast({ message: "Subject updated successfully!", type: "success" });
+        setToast({ message: "Subject created successfully!", type: "success" });
+        // @ts-ignore
+        prog?.subjects?.push({ id: data.id });
+        updateProgram({
+          programId: prog?.id,
+          programData: prog
+        })
         dispatch({ type: "delete" });
+        formik.resetForm()
       },
       onError: () => {
         // @ts-ignore
-        setToast({ message: "Subject update is unsuccessful!", type: "error" });
+        setToast({ message: "Subject creation is unsuccessful!", type: "error" });
       },
     },
   );
 
   const { mutate: updateProgram, isLoading: isUpdatingProgram } = useMutation(
-    ProgramService.updateProgram,
+    programService.updateProgram,
     {
       onSuccess: () => {
         // @ts-ignore
@@ -63,6 +77,7 @@ const UpdateSubjectForm = () => {
       onSuccess: () => {
         // @ts-ignore
         setToast({ message: "Assigned Subject to Lecturer successfully, Email has send successfully", type: "success" });
+        dispatch({ type: "delete" });
       },
       onError: () => {
         // @ts-ignore
@@ -73,13 +88,14 @@ const UpdateSubjectForm = () => {
 
   const formik = useFormik<Subject>({
     initialValues: {
-      id: subject?.id ?? 0,
-      name: subject?.name ?? '',
-      noOfCredits: subject?.noOfCredits ?? 0,
-      description: subject?.description ?? '',
-      isAssigned: subject?.isAssigned ?? false,
-      lecturerId: subject?.lecturerId ?? undefined,
+            id: 0,
+            name: '',
+            noOfCredits: 1,
+            description: '',
+            isAssigned: false,
+            lecturerId: undefined,
     },
+            
     validationSchema: Yup.object({
       name: Yup.string()
         .required('Subject name is required')
@@ -100,9 +116,9 @@ const UpdateSubjectForm = () => {
         const lecturerId = values.lecturerId;
 
         const lecturerData = await LecturerService.getLecturerById({ lecturerId });
-        const lecturerEmail = lecturerData.email;
+        const lecturerEmail = lecturerData.email; 
 
-        await updateSubject({ subjectId: subject?.id, subjectData: values });
+        await createSubject({ subjectData: values });
 
         await sendEmail({
           lecturerEmail,
@@ -110,12 +126,21 @@ const UpdateSubjectForm = () => {
           data: data?.name,
         });
       } else {
-        await updateSubject({ subjectId: subject?.id, subjectData: values });
+        await createSubject({ subjectData: values });
       }
     },
   });
 
   const [loading, setLoading] = useState(true);
+  const [programName, setProgramName] = useState<string | null>(null);
+
+  useEffect(() => {
+
+    if (prog) {
+      setProgramName(prog.name); // Assuming prog has a 'name' property
+    }
+
+  }, [prog]);
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1000);
@@ -124,29 +149,30 @@ const UpdateSubjectForm = () => {
 
   const handleModalConfirm = () => {
     setShowModal(false);
-    navigate('/app/subjects');
+    navigate('/app/subjects'); // Navigate to login page when modal is closed
   };
 
   const handleModalClose = () => {
-    setShowModal(false);
+    setShowModal(false); // Navigate to login page when modal is closed
   };
 
-  if (  isUpdatingSubject || isUpdatingProgram || loading) {
+  if (isCreatingSubject || isUpdatingProgram || loading) {
     return <Loader />;
   }
 
+      
 
 
 
   return (
     <>
-      <Breadcrumb pageName= "Update Subject" />
+      <Breadcrumb pageName={`Add Subject to ${programName}`} />
       <form
         onSubmit={formik.handleSubmit}
         className="p-6 rounded-lg border border-stroke bg-white shadow-md dark:border-strokedark dark:bg-boxdark"
       >
         <h2 className="text-lg font-medium mb-6 text-black dark:text-white">
-          Update Subject
+          Create Subject
         </h2>
 
         {/* Subject Name */}
@@ -211,9 +237,6 @@ const UpdateSubjectForm = () => {
             onBlur={formik.handleBlur}
             value={formik.values.lecturerId}
             disabled={!formik.values.isAssigned}
-
-
-
           ></input>
         </div>
         {formik.touched.lecturerId && formik.errors.lecturerId && (
@@ -287,18 +310,18 @@ const UpdateSubjectForm = () => {
             disabled={!formik.isValid || isSendingEmail}
             className="w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
           >
-            Update Subject
+            Add Subject
           </button>
         </div>
       </form>
       {showModal && (
-        <NavigateModal
-          onClose={handleModalClose}
-          onConfirm={handleModalConfirm}
-          message={'Subject Updated Successfuly'}
-          btnOne={'Keep Updating Subject'}
-          btnTwo={'View Subject List'}/>
-      )}
+            <NavigateModal 
+            onClose={handleModalClose} 
+            onConfirm={handleModalConfirm} 
+            message={`${pathname.slice(14, 20) === 'update' ? 'Subject Updated Successfuly' : 'Subject Added Successfuly'} `} 
+            btnOne={`${pathname.slice(14, 20) === 'update' ? 'Keep Updating Subject' : 'Keep Adding Subject'} `} 
+            btnTwo={'View Subject List'}/>
+            )}
       {toast && <Toast
         // @ts-ignore
         {...toast} onClose={() => setToast(null)} />}
@@ -306,4 +329,4 @@ const UpdateSubjectForm = () => {
   );
 };
 
-export default UpdateSubjectForm;
+export default AddSubjectForm;
