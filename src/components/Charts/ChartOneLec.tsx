@@ -1,9 +1,10 @@
 import { ApexOptions } from 'apexcharts';
 import React, { useEffect, useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
-import { InstituteRes } from '../../types/instituteTypes/instituteRes.ts';
 import { Program } from '../../types/instituteTypes/program.ts';
 import { useData } from '../../context/MainContext.tsx';
+import { LecturerRes } from '../../types/lecturerTypes/lecturerRes.ts';
+import ProgramService from '../../services/programService.ts';
 
 const options: ApexOptions = {
   legend: {
@@ -24,7 +25,6 @@ const options: ApexOptions = {
       left: 0,
       opacity: 0.1,
     },
-
     toolbar: {
       show: false,
     },
@@ -76,13 +76,13 @@ const options: ApexOptions = {
     fillOpacity: 1,
     discrete: [],
     hover: {
-      size: undefined,
+      size: 2,
       sizeOffset: 5,
     },
   },
   xaxis: {
     type: 'category',
-    categories: [],
+    categories: ["Duration (Days)", "Student Count", "PayRate (LKR)"],
     axisBorder: {
       show: false,
     },
@@ -97,7 +97,7 @@ const options: ApexOptions = {
       },
     },
     min: 0,
-    max: 0,
+    max: undefined,
     decimalsInFloat: 0
   },
 };
@@ -106,43 +106,39 @@ interface ChartOneState {
   series: {
     name: string;
     data: number[];
-  }[] | undefined;
+  }[];
 }
 
-const ChartOne:  React.FC = () => {
-  // @ts-ignore
-  const data: InstituteRes  = useData();
-  // @ts-ignore
-  options.xaxis.categories = ["Duration (Days)", "Student Count", "PayRate (LKR)"]
-  const hourlyPayRates = data?.programs?.map((program : Program) => program?.hourlyPayRate);
-  // @ts-ignore
-  options.yaxis.max = Math.max(...hourlyPayRates ?? [])+10;
-
-  const [state, setState] = useState<ChartOneState>({
-    series: data?.programs?.flatMap((program: Program) => {
-      return {
-        name: program?.name,
-        data: [program?.durationInDays, program?.studentCount, program?.hourlyPayRate],
-      };
-    })
-  });
+const ChartOneLec: React.FC = () => {
+  const data: LecturerRes | null = useData();
+  const [state, setState] = useState<ChartOneState>({ series: [] });
 
   useEffect(() => {
-    handleReset();
-  }, []);
+    const fetchPrograms = async () => {
+      if (data?.id) {
+        try {
+          const programs = await ProgramService.getProgramsForLecturer({ lecturerId: data.id });
+          const seriesData = programs.map((program: Program) => ({
+            name: program.name,
+            data: [program.durationInDays, program.studentCount, program.hourlyPayRate],
+          }));
+          setState({ series: seriesData });
+          options.yaxis.max= Math.max(...programs.map(p => p.hourlyPayRate)) + 10; // Update max y-axis value
+        } catch (error) {
+          console.error("Error fetching programs:", error);
+        }
+      }
+    };
 
-  const handleReset = () => {
-    setState((prevState) => ({
-      ...prevState,
-    }));
-  };
+    fetchPrograms();
+  }, [data]);
 
   return (
     <div className="col-span-12 rounded-sm border border-stroke bg-white px-5 pt-7.5 pb-5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:col-span-8">
       <div className="flex flex-wrap items-start justify-between gap-3 sm:flex-nowrap">
         <div>
           <h4 className="text-xl font-semibold text-black dark:text-white">
-            Program Comparison
+            Comparison of Undertaken Programs
           </h4>
         </div>
       </div>
@@ -161,4 +157,4 @@ const ChartOne:  React.FC = () => {
   );
 };
 
-export default ChartOne;
+export default ChartOneLec;
