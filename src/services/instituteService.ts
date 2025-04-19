@@ -9,7 +9,7 @@ const InstituteService = {
   },
 
   getInstituteById: async (payload: {
-    instituteId: number;
+    instituteId: number | string;
   }): Promise<InstituteRes> => {
     const { data } = await lectureLinkAxios.get(
       `/institutes/${payload.instituteId}`,
@@ -19,7 +19,7 @@ const InstituteService = {
 
   getInstitutesForLecturer: async (
     _key: string,
-    payload: { lecturerId: string},
+    payload: { lecturerId: string | number | undefined},
   ): Promise<InstituteRes[]> => {
     const { data } = await lectureLinkAxios.get(
       `/institutes/lecturer/${payload.lecturerId}`,
@@ -109,7 +109,7 @@ const InstituteService = {
     return data;
   },
 
-  getInstituteEmailBySubjectId: async (subjectId: number): Promise<string> => {
+  getInstituteEmailBySubjectId: async (subjectId: number | string | undefined): Promise<string> => {
     const { data } = await lectureLinkAxios.get(`/institutes/email-by-subject/${subjectId}`);
     return data;
   }

@@ -5,7 +5,7 @@ import { lectureLinkAxios } from "./axiosConfig";
 const EmailService = {
   sendEmailInstitute: async (payload: {
     instituteEmail: string;
-    name: string;
+    name: string | undefined;
     data: string | undefined; 
     }): Promise<LecturerRes> => {
             const { data } = await lectureLinkAxios.post('/email/send', {

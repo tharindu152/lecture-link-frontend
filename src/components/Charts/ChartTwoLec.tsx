@@ -93,7 +93,7 @@ const ChartTwoLec: React.FC = () => {
     return data.subjects.map(subject => subject.noOfCredits); // Assuming noOfCredits is a property of each subject
   }
 
-  // Update options with subject names
+  // @ts-ignore
   options.xaxis.categories = getSubjectNames(data);
 
   const [state, setState] = useState<ChartTwoState>({

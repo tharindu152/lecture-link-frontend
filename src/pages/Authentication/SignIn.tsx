@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import LogoDark from '../../images/logo/LectureLinkLogoDark.png';
 import Logo from '../../images/logo/LectureLinkLogo.png';
@@ -9,22 +9,12 @@ import authService from '../../services/authService.ts';
 import Loader from '../../common/Loader/Loader.tsx';
 import Toast from '../../components/Miscellaneous/Toast.tsx';
 import { jwtDecode } from 'jwt-decode';
-import { useData, useDispatcher } from '../../context/MainContext.tsx';
-import { useNavigate } from 'react-router-dom';
+import { useDispatcher } from '../../context/MainContext.tsx';
 
 const SignIn = () => {
   const [toast, setToast] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const dispatcher = useDispatcher();
-  const data = useData();
-  const navigate = useNavigate(); // Properly initialize useNavigate
-
-  // const responseMessage = (response) => {
-  //     console.log(response);
-  // };
-  // const errorMessage = (error) => {
-  //     console.log(error);
-  // };
 
   const { mutate: signInUser, isLoading: isSigningIn } = useMutation(
     authService.signIn,

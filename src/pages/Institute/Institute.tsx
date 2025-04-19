@@ -14,7 +14,7 @@ const Institute = () => {
   const { pathname } = location;
 
   const { data: institute, isLoading: isLoadingInstitutes } = useQuery(
-    ['getInstituteById', pathname.slice(16)], // Unique key for each institute
+    ['getInstituteById', pathname.slice(16)],
     () => InstituteService.getInstituteById({ instituteId: pathname.slice(16) }),
   );
 
@@ -42,7 +42,7 @@ const Institute = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  if (isLoadingInstitutes) {
+  if (loading || isLoadingInstitutes) {
     return <Loader />;
   }
 

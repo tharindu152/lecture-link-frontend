@@ -3,7 +3,7 @@ import ProgramService from "../../services/programService.ts";
 import { Program } from '../../types/instituteTypes/program.ts'; 
 
 interface TableTwoLecProps {
-  lecturerId: string; 
+  lecturerId: string | number | undefined;
 }
 
 const TableTwoLec: React.FC<TableTwoLecProps> = ({ lecturerId }) => { 

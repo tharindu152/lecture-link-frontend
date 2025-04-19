@@ -14,6 +14,7 @@ import { LecturerRes } from '../../types/lecturerTypes/lecturerRes.ts';
 import NavigateModal from '../Miscellaneous/NavigateModal.tsx';
 import { PrefferedTimeSlot } from '../../types/enums/prefferedTimeSlot.ts';
 import { Language } from '../../types/enums/language.ts';
+import { districtOptions } from '../../types/dropdowns/dropdownOptions.ts';
 
 const UpdateLecturerForm = () => {
   const [toast, setToast] = useState(null);
@@ -28,34 +29,6 @@ const UpdateLecturerForm = () => {
   const [showModal, setShowModal] = useState(false);
   const [oldPassword, setOldPassword] = useState('');
   const [isImgModalOpen, setIsImgModalOpen] = useState(false);
-
-  const districtOptions = [
-    'Ampara',
-    'Anuradhapura',
-    'Badulla',
-    'Batticaloa',
-    'Colombo',
-    'Galle',
-    'Gampaha',
-    'Hambantota',
-    'Jaffna',
-    'Kalutara',
-    'Kandy',
-    'Kegalle',
-    'Kilinochchi',
-    'Kurunegala',
-    'Mannar',
-    'Matale',
-    'Matara',
-    'Monaragala',
-    'Mullaitivu',
-    'Nuwara Eliya',
-    'Polonnaruwa',
-    'Puttalam',
-    'Ratnapura',
-    'Trincomalee',
-    'Vavuniya',
-  ];
 
   const { mutate: updateLecturerMultipart, isLoading: isUpdatingLecturerMultipart } =
     useMutation(lecturerService.updateLecturerMultipart, {
@@ -812,7 +785,7 @@ const UpdateLecturerForm = () => {
           ) : (
             <button
               onClick={() => {
-                formik.handleSubmit;
+                formik.handleSubmit();
                 setShowModal(true);
               }}
               disabled={!formik.isValid}

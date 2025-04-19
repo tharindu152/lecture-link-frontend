@@ -1,5 +1,5 @@
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb.tsx';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import Loader from '../../common/Loader/Loader.tsx';
 import { useData, useDispatcher } from '../../context/MainContext.tsx';
 import { Role } from '../../types/enums/role.ts';
@@ -12,11 +12,9 @@ import { useState } from 'react';
 import { LecturerRes } from '../../types/lecturerTypes/lecturerRes.ts';
 
 const SubjectView = () => {
-  const location = useLocation();
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const { subjectId } = useParams(); 
   const lecturer: LecturerRes | null = useData() as LecturerRes;
-  const { pathname } = location;
   const dispatch = useDispatcher();
 
   const { data: subject, isLoading: isLoadingSubject, isError: isSubjectError } = useQuery(
@@ -68,7 +66,7 @@ const SubjectView = () => {
 
   const handleConveyInterest = async () => {
     if (subject) { 
-      getInstituteEmail(subjectId); // Call the mutation to get the institute email
+      getInstituteEmail(subjectId);
     }
   };
 

@@ -12,10 +12,8 @@ import instituteService from '../../services/instituteService.ts';
 import { Status } from '../../types/enums/status.ts';
 import { Role } from '../../types/enums/role.ts';
 import SignUpModal from '../../components/Miscellaneous/SignUpModal.tsx';
-// import { auth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from './firebase-config';
+import { districtOptions } from '../../types/dropdowns/dropdownOptions.ts';
 import RoleSelectionModal from './RoleSelectionModal';
-
-
 
 const SignUp: React.FC = () => {
   const [toast, setToast] = useState(null);
@@ -24,34 +22,6 @@ const SignUp: React.FC = () => {
   const [showRePassword, setShowRePassword] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [roleSelectionModalOpen, setRoleSelectionModalOpen] = useState(false);
-
-  const districtOptions = [
-    'Ampara',
-    'Anuradhapura',
-    'Badulla',
-    'Batticaloa',
-    'Colombo',
-    'Galle',
-    'Gampaha',
-    'Hambantota',
-    'Jaffna',
-    'Kalutara',
-    'Kandy',
-    'Kegalle',
-    'Kilinochchi',
-    'Kurunegala',
-    'Mannar',
-    'Matale',
-    'Matara',
-    'Monaragala',
-    'Mullaitivu',
-    'Nuwara Eliya',
-    'Polonnaruwa',
-    'Puttalam',
-    'Ratnapura',
-    'Trincomalee',
-    'Vavuniya',
-  ];
 
   const { mutate: createLecturer, isLoading: isLecturerCreated } = useMutation(
     lecturerService.createLecturer,

@@ -12,6 +12,7 @@ import { InstituteRes } from '../../types/instituteTypes/instituteRes.ts';
 import { Status } from '../../types/enums/status.ts';
 import ConfirmationModal from '../Miscellaneous/ConfirmationModal.tsx';
 import NavigateModal from '../Miscellaneous/NavigateModal.tsx';
+import { districtOptions } from '../../types/dropdowns/dropdownOptions.ts';
 
 const UpdateInstituteForm = () => {
   const [toast, setToast] = useState(null);
@@ -27,34 +28,6 @@ const UpdateInstituteForm = () => {
   const [showModal, setShowModal] = useState(false);
   const [oldPassword, setOldPassword] = useState('');
   const [isImgModalOpen, setIsImgModalOpen] = useState(false);
-
-  const districtOptions = [
-    'Ampara',
-    'Anuradhapura',
-    'Badulla',
-    'Batticaloa',
-    'Colombo',
-    'Galle',
-    'Gampaha',
-    'Hambantota',
-    'Jaffna',
-    'Kalutara',
-    'Kandy',
-    'Kegalle',
-    'Kilinochchi',
-    'Kurunegala',
-    'Mannar',
-    'Matale',
-    'Matara',
-    'Monaragala',
-    'Mullaitivu',
-    'Nuwara Eliya',
-    'Polonnaruwa',
-    'Puttalam',
-    'Ratnapura',
-    'Trincomalee',
-    'Vavuniya',
-  ];
 
   const { mutate: updateInstituteMultipart, isLoading: isUpdatingInstituteMultipart } =
     useMutation(instituteService.updateInstituteMultipart, {
@@ -616,7 +589,7 @@ const UpdateInstituteForm = () => {
           ) : (
             <button
               onClick={() => {
-                formik.handleSubmit;
+                formik.handleSubmit();
                 setShowModal(true);
               }}
               disabled={!formik.isValid}

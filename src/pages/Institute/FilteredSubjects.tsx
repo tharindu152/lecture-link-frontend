@@ -7,39 +7,14 @@ import { useMutation } from 'react-query';
 import subjectService from '../../services/subjectService.ts';
 import Toast from '../../components/Miscellaneous/Toast.tsx';
 import { FilteredSubjectRes } from '../../types/instituteTypes/filteredSubjectRes.ts';
-
-const districtOptions = [
-  'Ampara',
-  'Anuradhapura',
-  'Badulla',
-  'Batticaloa',
-  'Colombo',
-  'Galle',
-  'Gampaha',
-  'Hambantota',
-  'Jaffna',
-  'Kalutara',
-  'Kandy',
-  'Kegalle',
-  'Kilinochchi',
-  'Kurunegala',
-  'Mannar',
-  'Matale',
-  'Matara',
-  'Monaragala',
-  'Mullaitivu',
-  'Nuwara Eliya',
-  'Polonnaruwa',
-  'Puttalam',
-  'Ratnapura',
-  'Trincomalee',
-  'Vavuniya',
-];
-const levelOptions = ['DOCTORATE', 'MASTERS', 'BACHELORS', 'POSTGRADUATE', 'HND', 'HNC'];
-const creditOptions = [1,2,3,4];
-const hourlyRateOptions = ['500-1000', '1000-1500', '1500-2000', '2000-3000', '3000-5000'];
-const durationOptions = ['1-2', '2-3', '3-6', '6-12', '12-48'];
-const studentCountOptions = ['10-50', '50-100', '100-200', '200-500', '500-1000'];
+import {
+  districtOptions,
+  creditOptions,
+  durationOptions,
+  hourlyRateOptions,
+  levelOptions,
+  studentCountOptions,
+} from '../../types/dropdowns/dropdownOptions.ts';
 
 const FilteredSubjects = () => {
   const [currentPage, setCurrentPage] = useState(1);

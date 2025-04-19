@@ -68,7 +68,7 @@ const Qualifications = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  if (isDeletingQualification) {
+  if (loading || isDeletingQualification) {
     return <Loader />;
   }
 

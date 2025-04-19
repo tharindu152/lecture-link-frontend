@@ -12,7 +12,7 @@ type Props = {
   password:string;
 };
 
-const ConfirmationModalPass: FC<Props> = ({
+const PasswordConfirmationModal: FC<Props> = ({
   isOpen,
   title,
   message,
@@ -51,7 +51,7 @@ const ConfirmationModalPass: FC<Props> = ({
             className="px-4 py-2 bg-red-600 dark:bg-red-700 text-white rounded-lg transition border-2 border-white dark:border-gray-800 hover:border-red-900 dark:hover:border-red-400"
             type={submit ? 'submit' : 'button'}
             onClick={() => {
-              onConfirm(currentPassword); // Pass the current password to onConfirm
+              onConfirm(currentPassword);
               onClose();
             }}
           >
@@ -63,4 +63,4 @@ const ConfirmationModalPass: FC<Props> = ({
   );
 };
 
-export default ConfirmationModalPass;
+export default PasswordConfirmationModal;

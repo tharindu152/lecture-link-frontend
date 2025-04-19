@@ -8,6 +8,7 @@ import Loader from '../../common/Loader/Loader.tsx';
 import { useData } from '../../context/MainContext.tsx';
 import { Program } from '../../types/instituteTypes/program.ts';
 import { Subject } from '../../types/instituteTypes/subject.ts';
+import { Qualification } from '../../types/lecturerTypes/qualification.ts';
 import { LecturerRes } from '../../types/lecturerTypes/lecturerRes.ts';
 import { InstituteRes } from '../../types/instituteTypes/instituteRes.ts';
 import { Role } from '../../types/enums/role.ts';
@@ -15,10 +16,9 @@ import ChartOneLec from '../../components/Charts/ChartOneLec.tsx';
 import ChartTwoLec from '../../components/Charts/ChartTwoLec.tsx';
 import TableOneLec from '../../components/Tables/TableOneLec.tsx';
 import TableTwoLec from '../../components/Tables/TableTwoLec.tsx';
-import Modal from '../../components/Miscellaneous/modal.tsx';
+import FirstTimeUserModal from '../../components/Miscellaneous/FirstTimeUserModal.tsx';
 import InstituteService from '../../services/instituteService.ts';
 import ProgramService from '../../services/programService.ts';
-import { Qualification } from '../../types/lecturerTypes/qualification.ts';
 const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -26,14 +26,18 @@ const Dashboard: React.FC = () => {
   const [programCount, setProgramCount] = useState(0);
   const [totalStudents, setTotalStudents] = useState(0);
   const lecturer: LecturerRes | null = useData();
+  // @ts-ignore
   const institute: InstituteRes | null = useData();
+  // @ts-ignore
   const [qualificationList, setQualificationList] = useState<Qualification[]>([]);
+  // @ts-ignore
   const [programList, setProgramList] = useState<Program[]>([]);
   // @ts-ignore
   const data: LecturerRes | InstituteRes = useData();
 
   const lecturerId = data?.id;
 
+  // @ts-ignore
   const countInstitutesForLecturer = async (lecturerId) => {
     try {
       const institutes = await InstituteService.getInstitutesForLecturer('some_key', { lecturerId });
@@ -45,20 +49,20 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  // @ts-ignore
   const countProgramsForLecturer = async (lecturerId) => {
     try {
       const programs = await ProgramService.getProgramsForLecturer({ lecturerId });
-      const numberOfPrograms = programs.length; // Calculate the number of programs
+      const numberOfPrograms = programs.length;
 
-      // Calculate the total number of students
       const totalStudents = programs.reduce((total, program) => {
-        return total + (program.studentCount || 0); // Ensure studentCount is a number
+        return total + (program.studentCount || 0);
       }, 0);
 
-      return { numberOfPrograms, totalStudents }; // Return both counts
+      return { numberOfPrograms, totalStudents };
     } catch (error) {
       console.error('Error fetching programs:', error);
-      return { numberOfPrograms: 0, totalStudents: 0 }; // Return 0 or handle the error as needed
+      return { numberOfPrograms: 0, totalStudents: 0 };
     }
   };
 
@@ -119,7 +123,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <>
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
+      <FirstTimeUserModal isOpen={isModalOpen} onClose={closeModal}>
         {localStorage.getItem('role') === Role.INSTITUTE
           ? (
             <>
@@ -144,7 +148,7 @@ const Dashboard: React.FC = () => {
               </div>
             </>
           )}
-      </Modal>
+      </FirstTimeUserModal>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
         {localStorage.getItem('role') === Role.INSTITUTE
           ? (

@@ -12,7 +12,6 @@ import { InstituteRes } from '../../types/instituteTypes/instituteRes.ts';
 import { useLocation, useNavigate } from 'react-router-dom';
 import NavigateModal from '../Miscellaneous/NavigateModal.tsx';
 import EmailService from '../../services/emailService.ts';
-import ProgramService from '../../services/programService.ts';
 import LecturerService from '../../services/lecturerService.ts';
 
 const UpdateSubjectForm = () => {
@@ -38,21 +37,6 @@ const UpdateSubjectForm = () => {
       onError: () => {
         // @ts-ignore
         setToast({ message: "Subject update is unsuccessful!", type: "error" });
-      },
-    },
-  );
-
-  const { mutate: updateProgram, isLoading: isUpdatingProgram } = useMutation(
-    ProgramService.updateProgram,
-    {
-      onSuccess: () => {
-        // @ts-ignore
-        setToast({ message: "Subject added to the program successfully!", type: "success" });
-        dispatch({ type: "delete" });
-      },
-      onError: () => {
-        // @ts-ignore
-        setToast({ message: "Subject addition to the program is unsuccessful!", type: "error" });
       },
     },
   );
@@ -131,7 +115,7 @@ const UpdateSubjectForm = () => {
     setShowModal(false);
   };
 
-  if (  isUpdatingSubject || isUpdatingProgram || loading) {
+  if (  isUpdatingSubject || loading) {
     return <Loader />;
   }
 
@@ -281,7 +265,7 @@ const UpdateSubjectForm = () => {
           <button
             type="submit"
             onClick={() => {
-              formik.handleSubmit;
+              formik.handleSubmit();
               setShowModal(true);
             }}
             disabled={!formik.isValid || isSendingEmail}

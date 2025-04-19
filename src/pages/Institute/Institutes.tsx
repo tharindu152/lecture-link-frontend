@@ -16,6 +16,7 @@ const Institutes = () => {
   const [institutesList, setInstitutesList] = useState<InstituteRes[]>([]);
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  // @ts-ignore
   const [selectedInstitute, setSelectedInstitute] = useState(0);
   const [toast, setToast] = useState(null);
   const dispatch = useDispatcher();

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { auth, GoogleAuthProvider, signInWithPopup } from './firebase-config';
+import { auth, GoogleAuthProvider, signInWithPopup } from '../../services/firebase-config';
 
 interface RoleSelectionModalProps {
-  toggleModal: () => void;
+  toggleModal?: () => void;
 }
 
 const RoleSelectionModal: React.FC<RoleSelectionModalProps> = ({ toggleModal }) => {

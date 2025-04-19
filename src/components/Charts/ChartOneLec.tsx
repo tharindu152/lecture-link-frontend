@@ -123,6 +123,7 @@ const ChartOneLec: React.FC = () => {
             data: [program.durationInDays, program.studentCount, program.hourlyPayRate],
           }));
           setState({ series: seriesData });
+          // @ts-ignore
           options.yaxis.max= Math.max(...programs.map(p => p.hourlyPayRate)) + 10; // Update max y-axis value
         } catch (error) {
           console.error("Error fetching programs:", error);

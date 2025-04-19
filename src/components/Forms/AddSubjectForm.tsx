@@ -14,12 +14,10 @@ import { Program } from '../../types/instituteTypes/program.ts';
 import NavigateModal from '../Miscellaneous/NavigateModal.tsx';
 import EmailService from '../../services/emailService.ts';
 import LecturerService from '../../services/lecturerService.ts';
-import { LecturerRes } from '../../types/lecturerTypes/lecturerRes.ts';
 
 const AddSubjectForm = () => {
   //@ts-ignore
   const data = useData();
-  const lecturer: LecturerRes | null = useData() as LecturerRes;
   const dispatch = useDispatcher();
   const location = useLocation();
   const [toast, setToast] = useState(null);
@@ -27,8 +25,7 @@ const AddSubjectForm = () => {
   const navigate = useNavigate();
 
   const { pathname } = location;
-  const subject = data?.programs?.flatMap(prog => prog.subjects || []).find(sub => sub?.id === Number(pathname.slice(29)));
-  let prog: Program | null = pathname.slice(14, 20) !== 'update' ? JSON.parse(localStorage.getItem('program') || 'null') : null;
+  let prog: Program | null = pathname.slice(14, 20) !== 'update' ? JSON.parse(localStorage.getItem('program') ?? 'null') : null;
 
   if (!prog) {
     console.error("Program not found in local storage");
@@ -135,11 +132,9 @@ const AddSubjectForm = () => {
   const [programName, setProgramName] = useState<string | null>(null);
 
   useEffect(() => {
-
     if (prog) {
-      setProgramName(prog.name); // Assuming prog has a 'name' property
+      setProgramName(prog.name);
     }
-
   }, [prog]);
 
   useEffect(() => {
@@ -149,7 +144,7 @@ const AddSubjectForm = () => {
 
   const handleModalConfirm = () => {
     setShowModal(false);
-    navigate('/app/subjects'); // Navigate to login page when modal is closed
+    navigate('/app/subjects');
   };
 
   const handleModalClose = () => {
@@ -304,7 +299,7 @@ const AddSubjectForm = () => {
           <button
             type="submit"
             onClick={() => {
-              formik.handleSubmit;
+              formik.handleSubmit();
               setShowModal(true);
             }}
             disabled={!formik.isValid || isSendingEmail}

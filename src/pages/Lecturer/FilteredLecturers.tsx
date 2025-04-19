@@ -8,39 +8,13 @@ import lecturerService from '../../services/lecturerService.ts';
 import { LecturerRes } from '../../types/lecturerTypes/lecturerRes.ts';
 import Toast from '../../components/Miscellaneous/Toast.tsx';
 import dummyProfileImg from '../../images/user/profile_dummy.png';
-
-// Dropdown options
-const districtOptions = [
-  'Ampara',
-  'Anuradhapura',
-  'Badulla',
-  'Batticaloa',
-  'Colombo',
-  'Galle',
-  'Gampaha',
-  'Hambantota',
-  'Jaffna',
-  'Kalutara',
-  'Kandy',
-  'Kegalle',
-  'Kilinochchi',
-  'Kurunegala',
-  'Mannar',
-  'Matale',
-  'Matara',
-  'Monaragala',
-  'Mullaitivu',
-  'Nuwara Eliya',
-  'Polonnaruwa',
-  'Puttalam',
-  'Ratnapura',
-  'Trincomalee',
-  'Vavuniya',
-];
-const qualificationOptions = ['DOCTORATE', 'MASTERS', 'BACHELORS', 'POSTGRADUATE', 'HND', 'HNC'];
-const hourlyRateOptions = ['500-1000', '1000-1500', '1500-2000', '2000-3000', '3000<'];
-const isAssignedOptions = ["true", "false"];
-const languageOptions = ['ENGLISH', 'SINHALA', 'TAMIL'];
+import {
+  districtOptions,
+  qualificationOptions,
+  isAssignedOptions,
+  hourlyRateOptions,
+  languageOptions,
+} from '../../types/dropdowns/dropdownOptions.ts';
 
 const FilteredLecturers = () => {
 
@@ -118,14 +92,6 @@ const FilteredLecturers = () => {
       })
     },
   });
-
-  const sortLecturers = (lecturers: LecturerRes[]) => {
-    return [...lecturers].sort((a, b) => {
-      const rateA = a.hourlyPayRate || 0;
-      const rateB = b.hourlyPayRate || 0;
-      return sortOrder === 'asc' ? rateA - rateB : rateB - rateA;
-    });
-  };;
 
   const handleSort = (column: string) => {
     if (sortColumn === column) {

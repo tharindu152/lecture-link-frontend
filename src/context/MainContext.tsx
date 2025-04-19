@@ -91,6 +91,7 @@ export function MainProvider({ children }: { children: ReactNode }) {
 }
 
 export function useData() {
+  // @ts-ignore
   return useContext(DataContext);
 }
 
