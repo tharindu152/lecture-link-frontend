@@ -19,7 +19,7 @@ const InstituteService = {
 
   getInstitutesForLecturer: async (
     _key: string,
-    payload: { lecturerId: string },
+    payload: { lecturerId: string},
   ): Promise<InstituteRes[]> => {
     const { data } = await lectureLinkAxios.get(
       `/institutes/lecturer/${payload.lecturerId}`,
@@ -89,6 +89,31 @@ const InstituteService = {
     );
     return data;
   },
+
+  deactivateInstitute: async (payload: {
+    instituteId: number | undefined;
+  }): Promise<{ id: string; name: string }> => {
+    const { data } = await lectureLinkAxios.patch(
+      `/institutes/${payload.instituteId}/deactivate`,
+    );
+    return data;
+  },
+
+  updateInstituteRating: async (payload: { instituteId: number; newRating: FormData }): Promise<unknown> => {
+    const { data } = await lectureLinkAxios.patch(`/institutes/${payload.instituteId}/rating`, payload.newRating);
+    return data;
+  },
+
+  subscribeInstitute: async (payload: { instituteId: string | null; subscribed: FormData }): Promise<unknown> => {
+    const { data } = await lectureLinkAxios.patch(`/institutes/${payload.instituteId}/subscribe`, payload.subscribed);
+    return data;
+  },
+
+  getInstituteEmailBySubjectId: async (subjectId: number): Promise<string> => {
+    const { data } = await lectureLinkAxios.get(`/institutes/email-by-subject/${subjectId}`);
+    return data;
+  }
+
 };
 
 export default InstituteService;

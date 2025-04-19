@@ -9,7 +9,7 @@ const LecturerService = {
     return data;
   },
 
-  getLecturerById: async (payload: { lecturerId: string }): Promise<LecturerRes> => {
+  getLecturerById: async (payload: { lecturerId: string | number | undefined }): Promise<LecturerRes> => {
     const { data } = await lectureLinkAxios.get(`/lecturers/${payload.lecturerId}`);
     return data;
   },
@@ -21,13 +21,13 @@ const LecturerService = {
     return data;
   },
 
-  updateLecturerMultipart: async (payload: { lecturerId: number; lecturerData: FormData }): Promise<{ id: string; name: string }> => {
-    const { data } = await lectureLinkAxios.patch(`/lecturers/${payload.lecturerId}`, payload.lecturerData);
+  updateLecturerMultipart: async (payload: { lecturerId: number | undefined; lecturerConfig: FormData }): Promise<{ id: string; name: string }> => {
+    const { data } = await lectureLinkAxios.patch(`/lecturers/${payload.lecturerId}`, payload.lecturerConfig);
     return data;
   },
 
-  updateLecturerJson: async (payload: { lecturerId: number; lecturerData: Lecturer }): Promise<{ id: string; name: string }> => {
-    const { data } = await lectureLinkAxios.patch(`/lecturers/${payload.lecturerId}`, payload.lecturerData);
+  updateLecturerJson: async (payload: { lecturerId: number | undefined; lecturerConfig: Lecturer }): Promise<{ id: string; name: string }> => {
+    const { data } = await lectureLinkAxios.patch(`/lecturers/${payload.lecturerId}`, payload.lecturerConfig);
     return data;
   },
 
@@ -50,8 +50,8 @@ const LecturerService = {
     const params = new URLSearchParams();
 
     if (payload.district) params.append('district', payload.district);
-    if (payload.hourlyRate !== undefined) params.append('payRateLower', payload.hourlyRate.split("-")[0].toString());
-    if (payload.hourlyRate !== undefined) params.append('payRateUpper', payload.hourlyRate.split("-")[1].toString());
+    if (payload.hourlyRate !== undefined) params.append('paymentLower', payload.hourlyRate.split("-")[0].toString());
+    if (payload.hourlyRate !== undefined) params.append('paymentUpper', payload.hourlyRate.split("-")[1].toString());
     if (payload.qualification) params.append('qualification', payload.qualification);
     if (payload.isAssigned !== undefined) params.append('isAssigned', payload.isAssigned.toString());
     if (payload.language) params.append('language', payload.language);
@@ -67,6 +67,25 @@ const LecturerService = {
 
   deleteLecturerById: async (payload: { lecturerId: number }): Promise<{ success: boolean; message?: string }> => {
     const { data } = await lectureLinkAxios.delete(`/lecturers/${payload.lecturerId}`);
+    return data;
+  },
+
+  updateLecturerRating: async (payload: { lecturerId: number; newRating: FormData }): Promise<unknown> => {
+    const { data } = await lectureLinkAxios.patch(`/lecturers/${payload.lecturerId}/rating`, payload.newRating);
+    return data;
+  },
+
+  deactivateLecturer: async (payload: {
+    lecturerId: number | undefined;
+  }): Promise<{ id: string; name: string }> => {
+    const { data } = await lectureLinkAxios.patch(
+      `/lecturers/${payload.lecturerId}/deactivate`,
+    );
+    return data;
+  },
+
+  subscribeLecturer: async (payload: { lecturerId: string | null; subscribed: FormData }): Promise<unknown> => {
+    const { data } = await lectureLinkAxios.patch(`/lecturers/${payload.lecturerId}/subscribe`, payload.subscribed);
     return data;
   },
 };

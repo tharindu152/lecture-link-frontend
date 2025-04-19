@@ -45,7 +45,7 @@ const QualificationService = {
   },
 
   updateQualification: async (payload: {
-    qualificationId: string;
+    qualificationId: number | undefined;
     qualificationData: Qualification;
   }): Promise<{ id: string; name: string }> => {
     const { data } = await lectureLinkAxios.patch(`/qualifications/${payload.qualificationId}`, payload.qualificationData);

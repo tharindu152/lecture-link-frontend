@@ -19,7 +19,7 @@ const ProgramService = {
     return data;
   },
 
-  getProgramsForLecturer: async (payload: { lecturerId: string }): Promise<Program[]> => {
+  getProgramsForLecturer: async (payload: { lecturerId: number | string}): Promise<Program[]> => {
     const { data } = await lectureLinkAxios.get(`/programs/lecturer/${payload.lecturerId}`);
     return data;
   },

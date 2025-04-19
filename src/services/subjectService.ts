@@ -10,7 +10,7 @@ const SubjectService = {
     return data;
   },
 
-  getSubjectById: async (payload: { subjectId: string }): Promise<Subject> => {
+  getSubjectById: async (payload: { subjectId: string | undefined}): Promise<Subject> => {
     const { data } = await lectureLinkAxios.get(`/subjects/${payload.subjectId}`);
     return data;
   },
