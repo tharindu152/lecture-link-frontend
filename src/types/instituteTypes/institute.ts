@@ -8,9 +8,10 @@ export type Institute = {
   email: string;
   district: string;
   telephone?: string;
+  mapsLocation: string;
   ugcRegNo?: string;
   description?: string;
-  rating?: number;
+  currentRating?: number;
   subscribed?: boolean;
   logo?: File;
   status: Status;

@@ -8,5 +8,5 @@ export type Qualification = {
   discipline?: string;
   completedAt: string;
   level: Level;
-  lecturerId: number;
+  lecturerId?: number;
 };

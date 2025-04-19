@@ -1,7 +1,8 @@
 export enum Level {
-  PHD = "PhD",
-  MSC = "MSc",
-  BSC = "BSc",
+  DOCTORATE = "DOCTORATE",
+  MASTERS = "MASTERS",
+  POSTGRADUATE = "POSTGRADUATE",
+  BACHELORS = "BACHELORS",
   HND = "HND",
-  PGD = "PGD",
+  HNC = "HNC",
 }

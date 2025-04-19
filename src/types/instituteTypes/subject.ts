@@ -1,3 +1,5 @@
+import { Program } from "./program";
+
 export type Subject = {
   id?: number;
   name: string;
@@ -5,4 +7,5 @@ export type Subject = {
   description?: string;
   isAssigned: boolean;
   lecturerId?: number;
+  programs?: Program[];
 };
