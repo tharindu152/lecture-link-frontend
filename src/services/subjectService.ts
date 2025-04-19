@@ -21,7 +21,7 @@ const SubjectService = {
   },
 
   getFilteredSubjects: async (payload: {
-    district?: string;
+    division?: string;
     programLevel?: string;
     credits?: number;
     hourlyRate?: string;
@@ -34,7 +34,7 @@ const SubjectService = {
   }): Promise<{ subjects: FilteredSubjectRes[]; total: number }> => {
     const params = new URLSearchParams();
 
-    if (payload.district) params.append("district", payload.district);
+    if (payload.division) params.append("division", payload.division);
     if (payload.programLevel) params.append("programLevel", payload.programLevel);
     if (payload.credits !== undefined) params.append("credits", payload.credits.toString());
     if (payload.hourlyRate !== undefined) params.append("paymentUpper", payload.hourlyRate.split('-')[1].toString());

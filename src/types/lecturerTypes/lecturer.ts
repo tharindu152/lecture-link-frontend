@@ -6,7 +6,7 @@ import { Program } from '../instituteTypes/program.ts';
 export type Lecturer = {
   id?: number;
   name: string;
-  district: string;
+  division: string;
   email: string;
   password: string;
   dob?: string;

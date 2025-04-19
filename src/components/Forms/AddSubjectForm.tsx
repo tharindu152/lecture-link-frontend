@@ -12,8 +12,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import programService from '../../services/programService.ts';
 import { Program } from '../../types/instituteTypes/program.ts';
 import NavigateModal from '../Miscellaneous/NavigateModal.tsx';
-import EmailService from '../../services/emailService.ts';
-import LecturerService from '../../services/lecturerService.ts';
 
 const AddSubjectForm = () => {
   //@ts-ignore
@@ -45,6 +43,7 @@ const AddSubjectForm = () => {
         })
         dispatch({ type: "delete" });
         formik.resetForm()
+        setShowModal(true);
       },
       onError: () => {
         // @ts-ignore
@@ -66,21 +65,6 @@ const AddSubjectForm = () => {
         setToast({ message: "Subject addition to the program is unsuccessful!", type: "error" });
       },
     },
-  );
-
-  const { mutate: sendEmail, isLoading: isSendingEmail } = useMutation(
-    EmailService.sendEmailLecturer,
-    {
-      onSuccess: () => {
-        // @ts-ignore
-        setToast({ message: "Assigned Subject to Lecturer successfully, Email has send successfully", type: "success" });
-        dispatch({ type: "delete" });
-      },
-      onError: () => {
-        // @ts-ignore
-        setToast({ message: "Assigned subject unsuccessfull!", type: "error" });
-      },
-    }
   );
 
   const formik = useFormik<Subject>({
@@ -109,22 +93,7 @@ const AddSubjectForm = () => {
       lecturerId: Yup.number().nullable(),
     }),
     onSubmit: async (values) => {
-      if (values.isAssigned && values.lecturerId) {
-        const lecturerId = values.lecturerId;
-
-        const lecturerData = await LecturerService.getLecturerById({ lecturerId });
-        const lecturerEmail = lecturerData.email; 
-
-        await createSubject({ subjectData: values });
-
-        await sendEmail({
-          lecturerEmail,
-          name: values.name,
-          data: data?.name,
-        });
-      } else {
-        await createSubject({ subjectData: values });
-      }
+      createSubject({ subjectData: values });
     },
   });
 
@@ -300,10 +269,9 @@ const AddSubjectForm = () => {
             type="submit"
             onClick={() => {
               formik.handleSubmit();
-              setShowModal(true);
             }}
-            disabled={!formik.isValid || isSendingEmail}
-            className="w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
+            disabled={!formik.isValid}
+            className={`mt-6 w-full inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out ${formik.isValid ? 'hover:bg-primary hover:border-primary hover:text-white hover:bg-opacity-90' : ''}`}
           >
             Add Subject
           </button>
@@ -313,8 +281,8 @@ const AddSubjectForm = () => {
             <NavigateModal 
             onClose={handleModalClose} 
             onConfirm={handleModalConfirm} 
-            message={`${pathname.slice(14, 20) === 'update' ? 'Subject Updated Successfuly' : 'Subject Added Successfuly'} `} 
-            btnOne={`${pathname.slice(14, 20) === 'update' ? 'Keep Updating Subject' : 'Keep Adding Subject'} `} 
+            message={`${pathname.slice(14, 20) === 'update' ? 'Subject Updated Successfully!' : 'Subject Added Successfully!'} `}
+            btnOne={`${pathname.slice(14, 20) === 'update' ? 'Keep Updating Subject' : 'Keep Adding Subjects'} `}
             btnTwo={'View Subject List'}/>
             )}
       {toast && <Toast

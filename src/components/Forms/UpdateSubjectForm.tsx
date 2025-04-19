@@ -29,10 +29,21 @@ const UpdateSubjectForm = () => {
   const { mutate: updateSubject, isLoading: isUpdatingSubject } = useMutation(
     subjectService.updateSubject,
     {
-      onSuccess: () => {
+      onSuccess: async () => {
         // @ts-ignore
         setToast({ message: "Subject updated successfully!", type: "success" });
         dispatch({ type: "delete" });
+        setShowModal(true);
+        if (formik?.values?.isAssigned && formik?.values?.lecturerId) {
+          const lecturerId = formik?.values?.lecturerId;
+          const lecturerData = await LecturerService.getLecturerById({ lecturerId });
+          const lecturerEmail = lecturerData.email;
+          await sendEmail({
+            lecturerEmail,
+            name: formik?.values?.name,
+            data: data?.name,
+          });
+        }
       },
       onError: () => {
         // @ts-ignore
@@ -80,22 +91,7 @@ const UpdateSubjectForm = () => {
       lecturerId: Yup.number().nullable(),
     }),
     onSubmit: async (values) => {
-      if (values.isAssigned && values.lecturerId) {
-        const lecturerId = values.lecturerId;
-
-        const lecturerData = await LecturerService.getLecturerById({ lecturerId });
-        const lecturerEmail = lecturerData.email;
-
-        await updateSubject({ subjectId: subject?.id, subjectData: values });
-
-        await sendEmail({
-          lecturerEmail,
-          name: values.name,
-          data: data?.name,
-        });
-      } else {
-        await updateSubject({ subjectId: subject?.id, subjectData: values });
-      }
+      await updateSubject({ subjectId: subject?.id, subjectData: values });
     },
   });
 
@@ -266,10 +262,9 @@ const UpdateSubjectForm = () => {
             type="submit"
             onClick={() => {
               formik.handleSubmit();
-              setShowModal(true);
             }}
             disabled={!formik.isValid || isSendingEmail}
-            className="w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
+            className={`mt-6 w-full inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out ${formik.isValid ? 'hover:bg-primary hover:border-primary hover:text-white hover:bg-opacity-90' : ''}`}
           >
             Update Subject
           </button>
@@ -279,7 +274,7 @@ const UpdateSubjectForm = () => {
         <NavigateModal
           onClose={handleModalClose}
           onConfirm={handleModalConfirm}
-          message={'Subject Updated Successfuly'}
+          message={'Subject Updated Successfully'}
           btnOne={'Keep Updating Subject'}
           btnTwo={'View Subject List'}/>
       )}

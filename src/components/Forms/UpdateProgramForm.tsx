@@ -35,6 +35,7 @@ const UpdateProgramForm = () => {
         setToast({ message: "Program created successfully!", type: "success" });
         dispatch({ type: "delete" });
         formik.resetForm()
+        setShowModal(true);
       },
       onError: () => {
         // @ts-ignore
@@ -50,6 +51,7 @@ const UpdateProgramForm = () => {
         // @ts-ignore
         setToast({ message: "Program updated successfully!", type: "success" });
         dispatch({ type: "delete" });
+        setShowModal(true);
       },
       onError: () => {
         // @ts-ignore
@@ -476,10 +478,9 @@ const UpdateProgramForm = () => {
         {/* Submit Button */}
         <button
           onClick={() => {
-            formik.handleSubmit;
-            setShowModal(true);
+            formik.handleSubmit();
           }}
-          className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
+          className={`mt-6 w-full inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out ${formik.isValid ? 'hover:bg-primary hover:border-primary hover:text-white hover:bg-opacity-90' : ''}`}
           type="submit"
           disabled={!formik.isValid}
         >

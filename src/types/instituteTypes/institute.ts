@@ -6,7 +6,7 @@ export type Institute = {
   name: string;
   password: string;
   email: string;
-  district: string;
+  division: string;
   telephone?: string;
   mapsLocation: string;
   ugcRegNo?: string;

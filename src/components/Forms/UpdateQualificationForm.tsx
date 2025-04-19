@@ -31,6 +31,7 @@ const UpdateQualificationForm = () => {
         // @ts-ignore
         setToast({ message: "Qualification updated successfully!", type: "success" });
         dispatch({ type: 'delete' });
+        setShowModal(true);
       },
       onError: () => {
         // @ts-ignore
@@ -104,7 +105,6 @@ const UpdateQualificationForm = () => {
     <>
       <Breadcrumb pageName={'Update Qualification'} />
       <form
-        onSubmit={formik.handleSubmit}
         className="p-6 rounded-lg border border-stroke bg-white shadow-md dark:border-strokedark dark:bg-boxdark"
       >
         <h2 className="text-lg font-medium mb-6 text-black dark:text-white">
@@ -249,9 +249,9 @@ const UpdateQualificationForm = () => {
         {/* Submit Button */}
         <button
           onClick={() => {
-            setShowModal(true);
+            formik.handleSubmit()
           }}
-          className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
+          className={`mt-6 w-full inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out ${formik.isValid ? 'hover:bg-primary hover:border-primary hover:text-white hover:bg-opacity-90' : ''}`}
           type="submit"
           disabled={!formik.isValid}
         >

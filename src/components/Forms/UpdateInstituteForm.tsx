@@ -12,7 +12,7 @@ import { InstituteRes } from '../../types/instituteTypes/instituteRes.ts';
 import { Status } from '../../types/enums/status.ts';
 import ConfirmationModal from '../Miscellaneous/ConfirmationModal.tsx';
 import NavigateModal from '../Miscellaneous/NavigateModal.tsx';
-import { districtOptions } from '../../types/dropdowns/dropdownOptions.ts';
+import { divisionOptions } from '../../types/dropdowns/dropdownOptions.ts';
 
 const UpdateInstituteForm = () => {
   const [toast, setToast] = useState(null);
@@ -38,6 +38,7 @@ const UpdateInstituteForm = () => {
           type: 'success',
         });
         dispatch({ type: 'delete' });
+        setShowModal(true);
       },
       onError: () => {
         setToast({
@@ -57,6 +58,7 @@ const UpdateInstituteForm = () => {
           type: 'success',
         });
         !pathname.includes("settings") && dispatch({ type: 'delete' });
+        setShowModal(true);
       },
       onError: () => {
         setToast({
@@ -96,7 +98,7 @@ const UpdateInstituteForm = () => {
       password: institute?.password,
       mapsLocation:institute?.mapsLocation,
       email: institute?.email,
-      district: institute?.district,
+      division: institute?.division,
       telephone: institute?.telephone ?? '',
       description: institute?.description ?? '',
       subscribed: institute?.subscribed ?? false,
@@ -117,9 +119,9 @@ const UpdateInstituteForm = () => {
           ' and one number. No special characters allowed other than underscore ',
         )
         .required('Password is required'),
-      district: Yup.string()
-        .required('District is required')
-        .max(500, 'District must not exceed 500 characters'),
+      division: Yup.string()
+        .required('Division is required')
+        .max(500, 'Division must not exceed 500 characters'),
       telephone: Yup.string()
         .matches(
           /^(?:\+94|0)?(?:7[01245678]\d{7}|1\d{8})$/,
@@ -141,10 +143,12 @@ const UpdateInstituteForm = () => {
       formData.append('name', values.name);
       formData.append('email', values.email);
       formData.append('password', values.password);
-      formData.append('district', values.district);
+      formData.append('division', values.division);
+      formData.append('telephone', values.telephone);
       formData.append('description', values.description);
       formData.append('subscribed', values.subscribed.toString());
       formData.append('status', values.status);
+      formData.append('currentRating', institute?.currentRating?.toString() ?? '0');
       formData.append('mapsLocation', values.mapsLocation);
       // @ts-ignore
       formData.append('logo', values.logo);
@@ -160,7 +164,7 @@ const UpdateInstituteForm = () => {
           instituteId: institute?.id,
           instituteConfig: values,
         });
-    },
+      },
   });
 
   const [loading, setLoading] = useState(true);
@@ -294,29 +298,29 @@ const UpdateInstituteForm = () => {
 
         {pathname.includes('update') && (
           <>
-            {/* District */}
+            {/* Division */}
             <div className="mb-4 flex items-center">
               <label
                 className="block w-40 text-black dark:text-white"
-                htmlFor="district"
+                htmlFor="division"
               >
-                District
+                Division
               </label>
               <select
-                id="district"
-                name="district"
+                id="division"
+                name="division"
                 className={`flex-1 rounded-md border-[1.5px] px-3 py-2 outline-none transition ${
-                  formik.touched.status && formik.errors.district
+                  formik.touched.status && formik.errors.division
                     ? 'border-red-500'
                     : 'border-gray-800 focus:border-primary'
                 } bg-white dark:bg-gray-800 dark:text-white`}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                value={formik.values.district}
+                value={formik.values.division}
               >
-                {districtOptions.map((district, index) => (
-                  <option key={index + district} value={district}>
-                    {district}
+                {divisionOptions.map((division, index) => (
+                  <option key={index + division} value={division}>
+                    {division}
                   </option>
                 ))}
               </select>
@@ -552,7 +556,7 @@ const UpdateInstituteForm = () => {
                 onClick={() => {
                   setIsImgModalOpen(true);
                 } }
-                className="text-red-500 hover:text-red-700"
+                className="mx-3 text-red-500 hover:text-red-700 text-xs"
               >
                 Remove Added<br/> Logo
               </button>
@@ -590,10 +594,9 @@ const UpdateInstituteForm = () => {
             <button
               onClick={() => {
                 formik.handleSubmit();
-                setShowModal(true);
               }}
               disabled={!formik.isValid}
-              className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
+              className={`mt-6 w-full inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out ${formik.isValid ? 'hover:bg-primary hover:border-primary hover:text-white hover:bg-opacity-90' : ''}`}
               type="submit"
             >
               {`Update Institute`}

@@ -66,12 +66,13 @@ const AddQualificationForm = () => {
       level: Yup.string()
         .required('Level is required')
         .oneOf(
-          ['MASTERS', 'BACHELORS', 'HND', 'POSTGRADUATE', 'DOCTORATE', 'HNC'],
+          ['DOCTORATE', 'MASTERS', 'POSTGRADUATE', 'BACHELORS', 'HND', 'HNC'],
           'Invalid level',
         )
     }),
     onSubmit: (values) => {
       createQualification({ qualificationData: values });
+      setShowModal(true);
     },
   });
 
@@ -97,7 +98,7 @@ const AddQualificationForm = () => {
 
   return (
     <>
-      <Breadcrumb pageName={"Add Qualification"} />
+      <Breadcrumb pageName={'Add Qualification'} />
       <form
         onSubmit={formik.handleSubmit}
         className="p-6 rounded-lg border border-stroke bg-white shadow-md dark:border-strokedark dark:bg-boxdark"
@@ -108,7 +109,12 @@ const AddQualificationForm = () => {
 
         {/* Qualification Name */}
         <div className="mb-4 flex items-center">
-          <label className="block w-40 text-black dark:text-white" htmlFor="name">Name</label>
+          <label
+            className="block w-40 text-black dark:text-white"
+            htmlFor="name"
+          >
+            Name
+          </label>
           <input
             id="name"
             name="name"
@@ -130,7 +136,10 @@ const AddQualificationForm = () => {
 
         {/* Awarding Body */}
         <div className="mb-4 flex items-center">
-          <label className="block w-40 text-black dark:text-white" htmlFor="awardingBody">
+          <label
+            className="block w-40 text-black dark:text-white"
+            htmlFor="awardingBody"
+          >
             Awarding Body
           </label>
           <input
@@ -149,12 +158,17 @@ const AddQualificationForm = () => {
           />
         </div>
         {formik.touched.awardingBody && formik.errors.awardingBody && (
-          <p className="text-red-500 text-sm mb-4">{formik.errors.awardingBody}</p>
+          <p className="text-red-500 text-sm mb-4">
+            {formik.errors.awardingBody}
+          </p>
         )}
 
         {/* Duration in Days */}
         <div className="mb-4 flex items-center">
-          <label className="block w-40 text-black dark:text-white" htmlFor="durationInDays">
+          <label
+            className="block w-40 text-black dark:text-white"
+            htmlFor="durationInDays"
+          >
             Duration (Days)
           </label>
           <div className="flex items-center gap-4">
@@ -177,7 +191,10 @@ const AddQualificationForm = () => {
 
         {/* Discipline */}
         <div className="mb-4 flex items-center">
-          <label className="block w-40 text-black dark:text-white" htmlFor="discipline">
+          <label
+            className="block w-40 text-black dark:text-white"
+            htmlFor="discipline"
+          >
             Discipline
           </label>
           <input
@@ -196,12 +213,17 @@ const AddQualificationForm = () => {
           />
         </div>
         {formik.touched.discipline && formik.errors.discipline && (
-          <p className="text-red-500 text-sm mb-4">{formik.errors.discipline}</p>
+          <p className="text-red-500 text-sm mb-4">
+            {formik.errors.discipline}
+          </p>
         )}
 
         {/* Completed At (Date Picker) */}
         <div className="mb-4 flex items-center">
-          <label className="block w-40 text-black dark:text-white" htmlFor="completedAt">
+          <label
+            className="block w-40 text-black dark:text-white"
+            htmlFor="completedAt"
+          >
             Completed At
           </label>
           <DatePicker
@@ -211,12 +233,19 @@ const AddQualificationForm = () => {
           />
         </div>
         {formik.touched.completedAt && formik.errors.completedAt && (
-          <p className="text-red-500 text-sm mb-4">{formik.errors.completedAt}</p>
+          <p className="text-red-500 text-sm mb-4">
+            {formik.errors.completedAt}
+          </p>
         )}
 
         {/* Level (Dropdown) */}
         <div className="mb-4 flex items-center">
-          <label className="block w-40 text-black dark:text-white" htmlFor='level'>Level</label>
+          <label
+            className="block w-40 text-black dark:text-white"
+            htmlFor="level"
+          >
+            Level
+          </label>
           <select
             id="level"
             name="level"
@@ -244,10 +273,9 @@ const AddQualificationForm = () => {
         {/* Submit Button */}
         <button
           onClick={() => {
-            formik.handleSubmit;
-            setShowModal(true);
+            formik.handleSubmit();
           }}
-          className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
+          className={`mt-6 w-full inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out ${formik.isValid ? 'hover:bg-primary hover:border-primary hover:text-white hover:bg-opacity-90' : ''}`}
           type="submit"
           disabled={!formik.isValid}
         >
@@ -255,11 +283,21 @@ const AddQualificationForm = () => {
         </button>
       </form>
       {showModal && (
-      <NavigateModal onClose={handleModalClose} onConfirm={handleModalConfirm} message={'Qualification Added'} btnOne={'Keep Adding'}  btnTwo={'Go To Qualification list'}/>
-      )}''
-      {toast && <Toast
-        // @ts-ignore
-        {...toast} onClose={() => setToast(null)} />}
+        <NavigateModal
+          onClose={handleModalClose}
+          onConfirm={handleModalConfirm}
+          message={'Qualification Added Successfully!'}
+          btnOne={'Keep adding'}
+          btnTwo={'Go to qualification list'}
+        />
+      )}
+      {toast && (
+        <Toast
+          // @ts-ignore
+          {...toast}
+          onClose={() => setToast(null)}
+        />
+      )}
     </>
   );
 };

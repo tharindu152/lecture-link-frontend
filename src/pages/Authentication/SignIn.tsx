@@ -200,8 +200,6 @@ const SignIn = () => {
                 </button>
               </div>
 
-              {/*<GoogleLogin onSuccess={responseMessage} onError={errorMessage} />*/}
-
               <div className="mt-6 text-center">
                 <p>
                   Don't have any account?{' '}

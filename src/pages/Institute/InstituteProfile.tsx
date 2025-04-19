@@ -78,9 +78,9 @@ const InstituteProfile = () => {
 
                 <div className="flex flex-col md:flex-row">
                   <h4 className="font-semibold text-black dark:text-white w-full md:w-56">
-                    District:
+                    Division:
                   </h4>
-                  <p>{institute?.district}</p>
+                  <p>{institute?.division}</p>
                 </div>
 
                 <div className="flex flex-col md:flex-row">

@@ -8,7 +8,7 @@ const lecturers = [
   {
     id: 1,
     name: 'John Doe',
-    district: 'Colombo',
+    division: 'Colombo',
     email: 'john.doe@example.com',
     password: 'password123',
     dob: '1985-02-15',
@@ -25,7 +25,7 @@ const lecturers = [
   {
     id: 2,
     name: 'Jane Smith',
-    district: 'Kurunagala',
+    division: 'Kurunagala',
     email: 'jane.smith@example.com',
     password: 'pass98765',
     dob: '1990-06-20',
@@ -42,7 +42,7 @@ const lecturers = [
   {
     id: 3,
     name: 'Michael Brown',
-    district: 'Nuwareliya',
+    division: 'Nuwareliya',
     email: 'michael.brown@example.com',
     password: 'securePass80',
     dob: '1977-10-11',
@@ -57,7 +57,7 @@ const lecturers = [
   {
     id: 4,
     name: 'Emily White',
-    district: 'Galle',
+    division: 'Galle',
     email: 'emily.white@example.com',
     password: 'passstrong77',
     dob: '1980-12-21',
@@ -73,7 +73,7 @@ const lecturers = [
   {
     id: 2,
     name: 'Jane Smith',
-    district: 'Kandy',
+    division: 'Kandy',
     email: 'jane.smith@example.com',
     password: 'pass98765',
     dob: '1990-06-20',
@@ -90,7 +90,7 @@ const lecturers = [
   {
     id: 5,
     name: 'Daniel Wilson',
-    district: 'Colombo',
+    division: 'Colombo',
     email: 'daniel.wilson@example.com',
     password: 'securePass90',
     dob: '1979-08-11',
@@ -106,7 +106,7 @@ const lecturers = [
   {
     id: 1,
     name: 'John Doe',
-    district: 'Kurunagala',
+    division: 'Kurunagala',
     email: 'john.doe@example.com',
     password: 'password123',
     dob: '1985-02-15',
@@ -124,7 +124,7 @@ const lecturers = [
   {
     id: 3,
     name: 'Michael Brown',
-    district: 'Matale',
+    division: 'Matale',
     email: 'michael.brown@example.com',
     password: 'securePass80',
     dob: '1977-10-11',
@@ -139,7 +139,7 @@ const lecturers = [
   {
     id: 5,
     name: 'Daniel Wilson',
-    district: 'Nuwareliya',
+    division: 'Nuwareliya',
     email: 'daniel.wilson@example.com',
     password: 'securePass90',
     dob: '1979-08-11',
@@ -155,7 +155,7 @@ const lecturers = [
   {
     id: 4,
     name: 'Emily White',
-    district: 'Galle',
+    division: 'Galle',
     email: 'emily.white@example.com',
     password: 'passstrong77',
     dob: '1980-12-21',

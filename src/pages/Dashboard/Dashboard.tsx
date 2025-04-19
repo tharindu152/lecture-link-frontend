@@ -129,22 +129,29 @@ const Dashboard: React.FC = () => {
             <>
               <hr />
               <div className='mt-2'>
-                <p><strong>Institute</strong></p><br />
-                <p># First Page is Dashboard</p><br />
-                <p># From Profile page you can update your Details</p><br />
-                <p># From Program page you can create your programs and Add subjects to them</p><br />
-                <p># From Subject page you can update subjects</p>
+                <br/>
+                <p><strong>Dashboard : </strong>Displays a summary of programs, subjects and lecturers of your institute.</p><br/>
+                <p><strong>Institute Profile : </strong>Displays a detailed information of your institute</p><br/>
+                <p><strong>Programs : </strong>Displays a list of programs in your institute, and allows you to add/update programs to your institute.</p><br/>
+                <p><strong>Subjects : </strong>Displays a list of subjects in your institute, and allows you to add/update subjects to a selected program.</p><br/>
+                <p><strong>Assigned Lecturers : </strong>Displays a list of lecturers assigned to your institute, and allows you to assign/ unassign subjects to them.</p><br/>
+                <p><strong>Filter Lecturers : </strong>Allows you to filter suitable lecturers based on some key criteria, form Lecture Link database and assign/unassign subjects to them.</p><br/>
+                <p><strong>AI Match : </strong>A single click AI solution to find suitable lecturers to a given subject.</p><br/>
+                <p><strong>Settings : </strong>Allows you to alter app settings including subscription to AI Match.</p><br/>
               </div>
             </>
           ) : (
             <>
               <hr />
               <div className='mt-2'>
-                <p><strong>Lecturer</strong></p><br />
-                <p># First Page is Dashboard</p><br />
-                <p># From Profile page you can update your Details</p><br />
-                <p># From Qualification page you can add your qualifications and update them</p><br />
-                <p># From Assigned Institutes page you can see institutes that you are working with</p>
+                <br/>
+                <p><strong>Dashboard : </strong>Displays a summary of programs, subjects and institutes which you are working with.</p><br/>
+                <p><strong>Lecturer Profile : </strong>Displays detailed information about yourself</p><br/>
+                <p><strong>Qualifications : </strong>Displays your qualifications as a list, and allows you to add/update your qualifications.</p><br/>
+                <p><strong>Institutes Working With : </strong>Displays a list of institutes that you are working with, and allows you to rate those institutes.</p><br/>
+                <p><strong>Filter Subjects : </strong>Allows you to filter suitable subjects based on some key criteria, form Lecture Link database and convey interest to those subjects.</p><br/>
+                <p><strong>AI Match : </strong>A single click AI solution to find suitable subjects to conduct lectures.</p><br/>
+                <p><strong>Settings : </strong>Allows you to alter app settings including subscription to AI Match.</p><br/>
               </div>
             </>
           )}

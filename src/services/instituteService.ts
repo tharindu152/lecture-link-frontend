@@ -28,7 +28,7 @@ const InstituteService = {
   },
 
   getFilteredInstitutes: async (payload: {
-    district?: string;
+    division?: string;
     status?: string;
     size?: string;
     page?: number;
@@ -36,7 +36,7 @@ const InstituteService = {
   }): Promise<{ institutes: InstituteRes[]; total: number }> => {
     const params = new URLSearchParams();
 
-    if (payload.district) params.append('district', payload.district);
+    if (payload.division) params.append('division', payload.division);
     if (payload.status) params.append('status', payload.status);
     if (payload.size) params.append('size', payload.size);
     if (payload.page !== undefined)

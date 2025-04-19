@@ -9,7 +9,7 @@ import { LecturerRes } from '../../types/lecturerTypes/lecturerRes.ts';
 import Toast from '../../components/Miscellaneous/Toast.tsx';
 import dummyProfileImg from '../../images/user/profile_dummy.png';
 import {
-  districtOptions,
+  divisionOptions,
   qualificationOptions,
   isAssignedOptions,
   hourlyRateOptions,
@@ -67,7 +67,7 @@ const FilteredLecturers = () => {
 
   const formik = useFormik({
     initialValues: {
-      district: '',
+      division: '',
       hourlyRate: '',
       qualification: '',
       isAssigned: '',
@@ -80,7 +80,7 @@ const FilteredLecturers = () => {
     onSubmit: (values) => {
       console.log(values);
       filterLecturer({
-        district: values.district ?? null,
+        division: values.division ?? null,
         hourlyRate: values.hourlyRate ?? null,
         qualification: values.qualification ?? null,
         isAssigned: values.isAssigned === 'true',
@@ -130,24 +130,24 @@ const FilteredLecturers = () => {
           onSubmit={formik.handleSubmit}
           className="flex flex-wrap gap-4 items-center justify-center sm:justify-between"
         >
-          {/* District Filter */}
+          {/* Division Filter */}
           <div className="flex flex-col">
-            <label className="block text-sm font-medium mb-2" htmlFor="district">District</label>
+            <label className="block text-sm font-medium mb-2" htmlFor="division">Division</label>
             <select
-              id="district"
-              name="district"
-              value={formik.values.district}
+              id="division"
+              name="division"
+              value={formik.values.division}
               onChange={formik.handleChange}
               className={`block w-full rounded rounded-md border-[1.5px] border-2 border-gray-500 py-2 px-5 outline-none w-40 transition ${
-                formik.touched.district && formik.errors.district
+                formik.touched.division && formik.errors.division
                   ? 'border-red-500'
                   : 'border-gray-300 focus:border-primary'
               } dark:bg-gray-800`}
             >
-              <option value="">Select District</option>
-              {districtOptions.map((district, index) => (
-                <option key={index+district} value={district}>
-                  {district}
+              <option value="">Select Division</option>
+              {divisionOptions.map((division, index) => (
+                <option key={index+division} value={division}>
+                  {division}
                 </option>
               ))}
             </select>
@@ -326,7 +326,7 @@ const FilteredLecturers = () => {
                   Highest Qualification
                 </th>
                 <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                  District
+                  Division
                 </th>
                 <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
                   Contact Number
@@ -390,7 +390,7 @@ const FilteredLecturers = () => {
                       </p>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      {lecturer?.district ?? 'N/A'}
+                      {lecturer?.division ?? 'N/A'}
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       {lecturer?.contactNo ?? 'N/A'}

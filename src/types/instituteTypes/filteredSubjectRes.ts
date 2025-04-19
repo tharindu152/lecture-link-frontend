@@ -4,6 +4,6 @@ export type FilteredSubjectRes = Omit<Subject, 'description' | 'isAssigned' | 'l
   level: string;
   durationInDays: number;
   studentCount: number;
-  district: string;
+  division: string;
   payment: number;
 };

@@ -14,7 +14,7 @@ import { LecturerRes } from '../../types/lecturerTypes/lecturerRes.ts';
 import NavigateModal from '../Miscellaneous/NavigateModal.tsx';
 import { PrefferedTimeSlot } from '../../types/enums/prefferedTimeSlot.ts';
 import { Language } from '../../types/enums/language.ts';
-import { districtOptions } from '../../types/dropdowns/dropdownOptions.ts';
+import { divisionOptions } from '../../types/dropdowns/dropdownOptions.ts';
 
 const UpdateLecturerForm = () => {
   const [toast, setToast] = useState(null);
@@ -39,6 +39,7 @@ const UpdateLecturerForm = () => {
           type: 'success',
         });
         dispatch({ type: 'delete' });
+        setShowModal(true);
       },
       onError: () => {
         setToast({
@@ -58,6 +59,7 @@ const UpdateLecturerForm = () => {
           type: 'success',
         });
         !pathname.includes("settings") && dispatch({ type: 'delete' });
+        setShowModal(true);
       },
       onError: () => {
         setToast({
@@ -96,7 +98,7 @@ const UpdateLecturerForm = () => {
       name: lecturer?.name,
       password: lecturer?.password,
       email: lecturer?.email,
-      district: lecturer?.district,
+      division: lecturer?.division,
       contactNo: lecturer?.contactNo ?? '',
       hourlyPayRate: lecturer?.hourlyPayRate ?? 0,
       subscribed: lecturer?.subscribed ?? false,
@@ -123,9 +125,9 @@ const UpdateLecturerForm = () => {
           ' and one number. No special characters allowed other than underscore ',
         )
         .required('Password is required'),
-      district: Yup.string()
-        .required('District is required')
-        .max(500, 'District must not exceed 500 characters'),
+      division: Yup.string()
+        .required('Division is required')
+        .max(500, 'Division must not exceed 500 characters'),
       contactNo: Yup.string()
         .matches(
           /^(?:\+94|0)?(?:7[01245678]\d{7}|1\d{8})$/,
@@ -157,7 +159,7 @@ const UpdateLecturerForm = () => {
       formData.append('name', values.name);
       formData.append('email', values.email);
       formData.append('password', values.password);
-      formData.append('district', values.district);
+      formData.append('division', values.division);
       formData.append('hourlyPayRate', values.hourlyPayRate.toString());
       formData.append('subscribed', String(values.subscribed));
       formData.append('status', values.status);
@@ -165,6 +167,7 @@ const UpdateLecturerForm = () => {
       formData.append('timePreference', values.timePreference);
       formData.append('language', values.language);
       formData.append('mapsLocation', values.mapsLocation);
+      formData.append('currentRating', lecturer?.currentRating?.toString() ?? '0');
       formData.append('fieldOfWork', values.fieldOfWork);
       formData.append('lecturingExperience', values.lecturingExperience.toString());
       // @ts-ignore
@@ -315,29 +318,29 @@ const UpdateLecturerForm = () => {
 
         {pathname.includes('update') && (
           <>
-            {/* District */}
+            {/* Division */}
             <div className="mb-4 flex items-center">
               <label
                 className="block w-40 text-black dark:text-white"
-                htmlFor="district"
+                htmlFor="division"
               >
-                District
+                Division
               </label>
               <select
-                id="district"
-                name="district"
+                id="division"
+                name="division"
                 className={`flex-1 rounded-md border-[1.5px] px-3 py-2 outline-none transition ${
-                  formik.touched.status && formik.errors.district
+                  formik.touched.status && formik.errors.division
                     ? 'border-red-500'
                     : 'border-gray-800 focus:border-primary'
                 } bg-white dark:bg-gray-800 dark:text-white`}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                value={formik.values.district}
+                value={formik.values.division}
               >
-                {districtOptions.map((district, index) => (
-                  <option key={index + district} value={district}>
-                    {district}
+                {divisionOptions.map((division, index) => (
+                  <option key={index + division} value={division}>
+                    {division}
                   </option>
                 ))}
               </select>
@@ -748,9 +751,9 @@ const UpdateLecturerForm = () => {
                 onClick={() => {
                   setIsImgModalOpen(true);
                 } }
-                className="text-red-500 hover:text-red-700"
+                className="mx-3 text-red-500 hover:text-red-700 text-xs"
               >
-                Remove Added<br/> Logo
+                Remove Added<br/> Picture
               </button>
             </div>
           </>
@@ -786,10 +789,9 @@ const UpdateLecturerForm = () => {
             <button
               onClick={() => {
                 formik.handleSubmit();
-                setShowModal(true);
               }}
               disabled={!formik.isValid}
-              className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
+              className={`mt-6 w-full inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out ${formik.isValid ? 'hover:bg-primary hover:border-primary hover:text-white hover:bg-opacity-90' : ''}`}
               type="submit"
             >
               {`Update lecturer`}
@@ -843,7 +845,7 @@ const UpdateLecturerForm = () => {
       </ConfirmationModal>
       <ConfirmationModal
         isOpen={isImgModalOpen}
-        title={'Delete Confirmation'}
+        title={'Remove Confirmation'}
         message={`This will remove selected Image. Enter Confirm to continue?`}
         btnOne={'Confirm'}
         btnTwo={'Cancel'}

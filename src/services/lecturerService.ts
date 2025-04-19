@@ -37,7 +37,7 @@ const LecturerService = {
   },
 
   getFilteredLecturers: async (payload: {
-    district?: string;
+    division?: string;
     hourlyRate?: string;
     qualification?: string;
     isAssigned?: boolean;
@@ -49,7 +49,7 @@ const LecturerService = {
   }): Promise<FilteredLecturersRes> => {
     const params = new URLSearchParams();
 
-    if (payload.district) params.append('district', payload.district);
+    if (payload.division) params.append('division', payload.division);
     if (payload.hourlyRate !== undefined) params.append('paymentLower', payload.hourlyRate.split("-")[0].toString());
     if (payload.hourlyRate !== undefined) params.append('paymentUpper', payload.hourlyRate.split("-")[1].toString());
     if (payload.qualification) params.append('qualification', payload.qualification);

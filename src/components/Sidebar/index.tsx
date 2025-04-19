@@ -384,7 +384,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         ></path>
                       </svg>
                     )}
-                    Institutes Working On
+                    Institutes Working With
                   </NavLink>
                 </li>
               )}

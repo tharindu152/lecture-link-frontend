@@ -100,7 +100,7 @@ const Institutes = () => {
                   Contact Number
                 </th>
                 <th className="min-w-[100px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                  District
+                  Division
                 </th>
                 <th className="py-4 px-4 text-left font-medium text-black dark:text-white">
                   Actions
@@ -138,7 +138,7 @@ const Institutes = () => {
                         {institute?.telephone ?? 'N/A'}
                       </td>
                       <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                        {institute.district ?? 'N/A'}
+                        {institute.division ?? 'N/A'}
                       </td>
                       <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                         <div className="flex items-center space-x-3.5">
