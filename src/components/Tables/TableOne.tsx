@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import gmail from '../../images/brand/brand-01.svg';
-import twitter from '../../images/brand/brand-02.svg';
-import github from '../../images/brand/brand-03.svg';
-import linkedIn from '../../images/brand/brand-04.svg';
-import facebook from '../../images/brand/brand-05.svg';
+import gmail from '../../images/brand/google.svg';
+import twitter from '../../images/brand/twitter.svg';
+import github from '../../images/brand/gitHub.svg';
+import linkedIn from '../../images/brand/linkedin.svg';
+import facebook from '../../images/brand/facebook.svg';
 import { Role } from '../../types/enums/role.ts';
 
 const brandData = [
