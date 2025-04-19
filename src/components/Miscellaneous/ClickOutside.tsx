@@ -8,11 +8,11 @@ interface Props {
 }
 
 const ClickOutside: React.FC<Props> = ({
-  children,
-  exceptionRef,
-  onClick,
-  className,
-}) => {
+                                         children,
+                                         exceptionRef,
+                                         onClick,
+                                         className,
+                                       }) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
