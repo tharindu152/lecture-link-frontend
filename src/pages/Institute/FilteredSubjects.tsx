@@ -119,7 +119,7 @@ const FilteredSubjects = () => {
           {/* Division Filter */}
           <div className="flex flex-col">
             <label className="block text-sm font-medium mb-2" htmlFor="division">
-              Division
+              Division in Colombo
             </label>
             <select
               id="division"
@@ -352,7 +352,7 @@ const FilteredSubjects = () => {
                   Student Count
                 </th>
                 <th className="py-4 px-4 font-medium text-black dark:text-white">
-                  Division
+                  Division in Colombo
                 </th>
                 <th className="py-4 px-4 font-medium text-black dark:text-white">
                   Hourly Rate (LKR)

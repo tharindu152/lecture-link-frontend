@@ -129,7 +129,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               <li>
                 <NavLink
                   to="/app/profile"
-                  className={`group relative flex items-center gap-2 rounded-sm py-2 ${localStorage.getItem('role') === Role.INSTITUTE ? 'px-3' : "px-4"} font-medium text-grey-800 duration-300 ease-in-out hover:bg-gray-500 dark:hover:bg-meta-4 hover:text-bodydark1 ${
+                  className={`group relative flex items-center gap-2 rounded-sm py-2 ${
+                    localStorage.getItem('role') === Role.INSTITUTE
+                      ? 'px-3'
+                      : 'px-4'
+                  } font-medium text-grey-800 duration-300 ease-in-out hover:bg-gray-500 dark:hover:bg-meta-4 hover:text-bodydark1 ${
                     pathname.includes('profile') &&
                     !pathname.includes('settings') &&
                     'bg-gray-500 dark:bg-meta-4 text-bodydark1'
@@ -199,6 +203,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                       pathname.includes('programs') &&
                       'bg-gray-500 dark:bg-meta-4 text-bodydark1'
                     }`}
+                    id={"programs-link"}
                   >
                     <svg
                       className="fill-current"
@@ -229,6 +234,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                       pathname.includes('subjects') &&
                       'bg-gray-500 dark:bg-meta-4 text-bodydark1'
                     }`}
+                    id={"subjects-link"}
                   >
                     <svg
                       className="stroke-current"
@@ -261,6 +267,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                       pathname.includes('qualifications') &&
                       'bg-gray-500 dark:bg-meta-4 text-bodydark1'
                     }`}
+                    id={"qualifications-link"}
                   >
                     <svg
                       className="stroke-current"
@@ -446,11 +453,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               {/* <!-- Menu Item Filter Lecturers --> */}
 
               {/* <!-- Menu Item AI Match --> */}
+              {localStorage.getItem('role') === Role.INSTITUTE && (
               <li>
                 <NavLink
-                  to="/app/lecturers/smartmatch-lecturers"
+                  to={`${data?.subscribed ? "/app/lecturers/smartmatch-lecturers" : "/app/profile/pricing-card"}`}
                   className={`group relative flex items-center gap-0.5 rounded-sm py-2 px-2.5 font-medium text-grey-800 duration-300 ease-in-out hover:bg-gray-500 dark:hover:bg-meta-4 hover:text-bodydark1 ${
-                    pathname.includes('smart-match') &&
+                    pathname.includes('smartmatch') &&
                     'bg-gray-500 dark:bg-meta-4 text-bodydark1'
                   }`}
                 >
@@ -475,6 +483,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   AI Match
                 </NavLink>
               </li>
+          )}
               {/* <!-- Menu Item AI Match --> */}
 
               {/* <!-- Menu Item Settings --> */}

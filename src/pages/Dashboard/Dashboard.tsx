@@ -41,11 +41,10 @@ const Dashboard: React.FC = () => {
   const countInstitutesForLecturer = async (lecturerId) => {
     try {
       const institutes = await InstituteService.getInstitutesForLecturer('some_key', { lecturerId });
-      const numberOfInstitutes = institutes.length; // Calculate the number of institutes
+      const numberOfInstitutes = institutes.length;
       return numberOfInstitutes;
     } catch (error) {
-      console.error('Error fetching institutes:', error);
-      return 0; // Return 0 or handle the error as needed
+      return 0;
     }
   };
 
@@ -61,7 +60,6 @@ const Dashboard: React.FC = () => {
 
       return { numberOfPrograms, totalStudents };
     } catch (error) {
-      console.error('Error fetching programs:', error);
       return { numberOfPrograms: 0, totalStudents: 0 };
     }
   };
@@ -150,7 +148,6 @@ const Dashboard: React.FC = () => {
                 <p><strong>Qualifications : </strong>Displays your qualifications as a list, and allows you to add/update your qualifications.</p><br/>
                 <p><strong>Institutes Working With : </strong>Displays a list of institutes that you are working with, and allows you to rate those institutes.</p><br/>
                 <p><strong>Filter Subjects : </strong>Allows you to filter suitable subjects based on some key criteria, form Lecture Link database and convey interest to those subjects.</p><br/>
-                <p><strong>AI Match : </strong>A single click AI solution to find suitable subjects to conduct lectures.</p><br/>
                 <p><strong>Settings : </strong>Allows you to alter app settings including subscription to AI Match.</p><br/>
               </div>
             </>

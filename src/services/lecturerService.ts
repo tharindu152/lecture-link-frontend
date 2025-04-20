@@ -79,13 +79,18 @@ const LecturerService = {
     lecturerId: number | undefined;
   }): Promise<{ id: string; name: string }> => {
     const { data } = await lectureLinkAxios.patch(
-      `/lecturers/${payload.lecturerId}/deactivate`,
+      `/lecturers/${payload.lecturerId}/deactivate`
     );
     return data;
   },
 
   subscribeLecturer: async (payload: { lecturerId: string | null; subscribed: FormData }): Promise<unknown> => {
     const { data } = await lectureLinkAxios.patch(`/lecturers/${payload.lecturerId}/subscribe`, payload.subscribed);
+    return data;
+  },
+
+  updateLecturerIsAssigned: async (payload: { lecturerId: string | number | undefined; isAssigned: FormData }): Promise<unknown> => {
+    const { data } = await lectureLinkAxios.patch(`/lecturers/${payload.lecturerId}/assign`, payload.isAssigned);
     return data;
   },
 };

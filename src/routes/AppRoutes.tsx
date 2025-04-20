@@ -19,7 +19,7 @@ import SmartMatchLecturers from './../pages/Lecturer/SmartMatchLecturers';
 import Qualifications from './../pages/Lecturer/Qualifications';
 import UpdateQualificationForm from '../components/Forms/UpdateQualificationForm.tsx';
 import NotFound from '../components/Miscellaneous/NotFound';
-import Program from '../pages/Institute/Program.tsx';
+import ProgramView from '../pages/Institute/ProgramView.tsx';
 import Subject from '../pages/Institute/Subject.tsx';
 import Qualification from '../pages/Lecturer/Qualification.tsx';
 import Lecturer from '../pages/Lecturer/Lecturer.tsx';
@@ -68,7 +68,7 @@ export const routes: RouteObject[] = [
           { index: true, element: <><PageTitle title="Lecture Link | Programs" /><Programs /></> },
           { path: 'add-program', element: <><PageTitle title="Lecture Link | Add Program" /><UpdateProgramForm /></> },
           { path: 'update-program/:programId', element: <><PageTitle title="Lecture Link | Update Program" /><UpdateProgramForm /></> },
-          { path: ':programId', element: <><PageTitle title="Lecture Link | Program" /><Program /></> }
+          { path: ':programId', element: <><PageTitle title="Lecture Link | Program" /><ProgramView /></> }
         ]},
 
       { path: 'subjects', children: [

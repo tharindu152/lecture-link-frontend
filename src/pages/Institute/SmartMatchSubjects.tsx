@@ -144,7 +144,7 @@ const SmartMatchSubjects = () => {
                     {lecturer.contactNo ?? 'N/A'}
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                    ${lecturer?.hourlyPayRate?.toFixed(2)}
+                    {lecturer?.hourlyPayRate?.toFixed(2)}
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <span

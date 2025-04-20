@@ -5,7 +5,7 @@ import Loader from '../../common/Loader/Loader.tsx';
 import dummyLogo from '../../images/brand/logo_dummy.jpg';
 import { useQuery } from 'react-query';
 import InstituteService from '../../services/instituteService.ts';
-import StarRating from '../../components/StarRate/StarRating.tsx';
+import StarRating from '../../components/Miscellaneous/StarRating.tsx';
 import { Rating } from '@mui/material';
 
 const Institute = () => {
@@ -13,7 +13,7 @@ const Institute = () => {
   const location = useLocation();
   const { pathname } = location;
 
-  const { data: institute, isLoading: isLoadingInstitutes } = useQuery(
+  const { data: institute, isLoading: isLoadingInstitutes, refetch: refetchInstitute } = useQuery(
     ['getInstituteById', pathname.slice(16)],
     () => InstituteService.getInstituteById({ instituteId: pathname.slice(16) }),
   );
@@ -88,7 +88,7 @@ const Institute = () => {
 
               <div className="flex flex-col md:flex-row">
                 <h4 className="font-semibold text-black dark:text-white w-full md:w-56">
-                  Division:
+                  Division in Colombo:
                 </h4>
                 <p>{institute?.division}</p>
               </div>
@@ -161,7 +161,7 @@ const Institute = () => {
                 <p className="mt-1.5">{institute?.description}</p>
               </div>
             </div>
-            <StarRating instituteId={institute?.id} marginLeft={10}/>
+            <StarRating instituteId={institute?.id} marginLeft={10} refetch={refetchInstitute}/>
           </div>
         </div>
       </div>

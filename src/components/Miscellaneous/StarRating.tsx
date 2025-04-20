@@ -2,19 +2,20 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import Rating from "@mui/material/Rating";
 import Button from "@mui/material/Button"; 
-import LecturerService from "../../services/lecturerService";
-import InstituteService from "../../services/instituteService"; 
-import Toast from "../Miscellaneous/Toast";
+import LecturerService from "../../services/lecturerService.ts";
+import InstituteService from "../../services/instituteService.ts";
+import Toast from "./Toast.tsx";
 import { useEffect, useState } from "react";
-import { useDispatcher } from "../../context/MainContext";
+import { useDispatcher } from "../../context/MainContext.tsx";
 import { useMutation } from "react-query";
-import Loader from "../../common/Loader/Loader";
+import Loader from "../../common/Loader/Loader.tsx";
 
 interface StarRatingProps {
   lecturerId?: number;
   instituteId?: number;
   marginLeft?: number; 
   marginTop?: number;
+  refetch?: () => void;
 }
 
 export default function StarRating({
@@ -22,6 +23,7 @@ export default function StarRating({
   instituteId,
   marginLeft = 4,
   marginTop = 2,
+  refetch
 }: Readonly<StarRatingProps>) {
   const [value, setValue] = React.useState<number | null>(0);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
@@ -45,6 +47,9 @@ export default function StarRating({
           type: 'success',
         });
         dispatch({ type: 'delete' });
+        if (refetch) {
+          refetch();
+        }
       },
       onError: () => {
         setToast({
@@ -60,10 +65,13 @@ export default function StarRating({
       onSuccess: () => {
         setToast({
           // @ts-ignore
-          message: 'Lecturer Rating successfull!',
+          message: 'Lecturer Rating successfully!',
           type: 'success',
         });
         dispatch({ type: 'delete' });
+        if (refetch) {
+          refetch();
+        }
       },
       onError: () => {
         setToast({

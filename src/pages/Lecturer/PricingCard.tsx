@@ -101,37 +101,63 @@ const PricingCard = () => {
   return (
     <div className="max-w-m flex flex-col rounded-3xl bg-white dark:bg-boxdark shadow-xl ring-1 ring-black/10">
       <div className="p-8 sm:p-10">
-        <h3 className="text-xl font-semibold leading-8 tracking-tight text-indigo-600">Basic</h3>
+        <h3 className="text-xl font-semibold leading-8 tracking-tight text-indigo-600">
+          { data?.subscribed ? `Change subscription to AI Match Feature` : `Subscribe to AI Match Feature`}
+        </h3>
         <div className="mt-4 flex items-baseline text-5xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
-          <span>$25</span>
-          <span className="text-lg font-semibold leading-8 tracking-normal text-gray-500">/month</span>
+          <span>$10</span>
+          <span className="text-lg font-semibold leading-8 tracking-normal text-gray-500">
+            /month
+          </span>
         </div>
         <p className="mt-6 text-base leading-7 text-gray-500 ">
-          The Basic plan is the perfect starting point for new users. Join now
-          to get a taste of all the features & benefits that Subtxt has to offer.
+          The $10 per month Basic Subscription Package unlocks the AI Match
+          Feature, offering one click smart matching between a given subject and a suitable lecturer to that subject.
         </p>
       </div>
       <div className="flex flex-1 flex-col p-2">
         <div className="flex flex-1 flex-col justify-between rounded-2xl bg-gray-50 dark:bg-gray-900 p-6 sm:p-8">
           <ul className="space-y-6">
-            <li className="flex items-start"><p className="ml-3 text-sm leading-6 text-gray-600 dark:text-gray-400">550+ Unique Story Structures</p></li>
-            <li className="flex items-start"><p className="ml-3 text-sm leading-6 text-gray-600 dark:text-gray-400">100 AI Tokens/Month</p></li>
-            <li className="flex items-start"><p className="ml-3 text-sm leading-6 text-gray-600 dark:text-gray-400">Unlimited AI Assistance</p></li>
-            <li className="flex items-start"><p className="ml-3 text-sm leading-6 text-gray-600 dark:text-gray-400">Fine-Tuned Story Models</p></li>
+            <strong className="ml-3" >Features enabled</strong>
+            <li className="flex items-start">
+              <p className="ml-3 text-sm leading-6 text-gray-600 dark:text-gray-400">
+                Unlimited AI Assistance
+              </p>
+            </li>
+            <li className="flex items-start">
+              <p className="ml-3 text-sm leading-6 text-gray-600 dark:text-gray-400">
+                Free model training for updated data sets
+              </p>
+            </li>
+            <li className="flex items-start">
+              <p className="ml-3 text-sm leading-6 text-gray-600 dark:text-gray-400">
+                Timely updates on new features
+              </p>
+            </li>
           </ul>
           <div className="mt-8">
             {data?.subscribed ? (
               <div className="flex items-center gap-3">
-                <button disabled className="bg-gray-500 text-white px-6 py-2 rounded-lg cursor-not-allowed">
+                <button
+                  disabled
+                  className="bg-gray-500 text-white px-6 py-2 rounded-lg cursor-not-allowed"
+                >
                   Already Subscribed
                 </button>
-                <button onClick={() => {setIsNewModalOpen(true)}} 
-                className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition">
+                <button
+                  onClick={() => {
+                    setIsNewModalOpen(true);
+                  }}
+                  className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition"
+                >
                   Unsubscribe
                 </button>
               </div>
             ) : (
-              <button onClick={handleOnClick} className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+              <button
+                onClick={handleOnClick}
+                className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+              >
                 Get Started Today
               </button>
             )}
@@ -148,20 +174,32 @@ const PricingCard = () => {
         onConfirm={() => {
           const formData = new FormData();
           formData.append('subscribed', String(false));
-            role === Role.LECTURER ? subscribeLecturer({lecturerId:id, subscribed:formData}) : subscribeInstitute({instituteId:id, subscribed:formData})
-            setIsNewModalOpen(false);
+          role === Role.LECTURER
+            ? subscribeLecturer({ lecturerId: id, subscribed: formData })
+            : subscribeInstitute({ instituteId: id, subscribed: formData });
+          setIsNewModalOpen(false);
+          setToast({
             // @ts-ignore
-            setToast({ message: 'Account successfully unsubscribe!', type: 'success' });
+            message: 'Account successfully unsubscribe!',
+            type: 'success',
+          });
         }}
         onClose={() => {
           setIsNewModalOpen(false);
-          // @ts-ignore
-          setToast({ message: 'Subscription settings are reverted to last saved', type: 'success' });
+          setToast({
+            // @ts-ignore
+            message: 'Subscription settings are reverted to last saved',
+            type: 'success',
+          });
         }}
       />
-      {toast && <Toast
-        // @ts-ignore
-        {...toast} onClose={() => setToast(null)} />}
+      {toast && (
+        <Toast
+          // @ts-ignore
+          {...toast}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 };

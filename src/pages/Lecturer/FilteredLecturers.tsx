@@ -42,8 +42,6 @@ const FilteredLecturers = () => {
             type: 'error',
           });
         // @ts-ignore
-        console.log(data)
-        // @ts-ignore
         setFilteredLecturers(data.content)
       },
       onError: () => {
@@ -78,7 +76,6 @@ const FilteredLecturers = () => {
       sort: 'id',
     },
     onSubmit: (values) => {
-      console.log(values);
       filterLecturer({
         division: values.division ?? null,
         hourlyRate: values.hourlyRate ?? null,
@@ -326,7 +323,7 @@ const FilteredLecturers = () => {
                   Highest Qualification
                 </th>
                 <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                  Division
+                  Division in Colombo
                 </th>
                 <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
                   Contact Number
@@ -396,7 +393,7 @@ const FilteredLecturers = () => {
                       {lecturer?.contactNo ?? 'N/A'}
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      ${lecturer?.hourlyPayRate?.toLocaleString()}
+                      {lecturer?.hourlyPayRate?.toLocaleString()}
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <span

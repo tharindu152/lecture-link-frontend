@@ -100,7 +100,7 @@ const Institutes = () => {
                   Contact Number
                 </th>
                 <th className="min-w-[100px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                  Division
+                  Division in Colombo
                 </th>
                 <th className="py-4 px-4 text-left font-medium text-black dark:text-white">
                   Actions

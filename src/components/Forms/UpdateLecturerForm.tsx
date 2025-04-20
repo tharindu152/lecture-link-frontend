@@ -346,7 +346,7 @@ const UpdateLecturerForm = () => {
                 className="block w-40 text-black dark:text-white"
                 htmlFor="division"
               >
-                Division
+                Division in Colombo
               </label>
               <select
                 id="division"

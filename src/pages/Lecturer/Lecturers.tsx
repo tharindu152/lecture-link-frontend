@@ -64,8 +64,8 @@ const Lecturers = () => {
 
   const sortLecturers = (lecturers: LecturerRes[]) => {
     return [...lecturers].sort((a, b) => {
-      const rateA = a.hourlyPayRate || 0;
-      const rateB = b.hourlyPayRate || 0;
+      const rateA = a.hourlyPayRate ?? 0;
+      const rateB = b.hourlyPayRate ?? 0;
       return sortOrder === 'asc' ? rateA - rateB : rateB - rateA;
     });
   };;
@@ -106,7 +106,7 @@ const Lecturers = () => {
                   Highest Qualification
                 </th>
                 <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
-                  Division
+                  Division in Colombo
                 </th>
                 <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
                   Contact Number
@@ -183,7 +183,7 @@ const Lecturers = () => {
                       {lecturer?.contactNo ?? 'N/A'}
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      ${lecturer?.hourlyPayRate?.toLocaleString()}
+                      {lecturer?.hourlyPayRate?.toLocaleString()}
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <span

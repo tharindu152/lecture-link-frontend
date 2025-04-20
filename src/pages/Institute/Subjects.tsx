@@ -24,6 +24,8 @@ const Subjects = () => {
   const [sortColumn, setSortColumn] = useState<string>('');
 
   useEffect(() => {
+    dispatch({ type: "delete" });
+    dispatch({ type: "view", data: data });
     // @ts-ignore
     setProgramsList(data?.programs);
     localStorage.removeItem('programs');
@@ -92,13 +94,13 @@ const Subjects = () => {
 
   const [loading, setLoading] = useState(true);
 
-  const sortSubjects = (subject: Subject[]) => {
-    return [...subject]?.sort((a, b) => {
+  const sortSubjects = (subjects: Subject[]) => {
+    return subjects?.sort((a, b) => {
       const rateA = a.noOfCredits || 0;
       const rateB = b.noOfCredits || 0;
       return sortOrder === 'asc' ? rateA - rateB : rateB - rateA;
     });
-  };;
+  };
   const currentSubjects = sortSubjects(subjects)?.slice(indexOfFirstItem, indexOfLastItem);
 
   const handleSort = (column: string) => {
@@ -166,12 +168,12 @@ const Subjects = () => {
                     key={key + subject.name + subject?.noOfCredits}
                     className={'hover:bg-gray-200 dark:hover:bg-gray-800'}
                   >
-                    <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+                    <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark xl:pl-11">
                       <h5 className="font-medium text-black dark:text-white">
                         {subject?.name}
                       </h5>
                     </td>
-                    <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-4">
+                    <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark xl:pl-4">
                       <h5 className="font-medium text-black dark:text-white">
                         {subjectProgramMap[
                           // @ts-ignore

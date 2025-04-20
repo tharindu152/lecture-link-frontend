@@ -6,7 +6,7 @@ import dummyLogo from '../../images/brand/logo_dummy.jpg';
 import { Subject } from '../../types/instituteTypes/subject.ts';
 import LecturerService from '../../services/lecturerService.ts';
 import { useMutation, useQuery } from 'react-query';
-import StarRating from '../../components/StarRate/StarRating.tsx';
+import StarRating from '../../components/Miscellaneous/StarRating.tsx';
 import SubjectService from '../../services/subjectService.ts';
 import { InstituteRes } from '../../types/instituteTypes/instituteRes.ts';
 import { useData, useDispatcher } from '../../context/MainContext.tsx';
@@ -24,7 +24,7 @@ const Lecturer = () => {
   const [toast, setToast] = useState(null);
   const dispatch = useDispatcher();
 
-  const { data: lecturer, isLoading: isLoadingLecturer } = useQuery(
+  const { data: lecturer, isLoading: isLoadingLecturer, refetch:refetchLecturer } = useQuery(
     ['getLecturerById', pathname.slice(15)],
     () => LecturerService.getLecturerById({ lecturerId: pathname.slice(15) }),
   );
@@ -54,7 +54,7 @@ const Lecturer = () => {
       },
       onError: () => {
         // @ts-ignore
-        setToast({ message: "Assigned Subject to Lecturer unsuccessfull!", type: "error" });
+        setToast({ message: "Assigned Subject to Lecturer unsuccessfully!", type: "error" });
       },
     }
   );
@@ -162,7 +162,7 @@ const Lecturer = () => {
 
               <div className="flex flex-col md:flex-row">
                 <h4 className="font-semibold text-black dark:text-white w-full md:w-44">
-                  Division:
+                  Division in Colombo:
                 </h4>
                 <p>{lecturer?.division}</p>
               </div>
@@ -277,8 +277,7 @@ const Lecturer = () => {
                   </button>
                 </div>
               )}
-
-              <StarRating lecturerId={lecturer?.id}/>
+              <StarRating lecturerId={lecturer?.id} refetch={refetchLecturer}/>
             </div>
 
             {pathname.includes('profile') && (

@@ -112,6 +112,7 @@ const SignUp: React.FC = () => {
       formData.append('email', values.email);
       formData.append('division', values.division);
       formData.append('status', "ACTIVE");
+      formData.append('isAssigned', String(false));
 
       values.type === Role.LECTURER ?
         createLecturer({ lecturerConfig: formData }) :
@@ -243,7 +244,7 @@ const SignUp: React.FC = () => {
                   className="mb-2.5 block font-medium text-black dark:text-white"
                   htmlFor="division"
                 >
-                  Division
+                  Division in Colombo
                 </label>
                 <div className="relative ">
                   <select

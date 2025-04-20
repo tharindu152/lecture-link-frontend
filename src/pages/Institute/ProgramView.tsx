@@ -9,8 +9,9 @@ import { useMutation } from 'react-query';
 import programService from '../../services/programService.ts';
 import Toast from '../../components/Miscellaneous/Toast.tsx';
 import ConfirmationModal from '../../components/Miscellaneous/ConfirmationModal.tsx';
+import { Program } from '../../types/instituteTypes/program.ts';
 
-const Program = () => {
+const ProgramView = () => {
   const location = useLocation();
   const institute: InstituteRes | null = useData() as InstituteRes;
   const dispatch = useDispatcher();
@@ -19,11 +20,12 @@ const Program = () => {
   const [selectedSubjectIndex, setSelectedSubjectIndex] = useState<number | null>(null);
   const { pathname } = location;
   const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
+  const [program, setProgram] = useState<Program>();
   const [loading, setLoading] = useState(true);
 
-  const program = institute?.programs?.find(prog => prog?.id === Number(pathname.slice(14)));
-
   useEffect(() => {
+    //@ts-ignore
+    setProgram(institute?.programs?.find(prog => prog?.id === Number(pathname.slice(14))));
     if (program) {
       localStorage.setItem('program', JSON.stringify(program));
     }
@@ -59,9 +61,10 @@ const Program = () => {
   );
 
   const unassignProgram = (index: number) => {
-    if (program && program.subjects) {
-      program.subjects.splice(index, 1);
+    if (program?.subjects) {
+      program?.subjects?.splice(index, 1);
       updateProgram({ programId: program.id, programData: program });
+      setProgram(program)
       dispatch({ type: "delete" });
       dispatch({ type: "view" });
     }
@@ -281,7 +284,7 @@ const Program = () => {
       <ConfirmationModal
         isOpen={isModalOpen}
         title={'Unassign Confirmation'}
-        message={'Are you sure that you want to unassign this Program?'}
+        message={'Are you sure that you want to unassign this Subject?'}
         btnOne={'Unassign'}
         btnTwo={'Cancel'}
         onConfirm={() => {
@@ -296,4 +299,4 @@ const Program = () => {
   );
 };
 
-export default Program;
+export default ProgramView;

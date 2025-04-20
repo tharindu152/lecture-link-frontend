@@ -38,6 +38,9 @@ const UpdateSubjectForm = () => {
           const lecturerId = formik?.values?.lecturerId;
           const lecturerData = await LecturerService.getLecturerById({ lecturerId });
           const lecturerEmail = lecturerData.email;
+          const formData = new FormData();
+          formData.append('assign', String(formik?.values?.isAssigned));
+          await updateLecturerIsAssigned({ lecturerId: formik?.values?.lecturerId, isAssigned: formData })
           await sendEmail({
             lecturerEmail,
             name: formik?.values?.name,
@@ -62,6 +65,27 @@ const UpdateSubjectForm = () => {
       onError: () => {
         // @ts-ignore
         setToast({ message: "Assigned subject unsuccessfull!", type: "error" });
+      },
+    }
+  );
+
+  const { mutate: updateLecturerIsAssigned, isLoading: isUpdatingLecturerIsAssigned } = useMutation(
+    LecturerService.updateLecturerIsAssigned,
+    {
+      onSuccess: () => {
+        setToast({
+          // @ts-ignore
+          message: 'Lecturer assigned successfully!',
+          type: 'success',
+        });
+        dispatch({ type: 'delete' });
+      },
+      onError: () => {
+        setToast({
+          // @ts-ignore
+          message: 'Failed to assign lecturer. Please try again.',
+          type: 'error',
+        });
       },
     }
   );
@@ -111,12 +135,9 @@ const UpdateSubjectForm = () => {
     setShowModal(false);
   };
 
-  if (  isUpdatingSubject || loading) {
+  if (  isUpdatingSubject || loading || isUpdatingLecturerIsAssigned) {
     return <Loader />;
   }
-
-
-
 
   return (
     <>

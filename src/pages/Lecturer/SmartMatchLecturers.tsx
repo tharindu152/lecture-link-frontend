@@ -323,7 +323,7 @@ const SmartMatchLecturers = () => {
                     {lecturer?.contactNo ?? 'N/A'}
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                    ${lecturer?.payRate?.toFixed(2)}
+                    {lecturer?.payRate?.toFixed(2)}
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <span

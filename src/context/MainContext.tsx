@@ -34,7 +34,6 @@ async function getInstituteById(id: number): Promise<InstituteRes | null> {
 
     return await response.json();
   } catch (error) {
-    console.error("Error fetching institute:", error);
     return null;
   }
 }
@@ -52,7 +51,6 @@ async function getLecturerById(id: number): Promise<LecturerRes | null> {
 
     return await response.json();
   } catch (error) {
-    console.error("Error fetching lecturer:", error);
     return null;
   }
 }

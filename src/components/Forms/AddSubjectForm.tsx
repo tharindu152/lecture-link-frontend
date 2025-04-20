@@ -12,6 +12,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import programService from '../../services/programService.ts';
 import { Program } from '../../types/instituteTypes/program.ts';
 import NavigateModal from '../Miscellaneous/NavigateModal.tsx';
+import LecturerService from '../../services/lecturerService.ts';
 
 const AddSubjectForm = () => {
   //@ts-ignore
@@ -32,15 +33,20 @@ const AddSubjectForm = () => {
   const { mutate: createSubject, isLoading: isCreatingSubject } = useMutation(
     subjectService.createSubject,
     {
-      onSuccess: (data) => {
+      onSuccess: async (data) => {
         // @ts-ignore
         setToast({ message: "Subject created successfully!", type: "success" });
         // @ts-ignore
         prog?.subjects?.push({ id: data.id });
-        updateProgram({
+        await updateProgram({
           programId: prog?.id,
           programData: prog
         })
+        if(formik?.values?.isAssigned) {
+          const formData = new FormData();
+          formData.append('assign', String(formik?.values?.isAssigned));
+          await updateLecturerIsAssigned({ lecturerId: formik?.values?.lecturerId, isAssigned: formData })
+        }
         dispatch({ type: "delete" });
         formik.resetForm()
         setShowModal(true);
@@ -65,6 +71,27 @@ const AddSubjectForm = () => {
         setToast({ message: "Subject addition to the program is unsuccessful!", type: "error" });
       },
     },
+  );
+
+  const { mutate: updateLecturerIsAssigned, isLoading: isUpdatingLecturerIsAssigned } = useMutation(
+    LecturerService.updateLecturerIsAssigned,
+    {
+      onSuccess: () => {
+        setToast({
+          // @ts-ignore
+          message: 'Lecturer assigned successfully!',
+          type: 'success',
+        });
+        dispatch({ type: 'delete' });
+      },
+      onError: () => {
+        setToast({
+          // @ts-ignore
+          message: 'Failed to assign lecturer. Please try again.',
+          type: 'error',
+        });
+      },
+    }
   );
 
   const formik = useFormik<Subject>({
@@ -117,16 +144,13 @@ const AddSubjectForm = () => {
   };
 
   const handleModalClose = () => {
-    setShowModal(false); // Navigate to login page when modal is closed
+    setShowModal(false);
+    navigate(`/app/programs`);
   };
 
-  if (isCreatingSubject || isUpdatingProgram || loading) {
+  if (isCreatingSubject || isUpdatingProgram || isUpdatingLecturerIsAssigned || loading) {
     return <Loader />;
   }
-
-      
-
-
 
   return (
     <>
@@ -282,7 +306,7 @@ const AddSubjectForm = () => {
             onClose={handleModalClose} 
             onConfirm={handleModalConfirm} 
             message={`${pathname.slice(14, 20) === 'update' ? 'Subject Updated Successfully!' : 'Subject Added Successfully!'} `}
-            btnOne={`${pathname.slice(14, 20) === 'update' ? 'Keep Updating Subject' : 'Keep Adding Subjects'} `}
+            btnOne={`${pathname.slice(14, 20) === 'update' ? 'Keep Updating Subject' : 'View Program List'} `}
             btnTwo={'View Subject List'}/>
             )}
       {toast && <Toast

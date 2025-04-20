@@ -76,7 +76,7 @@ const Lecturer = () => {
 
               <div className="flex flex-col md:flex-row">
                 <h4 className="font-semibold text-black dark:text-white w-full md:w-44">
-                  Division:
+                  Division in Colombo:
                 </h4>
                 <p>{lecturer?.division}</p>
               </div>

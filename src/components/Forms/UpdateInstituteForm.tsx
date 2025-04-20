@@ -144,7 +144,6 @@ const UpdateInstituteForm = () => {
       formData.append('email', values.email);
       formData.append('password', values.password);
       formData.append('division', values.division);
-      formData.append('telephone', values.telephone);
       formData.append('description', values.description);
       formData.append('subscribed', values.subscribed.toString());
       formData.append('status', values.status);
@@ -315,7 +314,7 @@ const UpdateInstituteForm = () => {
                 className="block w-40 text-black dark:text-white"
                 htmlFor="division"
               >
-                Division
+                Division in Colombo
               </label>
               <select
                 id="division"
@@ -675,7 +674,7 @@ const UpdateInstituteForm = () => {
       </ConfirmationModal>
       <ConfirmationModal
         isOpen={isImgModalOpen}
-        title={'Delete Confirmation'}
+        title={'Remove Confirmation'}
         message={`This will remove selected Image. Enter Confirm to continue?`}
         btnOne={'Confirm'}
         btnTwo={'Cancel'}
