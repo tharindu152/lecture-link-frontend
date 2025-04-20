@@ -93,6 +93,11 @@ const LecturerService = {
     const { data } = await lectureLinkAxios.patch(`/lecturers/${payload.lecturerId}/assign`, payload.isAssigned);
     return data;
   },
+
+  getAiMatchPrediction: async (requestDto: Record<string, any>): Promise<any> => {
+    const { data } = await lectureLinkAxios.post('/ai-match', requestDto);
+    return data;
+  },
 };
 
 export default LecturerService;

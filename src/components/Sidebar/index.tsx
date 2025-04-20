@@ -456,9 +456,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               {localStorage.getItem('role') === Role.INSTITUTE && (
               <li>
                 <NavLink
-                  to={`${data?.subscribed ? "/app/lecturers/smartmatch-lecturers" : "/app/profile/pricing-card"}`}
+                  to={`${data?.subscribed ? "/app/lecturers/aimatch-lecturers" : "/app/profile/pricing-card"}`}
                   className={`group relative flex items-center gap-0.5 rounded-sm py-2 px-2.5 font-medium text-grey-800 duration-300 ease-in-out hover:bg-gray-500 dark:hover:bg-meta-4 hover:text-bodydark1 ${
-                    pathname.includes('smartmatch') &&
+                    pathname.includes('aimatch') &&
                     'bg-gray-500 dark:bg-meta-4 text-bodydark1'
                   }`}
                 >

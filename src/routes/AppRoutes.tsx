@@ -12,10 +12,9 @@ import UpdateProgramForm from '../components/Forms/UpdateProgramForm.tsx';
 import Subjects from './../pages/Institute/Subjects';
 import UpdateSubjectForm from '../components/Forms/UpdateSubjectForm.tsx';
 import FilteredSubjects from './../pages/Institute/FilteredSubjects';
-import SmartMatchSubjects from './../pages/Institute/SmartMatchSubjects';
 import Lecturers from './../pages/Lecturer/Lecturers';
 import FilteredLecturers from './../pages/Lecturer/FilteredLecturers';
-import SmartMatchLecturers from './../pages/Lecturer/SmartMatchLecturers';
+import AiMatchLecturers from '../pages/Lecturer/AiMatchLecturers.tsx';
 import Qualifications from './../pages/Lecturer/Qualifications';
 import UpdateQualificationForm from '../components/Forms/UpdateQualificationForm.tsx';
 import NotFound from '../components/Miscellaneous/NotFound';
@@ -77,14 +76,13 @@ export const routes: RouteObject[] = [
           { path: 'update-subject/:subjectId', element: <><PageTitle title="Lecture Link | Update Subject" /><UpdateSubjectForm /></> },
           { path: 'filtered-subjects', element: <><PageTitle title="Lecture Link | Filtered Subjects" /><FilteredSubjects /></> },
           { path: 'filtered-subjects/:subjectId', element: <><PageTitle title="Lecture Link | Filtered Subjects" /><SubjectView /></> },
-          { path: 'smartmatch-subjects', element: <><PageTitle title="Lecture Link | Smart Match Subjects" /><SmartMatchSubjects /></> },
           { path: ':subjectId', element: <><PageTitle title="Lecture Link | Subject" /><Subject /></> }
         ]},
 
       { path: 'lecturers', children: [
           { index: true, element: <><PageTitle title="Lecturers" /><Lecturers /></> },
           { path: 'filtered-lecturers', element: <><PageTitle title="Filtered Lecturers" /><FilteredLecturers /></> },
-          { path: 'smartmatch-lecturers', element: <><PageTitle title="Smart Match Lecturers" /><SmartMatchLecturers /></> },
+          { path: 'aimatch-lecturers', element: <><PageTitle title="AI Match Lecturers" /><AiMatchLecturers /></> },
           { path: ':lecturerId', element: <><PageTitle title="Lecture Link | Lecturer" /><Lecturer /></> },
           { path: 'settings', element: <><PageTitle title="Lecture Link | Settings" /><UpdateLecturerForm /></> },
         ]},
