@@ -18,8 +18,8 @@ import { divisionOptions } from '../../types/dropdowns/dropdownOptions.ts';
 
 const UpdateLecturerForm = () => {
   const [toast, setToast] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isNewModalOpen, setIsNewModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
   // @ts-ignore
   const lecturer: LecturerRes = useData();
   const navigate = useNavigate();
@@ -30,48 +30,56 @@ const UpdateLecturerForm = () => {
   const [oldPassword, setOldPassword] = useState('');
   const [isImgModalOpen, setIsImgModalOpen] = useState(false);
 
-  const { mutate: updateLecturerMultipart, isLoading: isUpdatingLecturerMultipart } =
-    useMutation(lecturerService.updateLecturerMultipart, {
-      onSuccess: () => {
-        setToast({
-          // @ts-ignore
-          message: 'Lecturer updated successfully!',
-          type: 'success',
-        });
-        dispatch({ type: 'delete' });
-        setShowModal(true);
-      },
-      onError: () => {
-        setToast({
-          // @ts-ignore
-          message: 'Lecturer update is unsuccessful!',
-          type: 'error',
-        });
-      },
-    });
+  const {
+    mutate: updateLecturerMultipart,
+    isLoading: isUpdatingLecturerMultipart,
+  } = useMutation(lecturerService.updateLecturerMultipart, {
+    onSuccess: () => {
+      setToast({
+        // @ts-ignore
+        message: 'Lecturer updated successfully!',
+        type: 'success',
+      });
+      dispatch({ type: 'delete' });
+      setShowModal(true);
+    },
+    onError: () => {
+      setToast({
+        // @ts-ignore
+        message: 'Lecturer update is unsuccessful!',
+        type: 'error',
+      });
+    },
+  });
 
   const { mutate: updateLecturerJson, isLoading: isUpdatingLecturerJson } =
     useMutation(lecturerService.updateLecturerJson, {
       onSuccess: () => {
         setToast({
           // @ts-ignore
-          message: `${pathname.includes("settings") ? 'Settings updated successfully!. Please login again' : 'Lecturer updated successfully!'}`,
+          message: `${
+            pathname.includes('settings')
+              ? 'Settings updated successfully!. Please login again'
+              : 'Lecturer updated successfully!'
+          }`,
           type: 'success',
         });
-        !pathname.includes("settings") && dispatch({ type: 'delete' });
+        !pathname.includes('settings') && dispatch({ type: 'delete' });
         setShowModal(true);
       },
       onError: () => {
         setToast({
           // @ts-ignore
-          message: `${pathname.includes("settings") ? 'Settings' : 'Lecturer'} update is unsuccessful!`,
+          message: `${
+            pathname.includes('settings') ? 'Settings' : 'Lecturer'
+          } update is unsuccessful!`,
           type: 'error',
         });
       },
     });
 
   const { mutate: deactivateLecturer, isLoading: isDeactivating } = useMutation(
-    lecturerService.deactivateLecturer, // This should be the function that calls your API
+    lecturerService.deactivateLecturer,
     {
       onSuccess: () => {
         setToast({
@@ -79,8 +87,7 @@ const UpdateLecturerForm = () => {
           message: 'Account deactivated successfully!',
           type: 'success',
         });
-        // Optionally, navigate to login or home page
-        navigate('/auth/signin'); // Adjust the path as necessary
+        navigate('/auth/signin');
       },
       onError: () => {
         setToast({
@@ -89,7 +96,7 @@ const UpdateLecturerForm = () => {
           type: 'error',
         });
       },
-    }
+    },
   );
 
   const formik = useFormik({
@@ -122,7 +129,7 @@ const UpdateLecturerForm = () => {
         .matches(
           /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[_]?)[A-Za-z\d_]{15,16}$/,
           'Password must be 16 characters long and include at least one uppercase letter, one lowercase letter,' +
-          ' and one number. No special characters allowed other than underscore ',
+            ' and one number. No special characters allowed other than underscore ',
         )
         .required('Password is required'),
       division: Yup.string()
@@ -140,10 +147,8 @@ const UpdateLecturerForm = () => {
       hourlyPayRate: Yup.number()
         .required('hourlyPayRate is required')
         .positive('hourlyPayRate must be greater than 0'),
-      fieldOfWork: Yup.string()
-        .nullable(),
-      lecturingExperience: Yup.number()
-        .nullable(),
+      fieldOfWork: Yup.string().nullable(),
+      lecturingExperience: Yup.number().nullable(),
       timePreference: Yup.string()
         .required('Time Preference is required')
         .oneOf(['WEEKDAY', 'WEEKEND', 'FLEXIBLE'], 'Invalid Time Preference'),
@@ -167,23 +172,29 @@ const UpdateLecturerForm = () => {
       formData.append('timePreference', values.timePreference);
       formData.append('language', values.language);
       formData.append('mapsLocation', values.mapsLocation);
-      formData.append('currentRating', lecturer?.currentRating?.toString() ?? '0');
+      formData.append(
+        'currentRating',
+        lecturer?.currentRating?.toString() ?? '0',
+      );
       formData.append('fieldOfWork', values.fieldOfWork);
-      formData.append('lecturingExperience', values.lecturingExperience.toString());
+      formData.append(
+        'lecturingExperience',
+        values.lecturingExperience.toString(),
+      );
       // @ts-ignore
       formData.append('picture', values.picture);
       if (values.contactNo) formData.append('contactNo', values.contactNo);
 
       // @ts-ignore
-      formik.values.picture?.size > 0 ?
-        updateLecturerMultipart({
-          lecturerId: lecturer?.id,
-          lecturerConfig: formData,
-        }) :
-        updateLecturerJson({
-          lecturerId: lecturer?.id,
-          lecturerConfig: values,
-        });
+      formik.values.picture?.size > 0
+        ? updateLecturerMultipart({
+            lecturerId: lecturer?.id,
+            lecturerConfig: formData,
+          })
+        : updateLecturerJson({
+            lecturerId: lecturer?.id,
+            lecturerConfig: values,
+          });
     },
   });
 
@@ -209,21 +220,32 @@ const UpdateLecturerForm = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  if (isUpdatingLecturerMultipart || isUpdatingLecturerJson ||  isDeactivating || loading) {
+  if (
+    isUpdatingLecturerMultipart ||
+    isUpdatingLecturerJson ||
+    isDeactivating ||
+    loading
+  ) {
     return <Loader />;
   }
 
   return (
     <>
       <Breadcrumb
-        pageName={`${pathname.includes("settings") ? 'Account Settings' : 'Update Lecturer'}`}
+        pageName={`${
+          pathname.includes('settings') ? 'Account Settings' : 'Update Lecturer'
+        }`}
       />
       <form
         onSubmit={formik.handleSubmit}
         className="p-6 rounded-lg border border-stroke bg-white shadow-md dark:border-strokedark dark:bg-boxdark"
       >
         <h2 className="text-lg font-medium mb-6 text-black dark:text-white">
-          {`${pathname.includes("settings") ? 'Account Settings' : 'Update Lecturer'}`}
+          {`${
+            pathname.includes('settings')
+              ? 'Account Settings'
+              : 'Update Lecturer'
+          }`}
         </h2>
 
         {pathname.includes('update') && (
@@ -375,7 +397,6 @@ const UpdateLecturerForm = () => {
               </p>
             )}
 
-
             <div className="mb-4 flex items-center">
               <label
                 className="block w-40 text-black dark:text-white"
@@ -416,7 +437,9 @@ const UpdateLecturerForm = () => {
               </select>
             </div>
             {formik.touched.timePreference && formik.errors.timePreference && (
-              <p className="text-red-500 text-sm mb-4">{formik.errors.timePreference}</p>
+              <p className="text-red-500 text-sm mb-4">
+                {formik.errors.timePreference}
+              </p>
             )}
 
             {/* Language Dropdown */}
@@ -460,7 +483,9 @@ const UpdateLecturerForm = () => {
               </select>
             </div>
             {formik.touched.language && formik.errors.language && (
-              <p className="text-red-500 text-sm mb-4">{formik.errors.language}</p>
+              <p className="text-red-500 text-sm mb-4">
+                {formik.errors.language}
+              </p>
             )}
 
             {/* hourlyPayRate */}
@@ -487,7 +512,9 @@ const UpdateLecturerForm = () => {
               />
             </div>
             {formik.touched.hourlyPayRate && formik.errors.hourlyPayRate && (
-              <p className="text-red-500 text-sm mb-4">{formik.errors.hourlyPayRate}</p>
+              <p className="text-red-500 text-sm mb-4">
+                {formik.errors.hourlyPayRate}
+              </p>
             )}
 
             {/* lecturingExperience */}
@@ -504,7 +531,8 @@ const UpdateLecturerForm = () => {
                 type="number"
                 placeholder="Enter Lecturing Experience"
                 className={`rounded-md border-[1.5px] py-2 px-3 outline-none w-40 text-center transition ${
-                  formik.touched.lecturingExperience && formik.errors.lecturingExperience
+                  formik.touched.lecturingExperience &&
+                  formik.errors.lecturingExperience
                     ? 'border-red-500'
                     : 'border-gray-800 focus:border-primary'
                 } dark:bg-gray-800`}
@@ -513,9 +541,12 @@ const UpdateLecturerForm = () => {
                 value={formik.values.lecturingExperience}
               />
             </div>
-            {formik.touched.lecturingExperience && formik.errors.lecturingExperience && (
-              <p className="text-red-500 text-sm mb-4">{formik.errors.lecturingExperience}</p>
-            )}
+            {formik.touched.lecturingExperience &&
+              formik.errors.lecturingExperience && (
+                <p className="text-red-500 text-sm mb-4">
+                  {formik.errors.lecturingExperience}
+                </p>
+              )}
 
             {/* fieldOfWork */}
             <div className="mb-4 flex items-center">
@@ -601,41 +632,40 @@ const UpdateLecturerForm = () => {
               </div>
             </div>
 
-
-            {/* Status */}
-            <div className="mb-4 flex items-center">
-              <label
-                className="block w-40 text-black dark:text-white"
-                htmlFor="status"
-              >
-                Status
-              </label>
-              <select
-                id="status"
-                name="status"
-                className={`flex-1 rounded-md border-[1.5px] px-3 py-2 outline-none transition ${
-                  formik.touched.status && formik.errors.status
-                    ? 'border-red-500'
-                    : 'border-gray-800 focus:border-primary'
-                } bg-white dark:bg-gray-800 dark:text-white`}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.status}
-              >
-                <option
-                  className="bg-white dark:bg-gray-800 dark:text-white"
-                  value="ACTIVE"
-                >
-                  ACTIVE
-                </option>
-                <option
-                  className="bg-white dark:bg-gray-800 dark:text-white"
-                  value="INACTIVE"
-                >
-                  INACTIVE
-                </option>
-              </select>
-            </div>
+            {/*/!* Status *!/*/}
+            {/*<div className="mb-4 flex items-center">*/}
+            {/*  <label*/}
+            {/*    className="block w-40 text-black dark:text-white"*/}
+            {/*    htmlFor="status"*/}
+            {/*  >*/}
+            {/*    Status*/}
+            {/*  </label>*/}
+            {/*  <select*/}
+            {/*    id="status"*/}
+            {/*    name="status"*/}
+            {/*    className={`flex-1 rounded-md border-[1.5px] px-3 py-2 outline-none transition ${*/}
+            {/*      formik.touched.status && formik.errors.status*/}
+            {/*        ? 'border-red-500'*/}
+            {/*        : 'border-gray-800 focus:border-primary'*/}
+            {/*    } bg-white dark:bg-gray-800 dark:text-white`}*/}
+            {/*    onChange={formik.handleChange}*/}
+            {/*    onBlur={formik.handleBlur}*/}
+            {/*    value={formik.values.status}*/}
+            {/*  >*/}
+            {/*    <option*/}
+            {/*      className="bg-white dark:bg-gray-800 dark:text-white"*/}
+            {/*      value="ACTIVE"*/}
+            {/*    >*/}
+            {/*      ACTIVE*/}
+            {/*    </option>*/}
+            {/*    <option*/}
+            {/*      className="bg-white dark:bg-gray-800 dark:text-white"*/}
+            {/*      value="INACTIVE"*/}
+            {/*    >*/}
+            {/*      INACTIVE*/}
+            {/*    </option>*/}
+            {/*  </select>*/}
+            {/*</div>*/}
           </>
         )}
 
@@ -700,12 +730,12 @@ const UpdateLecturerForm = () => {
                 <div className="flex flex-col items-center justify-center space-y-2">
                   {/* Placeholder or File Name */}
                   {formik.values.picture ? (
-                    <><p className="text-sm text-primary truncate">
+                    <p className="text-sm text-primary truncate">
                       {
                         // @ts-ignore
-                        formik.values.picture.name}
+                        formik.values.picture.name
+                      }
                     </p>
-                    </>
                   ) : (
                     <>
                       <span className="flex items-center justify-center h-10 w-10 rounded-full border dark:border-strokedark bg-white dark:bg-boxdark">
@@ -737,7 +767,8 @@ const UpdateLecturerForm = () => {
                         </svg>
                       </span>
                       <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Upload a picture if you want to change the picture, unless leave blank
+                        Upload a picture if you want to change the picture,
+                        unless leave blank
                       </p>
                       <p className="text-xs text-gray-400">
                         (SVG, PNG, JPG, or GIF - max, 800px by 800px)
@@ -750,88 +781,95 @@ const UpdateLecturerForm = () => {
                 type="button"
                 onClick={() => {
                   setIsImgModalOpen(true);
-                } }
+                }}
                 className="mx-3 text-red-500 hover:text-red-700 text-xs"
               >
-                Remove Added<br/> Picture
+                Remove Added
+                <br /> Picture
               </button>
             </div>
           </>
         )}
 
         {/* Submit Button */}
-        {
-          pathname.includes('settings') ? (
-            <>
-              <button
-                onClick={() =>
-                  setIsModalOpen(true)
-                }
-                disabled={!formik.isValid}
-                className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
-
-              >
-                {`Update Settings`}
-              </button>
-              <Link to={'/app/profile/pricing-card'}>
-                <button className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-success hover:border-success hover:text-white">
-                  Update Your Plan
-                </button>
-              </Link>
-              <button
-                onClick={() => setIsNewModalOpen(true)}
-                className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-red-500 py-2 px-5 text-center font-medium text-red-500 transition duration-150 ease-in-out hover:bg-red-600 hover:border-red-600 hover:text-white"
-              >
-                Deactivate Account
-              </button>
-            </>
-          ) : (
+        {pathname.includes('settings') ? (
+          <>
             <button
-              onClick={() => {
-                formik.handleSubmit();
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsUpdateModalOpen(true);
               }}
               disabled={!formik.isValid}
-              className={`mt-6 w-full inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out ${formik.isValid ? 'hover:bg-primary hover:border-primary hover:text-white hover:bg-opacity-90' : ''}`}
-              type="submit"
+              className={`mt-6 w-full inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out ${
+                formik.isValid
+                  ? 'hover:bg-primary hover:border-primary hover:text-white hover:bg-opacity-90'
+                  : ''
+              }`}
             >
-              {`Update lecturer`}
+              {`Update Settings`}
             </button>
-          )
-        }
-
+            <Link to={'/app/profile/pricing-card'}>
+              <button className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-success hover:border-success hover:text-white">
+                Update Your Plan
+              </button>
+            </Link>
+            <button
+              onClick={() => setIsDeactivateModalOpen(true)}
+              className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-red-500 py-2 px-5 text-center font-medium text-red-500 transition duration-150 ease-in-out hover:bg-red-600 hover:border-red-600 hover:text-white"
+            >
+              Deactivate Account
+            </button>
+          </>
+        ) : (
+          <button
+            onClick={() => {
+              formik.handleSubmit();
+            }}
+            disabled={!formik.isValid || pathname.includes('settings')}
+            className={`mt-6 w-full inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out ${
+              formik.isValid
+                ? 'hover:bg-primary hover:border-primary hover:text-white hover:bg-opacity-90'
+                : ''
+            }`}
+            type="submit"
+          >
+            {`Update lecturer`}
+          </button>
+        )}
       </form>
       <ConfirmationModal
-        isOpen={isNewModalOpen}
-        title={'Confirm To Deactivate Account'}
-        message={`Diactivate Account will log you out from LectureLink. After Deactivate you cannot sign in to this account again.. Enter Confirm to continue?`}
+        isOpen={isDeactivateModalOpen}
+        title={'Are you sure that you want to deactivate the account?'}
+        message={`Deactivating the account will log you out from LectureLink and prevent you from signing in to this account again. Click Yes to continue?`}
         btnOne={'Yes'}
         btnTwo={'No'}
-        submit={true}
         onConfirm={handleDeactivate}
         onClose={() => {
-          setIsNewModalOpen(false);
-          // @ts-ignore
-          setToast({ message: 'Account settings are reverted to last saved', type: 'success' });
+          setIsDeactivateModalOpen(false);
+          setToast({
+            // @ts-ignore
+            message: 'Account settings are reverted to last saved',
+            type: 'success',
+          });
         }}
       />
       <ConfirmationModal
-        isOpen={isModalOpen}
+        isOpen={isUpdateModalOpen}
         title={'Confirm Old Password'}
         message={`Please enter your old password to confirm the update.`}
         btnOne={'Confirm'}
         btnTwo={'Cancel'}
-        submit={true}
         onConfirm={() => {
           if (oldPassword === formik.values.password) {
             formik.handleSubmit();
-            setIsModalOpen(false);
+            setIsUpdateModalOpen(false);
           } else {
             // @ts-ignore
             setToast({ message: 'Old password is incorrect!', type: 'error' });
           }
         }}
         onClose={() => {
-          setIsModalOpen(false);
+          setIsUpdateModalOpen(false);
           setOldPassword('');
         }}
       >
@@ -849,19 +887,27 @@ const UpdateLecturerForm = () => {
         message={`This will remove selected Image. Enter Confirm to continue?`}
         btnOne={'Confirm'}
         btnTwo={'Cancel'}
-        submit={true}
         onConfirm={() => {
           formik.setFieldValue('picture', null);
           setIsImgModalOpen(false);
         }}
         onClose={() => {
           setIsImgModalOpen(false);
-          // @ts-ignore
-          setToast({ message: 'Account settings are reverted to last saved', type: 'success' });
+          setToast({
+            // @ts-ignore
+            message: 'Account settings are reverted to last saved',
+            type: 'success',
+          });
         }}
       />
       {showModal && (
-        <NavigateModal onClose={handleModalClose} onConfirm={handleModalConfirm} message={'Lecturer Updated Successfuly'} btnOne={'Keep Updating'} btnTwo={'Go To Profile'}/>
+        <NavigateModal
+          onClose={handleModalClose}
+          onConfirm={handleModalConfirm}
+          message={'Lecturer Updated Successfully'}
+          btnOne={'Keep Updating'}
+          btnTwo={'Go To Profile'}
+        />
       )}
       {toast && (
         <Toast

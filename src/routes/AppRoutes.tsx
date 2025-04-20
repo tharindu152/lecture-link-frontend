@@ -32,7 +32,6 @@ import AddSubjectForm from '../components/Forms/AddSubjectForm.tsx';
 import AddQualificationForm from '../components/Forms/AddQualificationForm.tsx';
 import SubjectView from '../pages/Institute/SubjectView.tsx';
 import PaymentSuccess from '../pages/Lecturer/PaymentSuccess.tsx';
-import RoleSelectionModal from '../pages/Authentication/RoleSelectionModal.tsx';
 
 export const routes: RouteObject[] = [
   { path: '/', element: <Navigate to="/auth/signin" /> },
@@ -41,7 +40,6 @@ export const routes: RouteObject[] = [
     children: [
       { path: 'signin', element: <><PageTitle title="Lecture Link | Sign In" /><SignIn /></> },
       { path: 'signup', element: <><PageTitle title="Lecture Link | Sign Up" /><SignUp /></> },
-      {path: 'role-selection', element: <><PageTitle title="Lecture Link | Role Selection" /><RoleSelectionModal /></> },
     ],
   },
   {

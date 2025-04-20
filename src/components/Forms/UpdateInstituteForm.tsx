@@ -16,8 +16,8 @@ import { divisionOptions } from '../../types/dropdowns/dropdownOptions.ts';
 
 const UpdateInstituteForm = () => {
   const [toast, setToast] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isNewModalOpen, setIsNewModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
   // @ts-ignore
   const institute: InstituteRes = useData();
   const navigate = useNavigate();
@@ -196,14 +196,22 @@ const UpdateInstituteForm = () => {
   return (
     <>
       <Breadcrumb
-        pageName={`${pathname.includes("settings") ? 'Account Settings' : 'Update Institute'}`}
+        pageName={`${
+          pathname.includes('settings')
+            ? 'Account Settings'
+            : 'Update Institute'
+        }`}
       />
       <form
         onSubmit={formik.handleSubmit}
         className="p-6 rounded-lg border border-stroke bg-white shadow-md dark:border-strokedark dark:bg-boxdark"
       >
         <h2 className="text-lg font-medium mb-6 text-black dark:text-white">
-          {`${pathname.includes("settings") ? 'Account Settings' : 'Update Institute'}`}
+          {`${
+            pathname.includes('settings')
+              ? 'Account Settings'
+              : 'Update Institute'
+          }`}
         </h2>
 
         {pathname.includes('update') && (
@@ -241,14 +249,17 @@ const UpdateInstituteForm = () => {
         {!pathname?.includes('update') && (
           <>
             <div className="mb-4 flex items-center">
-              <label className="block w-40 mr-4.5 text-black dark:text-white" htmlFor="password">
+              <label
+                className="block w-40 mr-4.5 text-black dark:text-white"
+                htmlFor="password"
+              >
                 Password
               </label>
               <div className="relative w-full">
                 <input
                   id="password"
                   name="password"
-                  type= 'password'
+                  type="password"
                   placeholder="Enter current password"
                   className={`w-full rounded-md border border-stroke py-2 pl-4 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary ${
                     formik.touched.password && formik.errors.password
@@ -280,7 +291,7 @@ const UpdateInstituteForm = () => {
                 name="email"
                 type="email"
                 placeholder="Enter email"
-                className={`flex-1 rounded-md border-[1.5px] py-2 px-3 outline-none transition ${
+                className={`w-full rounded-md border border-stroke py-2 pl-4 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary ${
                   formik.touched.email && formik.errors.email
                     ? 'border-red-500'
                     : 'border-gray-800 focus:border-primary'
@@ -409,41 +420,6 @@ const UpdateInstituteForm = () => {
           </div>
         )}
 
-        {/* Status */}
-        <div className="mb-4 flex items-center">
-          <label
-            className="block w-40 text-black dark:text-white"
-            htmlFor="status"
-          >
-            Status
-          </label>
-          <select
-            id="status"
-            name="status"
-            className={`flex-1 rounded-md border-[1.5px] px-3 py-2 outline-none transition ${
-              formik.touched.status && formik.errors.status
-                ? 'border-red-500'
-                : 'border-gray-800 focus:border-primary'
-            } bg-white dark:bg-gray-800 dark:text-white`}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.status}
-          >
-            <option
-              className="bg-white dark:bg-gray-800 dark:text-white"
-              value="ACTIVE"
-            >
-              ACTIVE
-            </option>
-            <option
-              className="bg-white dark:bg-gray-800 dark:text-white"
-              value="INACTIVE"
-            >
-              INACTIVE
-            </option>
-          </select>
-        </div>
-
         {pathname.includes('update') && (
           <>
             {/* Description */}
@@ -505,12 +481,12 @@ const UpdateInstituteForm = () => {
                 <div className="flex flex-col items-center justify-center space-y-2">
                   {/* Placeholder or File Name */}
                   {formik.values.logo ? (
-                    <><p className="text-sm text-primary truncate">
+                    <p className="text-sm text-primary truncate">
                       {
                         // @ts-ignore
-                        formik.values.logo.name}
+                        formik.values.logo.name
+                      }
                     </p>
-                    </>
                   ) : (
                     <>
                       <span className="flex items-center justify-center h-10 w-10 rounded-full border dark:border-strokedark bg-white dark:bg-boxdark">
@@ -542,7 +518,8 @@ const UpdateInstituteForm = () => {
                         </svg>
                       </span>
                       <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Upload a picture if you want to change the logo, unless leave blank
+                        Upload a picture if you want to change the logo, unless
+                        leave blank
                       </p>
                       <p className="text-xs text-gray-400">
                         (SVG, PNG, JPG, or GIF - max, 800px by 800px)
@@ -555,58 +532,60 @@ const UpdateInstituteForm = () => {
                 type="button"
                 onClick={() => {
                   setIsImgModalOpen(true);
-                } }
+                }}
                 className="mx-3 text-red-500 hover:text-red-700 text-xs"
               >
-                Remove Added<br/> Logo
+                Remove Added
+                <br /> Logo
               </button>
             </div>
           </>
         )}
 
         {/* Submit Button */}
-        {
-          pathname.includes('settings') ? (
-            <>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsModalOpen(true);
-                }}
-                disabled={!formik.isValid}
-                className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
-              >
-                Update Settings
-              </button>
-              <Link to={'/app/profile/pricing-card'}>
-                <button className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-success hover:border-success hover:text-white">
-                  Update Your Plan
-                </button>
-              </Link>
-              <button
-                onClick={() => setIsNewModalOpen(true)}
-                className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-red-500 py-2 px-5 text-center font-medium text-red-500 transition duration-150 ease-in-out hover:bg-red-600 hover:border-red-600 hover:text-white"
-              >
-                Deactivate Account
-              </button>
-            </>
-          ) : (
+        {pathname.includes('settings') ? (
+          <>
             <button
-              onClick={() => {
-                formik.handleSubmit();
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsUpdateModalOpen(true);
               }}
               disabled={!formik.isValid}
-              className={`mt-6 w-full inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out ${formik.isValid ? 'hover:bg-primary hover:border-primary hover:text-white hover:bg-opacity-90' : ''}`}
-              type="submit"
+              className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
             >
-              {`Update Institute`}
+              Update Settings
             </button>
-          )
-        }
-
+            <Link to={'/app/profile/pricing-card'}>
+              <button className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-success hover:border-success hover:text-white">
+                Update Your Plan
+              </button>
+            </Link>
+            <button
+              onClick={() => setIsDeactivateModalOpen(true)}
+              className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-red-500 py-2 px-5 text-center font-medium text-red-500 transition duration-150 ease-in-out hover:bg-red-600 hover:border-red-600 hover:text-white"
+            >
+              Deactivate Account
+            </button>
+          </>
+        ) : (
+          <button
+            onClick={() => {
+              formik.handleSubmit();
+            }}
+            disabled={!formik.isValid}
+            className={`mt-6 w-full inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out ${
+              formik.isValid
+                ? 'hover:bg-primary hover:border-primary hover:text-white hover:bg-opacity-90'
+                : ''
+            }`}
+            type="submit"
+          >
+            {`Update Institute`}
+          </button>
+        )}
       </form>
       <ConfirmationModal
-        isOpen={isNewModalOpen}
+        isOpen={isDeactivateModalOpen}
         title={'Confirm Account Settings Change'}
         message={`Account settings changes will log you out from LectureLink. You have to login again using new credentials. Enter Confirm to continue?`}
         btnOne={'Yes'}
@@ -614,13 +593,16 @@ const UpdateInstituteForm = () => {
         submit={true}
         onConfirm={handleDeactivate}
         onClose={() => {
-          setIsNewModalOpen(false);
-          // @ts-ignore
-          setToast({ message: 'Account settings are reverted to last saved', type: 'success' });
+          setIsDeactivateModalOpen(false);
+          setToast({
+            // @ts-ignore
+            message: 'Account settings are reverted to last saved',
+            type: 'success',
+          });
         }}
       />
       <ConfirmationModal
-        isOpen={isModalOpen}
+        isOpen={isUpdateModalOpen}
         title={'Confirm Old Password'}
         message={`Please enter your old password to confirm the update.`}
         btnOne={'Confirm'}
@@ -629,14 +611,14 @@ const UpdateInstituteForm = () => {
         onConfirm={() => {
           if (oldPassword === formik.values.password) {
             formik.handleSubmit();
-            setIsModalOpen(false);
+            setIsUpdateModalOpen(false);
           } else {
             // @ts-ignore
             setToast({ message: 'Old password is incorrect!', type: 'error' });
           }
         }}
         onClose={() => {
-          setIsModalOpen(false);
+          setIsUpdateModalOpen(false);
           setOldPassword('');
         }}
       >
@@ -648,18 +630,47 @@ const UpdateInstituteForm = () => {
             onChange={(e) => setOldPassword(e.target.value)}
             className="mt-2 p-2 border rounded"
           />
-          <span className="absolute right-4 top-2.5 cursor-pointer" onClick={() => setShowpassword(!showpassword)}>
-          {showpassword ? (
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-            </svg>
-          ):(
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
-            </svg>
-          )}
-        </span>
+          <span
+            className="absolute right-4 top-2.5 cursor-pointer"
+            onClick={() => setShowpassword(!showpassword)}
+          >
+            {showpassword ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                className="size-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                className="size-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88"
+                />
+              </svg>
+            )}
+          </span>
         </div>
       </ConfirmationModal>
       <ConfirmationModal
@@ -675,12 +686,21 @@ const UpdateInstituteForm = () => {
         }}
         onClose={() => {
           setIsImgModalOpen(false);
-          // @ts-ignore
-          setToast({ message: 'Account settings are reverted to last saved', type: 'success' });
+          setToast({
+            // @ts-ignore
+            message: 'Account settings are reverted to last saved',
+            type: 'success',
+          });
         }}
       />
       {showModal && (
-        <NavigateModal onClose={handleModalClose} onConfirm={handleModalConfirm} message={'Institute Updated Successfuly'} btnOne={'Keep Updating'} btnTwo={'Go To Profile'}/>
+        <NavigateModal
+          onClose={handleModalClose}
+          onConfirm={handleModalConfirm}
+          message={'Institute Updated Successfuly'}
+          btnOne={'Keep Updating'}
+          btnTwo={'Go To Profile'}
+        />
       )}
       {toast && (
         <Toast

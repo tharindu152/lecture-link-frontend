@@ -23,7 +23,7 @@ const Qualifications = () => {
     // @ts-ignore
     setQualificationList(data?.qualifications);
     localStorage.removeItem('qualification');
-  }, []);
+  }, [data]);
 
   const { mutate: deleteQualification, isLoading: isDeletingQualification } = useMutation(
     QualificationService.deleteQualificationById,

@@ -13,7 +13,6 @@ import { Status } from '../../types/enums/status.ts';
 import { Role } from '../../types/enums/role.ts';
 import SignUpModal from '../../components/Miscellaneous/SignUpModal.tsx';
 import { divisionOptions } from '../../types/dropdowns/dropdownOptions.ts';
-import RoleSelectionModal from './RoleSelectionModal';
 
 const SignUp: React.FC = () => {
   const [toast, setToast] = useState(null);
@@ -21,7 +20,6 @@ const SignUp: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showRePassword, setShowRePassword] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [roleSelectionModalOpen, setRoleSelectionModalOpen] = useState(false);
 
   const { mutate: createLecturer, isLoading: isLecturerCreated } = useMutation(
     lecturerService.createLecturer,
@@ -145,7 +143,8 @@ const SignUp: React.FC = () => {
             </Link>
             <div className="mt-6 text-center">
               <p>
-                Connect with top lecturers or institutes in the academic world.<br/> Sign Up to start!
+                Connect with top lecturers or institutes in the academic world.
+                <br /> Sign Up to start!
               </p>
             </div>
           </div>
@@ -191,7 +190,9 @@ const SignUp: React.FC = () => {
                   className="mb-2.5 block font-medium text-black dark:text-white"
                   htmlFor="name"
                 >
-                  {formik.values?.type === Role.LECTURER ? 'Full Name' : 'Institute Name'}
+                  {formik.values?.type === Role.LECTURER
+                    ? 'Full Name'
+                    : 'Institute Name'}
                 </label>
                 <div className="relative">
                   <input
@@ -232,7 +233,9 @@ const SignUp: React.FC = () => {
                 </div>
               </div>
               {formik.touched.name && formik.errors.name && (
-                <p className="text-red-500 text-sm mb-4">{formik.errors.name}</p>
+                <p className="text-red-500 text-sm mb-4">
+                  {formik.errors.name}
+                </p>
               )}
 
               <div className="mb-4">
@@ -280,7 +283,9 @@ const SignUp: React.FC = () => {
                 </div>
               </div>
               {formik.touched.division && formik.errors.division && (
-                <p className="text-red-500 text-sm mb-4">{formik.errors.division}</p>
+                <p className="text-red-500 text-sm mb-4">
+                  {formik.errors.division}
+                </p>
               )}
 
               <div className="mb-4">
@@ -325,7 +330,9 @@ const SignUp: React.FC = () => {
                 </div>
               </div>
               {formik.touched.email && formik.errors.email && (
-                <p className="text-red-500 text-sm mb-4">{formik.errors.email}</p>
+                <p className="text-red-500 text-sm mb-4">
+                  {formik.errors.email}
+                </p>
               )}
 
               <div className="mb-4">
@@ -350,22 +357,53 @@ const SignUp: React.FC = () => {
                     value={formik.values.password}
                   />
 
-                  <span className="absolute right-6 top-4" onClick={() => setShowPassword(!showPassword)}>
-                  {showPassword ? (
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                    </svg>
-                  ):(
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
-                    </svg>
-                  )}
+                  <span
+                    className="absolute right-6 top-4"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                        className="size-6"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                        />
+                      </svg>
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                        className="size-6"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88"
+                        />
+                      </svg>
+                    )}
                   </span>
                 </div>
               </div>
               {formik.touched.password && formik.errors.password && (
-                <p className="text-red-500 text-sm mb-4">{formik.errors.password}</p>
+                <p className="text-red-500 text-sm mb-4">
+                  {formik.errors.password}
+                </p>
               )}
 
               <div className="mb-6">
@@ -390,22 +428,53 @@ const SignUp: React.FC = () => {
                     value={formik.values.re_password}
                   />
 
-                  <span className="absolute right-6 top-4" onClick={() => setShowRePassword(!showRePassword)}>
-                  {showRePassword ? (
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                    </svg>
-                  ):(
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
-                    </svg>
-                  )}
+                  <span
+                    className="absolute right-6 top-4"
+                    onClick={() => setShowRePassword(!showRePassword)}
+                  >
+                    {showRePassword ? (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                        className="size-6"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                        />
+                      </svg>
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                        className="size-6"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88"
+                        />
+                      </svg>
+                    )}
                   </span>
                 </div>
               </div>
               {formik.touched.re_password && formik.errors.re_password && (
-                <p className="text-red-500 text-sm mb-4">{formik.errors.re_password}</p>
+                <p className="text-red-500 text-sm mb-4">
+                  {formik.errors.re_password}
+                </p>
               )}
 
               <div className="mb-5">
@@ -417,7 +486,9 @@ const SignUp: React.FC = () => {
                     setShowModal(true); // Open modal on button click
                   }}
                   className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
-                >Create Account</button>
+                >
+                  Create Account
+                </button>
               </div>
 
               <div className="mt-6 text-center">
@@ -429,15 +500,14 @@ const SignUp: React.FC = () => {
                 </p>
               </div>
             </form>
-
-            {roleSelectionModalOpen && (
-              <RoleSelectionModal toggleModal={() => setRoleSelectionModalOpen}/>
-            )}
           </div>
         </div>
       </div>
       {showModal && (
-        <SignUpModal onClose={handleModalClose} message={'Sign Up is Completed!!'} />
+        <SignUpModal
+          onClose={handleModalClose}
+          message={'Sign Up is Completed!!'}
+        />
       )}
       {toast && (
         <Toast
