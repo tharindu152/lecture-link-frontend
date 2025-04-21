@@ -95,7 +95,7 @@ const LecturerService = {
   },
 
   getAiMatchPrediction: async (requestDto: Record<string, any>): Promise<any> => {
-    const { data } = await lectureLinkAxios.post('/ai-match', requestDto);
+    const { data } = await lectureLinkAxios.post('/lecturers/ai-match', requestDto);
     return data;
   },
 };

@@ -68,7 +68,7 @@ const Lecturers = () => {
       const rateB = b.hourlyPayRate ?? 0;
       return sortOrder === 'asc' ? rateA - rateB : rateB - rateA;
     });
-  };;
+  };
 
   const currentLecturers = sortLecturers(lecturerList)?.slice(indexOfFirstItem, indexOfLastItem);
 
@@ -152,7 +152,7 @@ const Lecturers = () => {
                       <p
                         className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium ${
                           getHighestQualification(lecturer)?.toLowerCase() ===
-                          'phd'
+                          'doctorate'
                             ? 'bg-meta-7 text-meta-7'
                             : getHighestQualification(
                               lecturer,
