@@ -175,7 +175,7 @@ const UpdateSubjectForm = () => {
         {/* Is Assigned (Toggle) */}
         <div className="mb-4 flex items-center">
           <label className="block w-40 text-black dark:text-white" htmlFor="isAssigned">
-            Is Assigned
+            Is Assigned to a Lecturer
           </label>
 
           <div

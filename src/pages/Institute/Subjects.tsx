@@ -145,7 +145,7 @@ const Subjects = () => {
                   No of Credits {sortColumn === 'noOfCredits' ? (sortOrder === 'asc' ? '↑' : '↓') : ''}
                 </th>
                 <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
-                  Is Assigned
+                  Is Assigned to a Lecturer
                 </th>
                 <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
                   Lecturer ID

@@ -17,11 +17,6 @@ const AuthService = {
     });
     return data;
   },
-
-  googleSignIn: async (payload: { email: string; name: string; role: string }) => {
-    const { data } = await lectureLinkAxios.post('/auth/google-signin', payload);
-    return data;
-  }
 };
 
 export default AuthService;

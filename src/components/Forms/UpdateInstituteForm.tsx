@@ -23,7 +23,7 @@ const UpdateInstituteForm = () => {
   const navigate = useNavigate();
   const dispatch = useDispatcher();
   const location = useLocation();
-  const [showpassword, setShowpassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { pathname } = location;
   const [showModal, setShowModal] = useState(false);
   const [oldPassword, setOldPassword] = useState('');
@@ -54,11 +54,13 @@ const UpdateInstituteForm = () => {
   const { mutate: updateInstituteJson, isLoading: isUpdatingInstituteJson } =
     useMutation(instituteService.updateInstituteJson, {
       onSuccess: () => {
-        setToast({
-          // @ts-ignore
-          message: `${pathname.includes('settings') ? 'Settings updated successfully!. Please login again' : 'Institute updated successfully!'}`,
-          type: 'success',
-        });
+        if(!pathname.includes('settings')) {
+          setToast({
+            // @ts-ignore
+            message: 'Institute updated successfully!',
+            type: 'success',
+          });
+        }
         !pathname.includes('settings') && dispatch({ type: 'delete' });
         setShowModal(true);
       },
@@ -213,6 +215,7 @@ const UpdateInstituteForm = () => {
         }`}
       />
       <form
+        onSubmit={formik.handleSubmit}
         className="p-6 rounded-lg border border-stroke bg-white shadow-md dark:border-strokedark dark:bg-boxdark"
       >
         <h2 className="text-lg font-medium mb-6 text-black dark:text-white">
@@ -608,7 +611,6 @@ const UpdateInstituteForm = () => {
         message={`Account settings changes will log you out from LectureLink. You have to login again using new credentials. Enter Confirm to continue?`}
         btnOne={'Yes'}
         btnTwo={'No'}
-        submit={true}
         onConfirm={handleDeactivate}
         onClose={() => {
           setIsDeactivateModalOpen(false);
@@ -625,14 +627,15 @@ const UpdateInstituteForm = () => {
         message={`Please enter your old password to confirm the update.`}
         btnOne={'Confirm'}
         btnTwo={'Cancel'}
-        submit={true}
         onConfirm={() => {
           if (oldPassword === formik.values.password) {
+            setOldPassword('');
             formik.handleSubmit();
             setIsUpdateModalOpen(false);
           } else {
             // @ts-ignore
             setToast({ message: 'Old password is incorrect!', type: 'error' });
+            setOldPassword('');
           }
         }}
         onClose={() => {
@@ -642,7 +645,7 @@ const UpdateInstituteForm = () => {
       >
         <div className="relative w-full">
           <input
-            type={showpassword ? 'text' : 'password'}
+            type={showPassword ? 'text' : 'password'}
             placeholder="Enter old password"
             value={oldPassword}
             onChange={(e) => setOldPassword(e.target.value)}
@@ -650,9 +653,9 @@ const UpdateInstituteForm = () => {
           />
           <span
             className="absolute right-4 top-2.5 cursor-pointer"
-            onClick={() => setShowpassword(!showpassword)}
+            onClick={() => setShowPassword(!showPassword)}
           >
-            {showpassword ? (
+            {showPassword ? (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -711,7 +714,7 @@ const UpdateInstituteForm = () => {
           });
         }}
       />
-      {showModal && (
+      {showModal && pathname.includes('update') && (
         <NavigateModal
           onClose={handleModalClose}
           onConfirm={handleModalConfirm}

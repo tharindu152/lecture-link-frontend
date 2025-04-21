@@ -112,7 +112,7 @@ const Programs = () => {
                     key={(program?.id ?? 0) + key}
                     className={'hover:bg-gray-200 dark:hover:bg-gray-800'}
                   >
-                    <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+                    <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark xl:pl-11">
                       <h5 className="font-medium text-black dark:text-white">
                         {program?.name}
                       </h5>

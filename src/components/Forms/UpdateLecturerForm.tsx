@@ -55,15 +55,13 @@ const UpdateLecturerForm = () => {
   const { mutate: updateLecturerJson, isLoading: isUpdatingLecturerJson } =
     useMutation(lecturerService.updateLecturerJson, {
       onSuccess: () => {
-        setToast({
-          // @ts-ignore
-          message: `${
-            pathname.includes('settings')
-              ? 'Settings updated successfully!. Please login again'
-              : 'Lecturer updated successfully!'
-          }`,
-          type: 'success',
-        });
+        if(!pathname.includes('settings')) {
+          setToast({
+            // @ts-ignore
+            message: 'Lecturer updated successfully!',
+            type: 'success',
+          });
+        }
         !pathname.includes('settings') && dispatch({ type: 'delete' });
         setShowModal(true);
       },
@@ -116,6 +114,7 @@ const UpdateLecturerForm = () => {
       timePreference: lecturer?.timePreference ?? PrefferedTimeSlot.WEEKDAY,
       mapsLocation: lecturer?.mapsLocation ?? '',
       fieldOfWork: lecturer?.fieldOfWork ?? '',
+      isAssigned: lecturer?.isAssigned,
       lecturingExperience: lecturer?.lecturingExperience ?? 0,
       language: lecturer?.language ?? Language.ENGLISH,
     },
@@ -178,6 +177,7 @@ const UpdateLecturerForm = () => {
         lecturer?.currentRating?.toString() ?? '0',
       );
       formData.append('fieldOfWork', values.fieldOfWork);
+      formData.append('isAssigned', String(values.isAssigned));
       formData.append(
         'lecturingExperience',
         values.lecturingExperience.toString(),
@@ -609,67 +609,6 @@ const UpdateLecturerForm = () => {
           </>
         )}
 
-        {/* Subscribed Toggle */}
-        {!pathname.includes('update') && (
-          <>
-            <div className="mb-4 flex items-center">
-              <label
-                className="block w-40 text-black dark:text-white"
-                htmlFor="subscribed"
-              >
-                Subscribed
-              </label>
-              <div
-                id="subscribed"
-                className={`w-12 h-6 rounded-full cursor-pointer p-1 transition border-gray-800 ${
-                  formik.values.subscribed ? 'bg-primary' : 'bg-gray-500'
-                }`}
-              >
-                <div
-                  className={`w-4 h-4 bg-white rounded-full shadow-md transform transition ${
-                    formik.values.subscribed ? 'translate-x-6' : ''
-                  }`}
-                ></div>
-              </div>
-            </div>
-
-            {/*/!* Status *!/*/}
-            {/*<div className="mb-4 flex items-center">*/}
-            {/*  <label*/}
-            {/*    className="block w-40 text-black dark:text-white"*/}
-            {/*    htmlFor="status"*/}
-            {/*  >*/}
-            {/*    Status*/}
-            {/*  </label>*/}
-            {/*  <select*/}
-            {/*    id="status"*/}
-            {/*    name="status"*/}
-            {/*    className={`flex-1 rounded-md border-[1.5px] px-3 py-2 outline-none transition ${*/}
-            {/*      formik.touched.status && formik.errors.status*/}
-            {/*        ? 'border-red-500'*/}
-            {/*        : 'border-gray-800 focus:border-primary'*/}
-            {/*    } bg-white dark:bg-gray-800 dark:text-white`}*/}
-            {/*    onChange={formik.handleChange}*/}
-            {/*    onBlur={formik.handleBlur}*/}
-            {/*    value={formik.values.status}*/}
-            {/*  >*/}
-            {/*    <option*/}
-            {/*      className="bg-white dark:bg-gray-800 dark:text-white"*/}
-            {/*      value="ACTIVE"*/}
-            {/*    >*/}
-            {/*      ACTIVE*/}
-            {/*    </option>*/}
-            {/*    <option*/}
-            {/*      className="bg-white dark:bg-gray-800 dark:text-white"*/}
-            {/*      value="INACTIVE"*/}
-            {/*    >*/}
-            {/*      INACTIVE*/}
-            {/*    </option>*/}
-            {/*  </select>*/}
-            {/*</div>*/}
-          </>
-        )}
-
         {pathname.includes('update') && (
           <>
             {/* preference */}
@@ -796,8 +735,7 @@ const UpdateLecturerForm = () => {
         {pathname.includes('settings') ? (
           <>
             <button
-              onClick={(e) => {
-                e.stopPropagation();
+              onClick={() => {
                 setIsUpdateModalOpen(true);
               }}
               disabled={!formik.isValid}
@@ -862,6 +800,7 @@ const UpdateLecturerForm = () => {
         btnTwo={'Cancel'}
         onConfirm={() => {
           if (oldPassword === formik.values.password) {
+            setOldPassword('');
             formik.handleSubmit();
             setIsUpdateModalOpen(false);
           } else {
@@ -901,7 +840,7 @@ const UpdateLecturerForm = () => {
           });
         }}
       />
-      {showModal && (
+      {showModal && pathname.includes('update') && (
         <NavigateModal
           onClose={handleModalClose}
           onConfirm={handleModalConfirm}

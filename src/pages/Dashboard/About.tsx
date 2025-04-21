@@ -46,20 +46,19 @@ const About = () => {
                 Description:
               </h4>
               <p className="mt-1.5 mb-1.5">
-                This application is designed to make it easier for academic
-                institutions to connect with qualified lecturers, creating a
-                smoother and more efficient matching process. By doing so, we
-                help tackle recruitment challenges, enhance teaching quality,
-                and ensure students have access to skilled professionals for a
-                better learning experience.
+                This application is designed for academic institutions to easily
+                connect with qualified lecturers, create a smoother and more
+                efficient match making process. By doing so, we help to tackle
+                recruitment challenges, enhance lecturing quality, and ensure
+                students have access to skilled professionals for a better
+                learning experience.
                 <br />
                 <br />
-                By bringing together institutions and talented lecturers from
-                both academia and industry, this platform expands
-                opportunities for everyone involved. It gives institutions
-                access to a wider network of qualified educators, helps
-                lighten the workload of full-time staff, and ultimately raises
-                the standard of education.
+                By bringing institutions and talented lecturers together, this
+                platform expands opportunities for everyone involved. It gives
+                institutions access to a wider network of qualified educators,
+                helps lighten the workload of full-time staff, and ultimately
+                raises the standard of education.
                 <br />
                 <br />
               </p>
@@ -75,7 +74,7 @@ const About = () => {
                 <h4 className="font-semibold text-black dark:text-white w-full md:w-56">
                   E-mail:
                 </h4>
-                <p>chanaka152@gmail.com</p>
+                <p>tharindu.20231753@iit.ac.lk</p>
               </div>
 
               <div className="flex flex-col md:flex-row">

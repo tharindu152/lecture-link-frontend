@@ -78,12 +78,12 @@ const AiMatchLecturers = () => {
     const noOfCredits = subjectDetails.noOfCredits;
 
     const payload : AiMatchRequest = {
-      program: programName,
+      program: programName.toLowerCase(),
       hourlyPay: hourlyPay,
-      level: level.slice(0,1)+level.slice(1).toLowerCase(),
-      time_pref: timePreference.slice(0,1)+timePreference.slice(1).toLowerCase(),
+      level: level.toLowerCase(),
+      time_pref: timePreference.toLowerCase(),
       studentCount: studentCount,
-      subject: subjectName,
+      subject: subjectName.toLowerCase(),
       noOfCredits: noOfCredits,
       instituteRating: instituteRating,
     };
