@@ -14,19 +14,16 @@ const AiMatchLecturers = () => {
   const [selectedSubject, setSelectedSubject] = useState<string>('');
   const [matchedLecturers, setMatchedLecturers] = useState<any>(null);
   const [lecturersToDisplay, setLecturersToDisplay] = useState([]);
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  const [sortColumn, setSortColumn] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (instituteData?.programs) {
-      // Extract subject names from the institute's programs
       const subjectNames = instituteData.programs.flatMap((program: any) =>
         program.subjects?.map((subject: any) => subject.name) || []
       );
       setSubjects(subjectNames);
-      setSelectedSubject(subjectNames[0]); // Default selection
+      setSelectedSubject(subjectNames[0]);
     }
   }, []);
 
@@ -49,10 +46,8 @@ const AiMatchLecturers = () => {
       return;
     }
 
-// Step 1: Extract institute-level data
     const instituteRating = instituteData.currentRating;
 
-// Step 2: Find the program containing the selected subject
     const programDetails = instituteData.programs.find((program) =>
       program.subjects.some((subject) => subject.name === selectedSubject)
     );
@@ -61,14 +56,12 @@ const AiMatchLecturers = () => {
       throw new Error("Program not found for the selected subject.");
     }
 
-// Step 3: Extract program-level details
     const programName = programDetails.name;
     const hourlyPay = programDetails.hourlyPayRate;
     const level = programDetails.level;
     const timePreference = programDetails.timePreference;
     const studentCount = programDetails.studentCount;
 
-// Step 4: Find the selected subject details
     const subjectDetails = programDetails.subjects.find(
       (subject) => subject.name === selectedSubject
     );
@@ -77,13 +70,9 @@ const AiMatchLecturers = () => {
       throw new Error("Subject details not found.");
     }
 
-// Step 5: Extract subject-level details
     const subjectName = subjectDetails.name;
     const noOfCredits = subjectDetails.noOfCredits;
 
-    console.log(level.slice(0,1)+level.slice(1).toLowerCase())
-
-// Step 6: Construct the payload
     const payload = {
       program: programName,
       hourlyPay: hourlyPay,
@@ -95,34 +84,23 @@ const AiMatchLecturers = () => {
       instituteRating: instituteRating,
     };
 
-    console.log(payload);
-
     getAiMatchPrediction(payload);
-  };
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
   };
 
   const handleNavigation = (path: string) => {
     navigate(path);
   };
 
-  const itemsPerPage = 5;
-  const [currentPage, setCurrentPage] = useState(1);
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-
   const fetchLecturers = async (lecturerIds: number[]) => {
     let lecturerDetails;
     try {
       lecturerDetails = await Promise.all(
-        lecturerIds?.map((lecturerId) =>
-          lecturerService?.getLecturerById({ lecturerId })
-        )
+        lecturerIds?.map((lecturerId) => {
+          if (lecturerId !== 0) {
+            return lecturerService?.getLecturerById({ lecturerId });
+          }
+        }),
       );
-      console.log(lecturerDetails)
-      await setLecturersToDisplay(lecturerDetails);
     } catch (error) {
       console.error('Error fetching lecturer details:', error);
     }
@@ -135,14 +113,20 @@ const AiMatchLecturers = () => {
       const lecturerIds = matchedLecturers.top_3_recommendations.map(
         (recommendation) => recommendation.lecturer_id
       );
-      fetchLecturers(lecturerIds);
+      fetchLecturers(lecturerIds).then((data) => {
+        setLecturersToDisplay(data);
+      });
     }
-  }, [selectedSubject]);
+  }, [matchedLecturers?.top_3_recommendations]);
 
-  const fetchedLecturers = lecturersToDisplay?.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(lecturersToDisplay?.length / itemsPerPage);
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
-  console.log(lecturersToDisplay);
+  if (loading || isGettingAiMatchPrediction) {
+    return <Loader />;
+  }
 
   const getHighestQualification = (lecturer: LecturerRes) => {
     const priority = ["DOCTORATE", "MASTERS", "BACHELORS", "HND", "POSTGRADUATE", "HNC"];
@@ -151,24 +135,7 @@ const AiMatchLecturers = () => {
     return priority.find(level => qualifications.includes(level)) ?? "N/A";
   };
 
-  const sortLecturers = (lecturers: LecturerRes[]) => {
-    return [...lecturers].sort((a, b) => {
-      const rateA = a.hourlyPayRate ?? 0;
-      const rateB = b.hourlyPayRate ?? 0;
-      return sortOrder === 'asc' ? rateA - rateB : rateB - rateA;
-    });
-  };
-
-  const currentLecturers = sortLecturers(fetchedLecturers)?.slice(indexOfFirstItem, indexOfLastItem);
-
-  const handleSort = (column: string) => {
-    if (sortColumn === column) {
-      setSortOrder(prev => (prev === 'asc' ? 'desc' : 'asc'));
-    } else {
-      setSortColumn(column);
-      setSortOrder('asc');
-    }
-  };
+  const currentLecturers = lecturersToDisplay.filter((lec) => lec?.name !== undefined);
 
   return (
     <>
@@ -196,7 +163,7 @@ const AiMatchLecturers = () => {
             className={`block w-full rounded rounded-md border-[1.5px] border-2 border-gray-500 py-2 px-5 outline-none w-40 transition 'border-gray-300 focus:border-primary dark:bg-gray-800`}
           >
             {subjects.map((subject, index) => (
-              <option key={index} value={subject}>
+              <option key={index + subject} value={subject}>
                 {subject}
               </option>
             ))}
@@ -208,6 +175,7 @@ const AiMatchLecturers = () => {
           <button
             type="submit"
             className="mt-5 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
+            id={'ai-match-btn'}
           >
             <svg
               width="32"
@@ -254,14 +222,8 @@ const AiMatchLecturers = () => {
                   </th>
                   <th
                     className="min-w-[100px] py-4 px-4 text-left font-medium text-black dark:text-white cursor-pointer"
-                    onClick={() => handleSort('hourlyRate')}
                   >
                     Hourly Rate (LKR){' '}
-                    {sortColumn === 'hourlyRate'
-                      ? sortOrder === 'asc'
-                        ? '↑'
-                        : '↓'
-                      : ''}
                   </th>
                   <th className="min-w-[150px] py-4 px-4 text-left font-medium text-black dark:text-white">
                     Already assigned to a Subject
@@ -272,7 +234,7 @@ const AiMatchLecturers = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentLecturers.length === 0 ? (
+                {currentLecturers?.length === 0 ? (
                   <tr>
                     <td colSpan={7} className="text-center py-5">
                       <p className="text-gray-500">No Lecturers Found</p>
@@ -376,37 +338,6 @@ const AiMatchLecturers = () => {
                 )}
               </tbody>
             </table>
-
-            {/* Pagination Controls */}
-            <div className="flex justify-center items-center space-x-2 mt-4">
-              <button
-                className="px-4 py-2 bg-gray-300 dark:bg-gray-700 rounded text-black dark:text-white"
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-              >
-                Prev
-              </button>
-              {Array.from({ length: totalPages }, (_, index) => (
-                <button
-                  key={index}
-                  onClick={() => handlePageChange(index + 1)}
-                  className={`px-4 py-2 rounded ${
-                    currentPage === index + 1
-                      ? 'bg-primary text-white'
-                      : 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white'
-                  }`}
-                >
-                  {index + 1}
-                </button>
-              ))}
-              <button
-                className="px-4 py-2 bg-gray-300 dark:bg-gray-700 rounded text-black dark:text-white"
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-              >
-                Next
-              </button>
-            </div>
           </div>
         </div>
       </div>
