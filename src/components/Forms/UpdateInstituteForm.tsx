@@ -29,79 +29,82 @@ const UpdateInstituteForm = () => {
   const [oldPassword, setOldPassword] = useState('');
   const [isImgModalOpen, setIsImgModalOpen] = useState(false);
 
-  const { mutate: updateInstituteMultipart, isLoading: isUpdatingInstituteMultipart } =
-    useMutation(instituteService.updateInstituteMultipart, {
-      onSuccess: () => {
-        setToast({
-          // @ts-ignore
-          message: 'Institute updated successfully!',
-          type: 'success',
-        });
-        dispatch({ type: 'delete' });
-        setShowModal(true);
-      },
-      onError: () => {
-        setToast({
-          // @ts-ignore
-          message: 'Institute update is unsuccessful!',
-          type: 'error',
-        });
-      },
-    });
+  const {
+    mutate: updateInstituteMultipart,
+    isLoading: isUpdatingInstituteMultipart,
+  } = useMutation(instituteService.updateInstituteMultipart, {
+    onSuccess: () => {
+      setToast({
+        // @ts-ignore
+        message: 'Institute updated successfully!',
+        type: 'success',
+      });
+      dispatch({ type: 'delete' });
+      setShowModal(true);
+    },
+    onError: () => {
+      setToast({
+        // @ts-ignore
+        message: 'Institute update is unsuccessful!',
+        type: 'error',
+      });
+    },
+  });
 
   const { mutate: updateInstituteJson, isLoading: isUpdatingInstituteJson } =
     useMutation(instituteService.updateInstituteJson, {
       onSuccess: () => {
         setToast({
           // @ts-ignore
-          message: `${pathname.includes("settings") ? 'Settings updated successfully!. Please login again' : 'Institute updated successfully!'}`,
+          message: `${pathname.includes('settings') ? 'Settings updated successfully!. Please login again' : 'Institute updated successfully!'}`,
           type: 'success',
         });
-        !pathname.includes("settings") && dispatch({ type: 'delete' });
+        !pathname.includes('settings') && dispatch({ type: 'delete' });
         setShowModal(true);
       },
       onError: () => {
         setToast({
           // @ts-ignore
-          message: `${pathname.includes("settings") ? 'Settings' : 'Institute'} update is unsuccessful!`,
+          message: `${pathname.includes('settings') ? 'Settings' : 'Institute'} update is unsuccessful!`,
           type: 'error',
         });
       },
     });
 
-  const { mutate: deactivateInstitute, isLoading: isDeactivating } = useMutation(
-    instituteService.deactivateInstitute, // This should be the function that calls your API
-    {
-      onSuccess: () => {
-        setToast({
-          // @ts-ignore
-          message: 'Account deactivated successfully!',
-          type: 'success',
-        });
-        // Optionally, navigate to login or home page
-        navigate('/auth/signin'); // Adjust the path as necessary
+  const { mutate: deactivateInstitute, isLoading: isDeactivating } =
+    useMutation(
+      instituteService.deactivateInstitute,
+      {
+        onSuccess: () => {
+          setToast({
+            // @ts-ignore
+            message: 'Account deactivated successfully!',
+            type: 'success',
+          });
+          navigate('/auth/signin');
+        },
+        onError: () => {
+          setToast({
+            // @ts-ignore
+            message: 'Failed to deactivate account. Please try again.',
+            type: 'error',
+          });
+        },
       },
-      onError: () => {
-        setToast({
-          // @ts-ignore
-          message: 'Failed to deactivate account. Please try again.',
-          type: 'error',
-        });
-      },
-    }
-  );
+    );
 
   const formik = useFormik({
     initialValues: {
       id: institute?.id,
       name: institute?.name,
       password: institute?.password,
-      mapsLocation:institute?.mapsLocation,
+      mapsLocation: institute?.mapsLocation,
       email: institute?.email,
       division: institute?.division,
       telephone: institute?.telephone ?? '',
       description: institute?.description ?? '',
       subscribed: institute?.subscribed ?? false,
+      currentRating: institute?.currentRating ?? 0,
       logo: undefined,
       status: institute?.status ?? Status.ACTIVE,
     },
@@ -116,7 +119,7 @@ const UpdateInstituteForm = () => {
         .matches(
           /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[_]?)[A-Za-z\d_]{15,16}$/,
           'Password must be 16 characters long and include at least one uppercase letter, one lowercase letter,' +
-          ' and one number. No special characters allowed other than underscore ',
+            ' and one number. No special characters allowed other than underscore ',
         )
         .required('Password is required'),
       division: Yup.string()
@@ -147,23 +150,26 @@ const UpdateInstituteForm = () => {
       formData.append('description', values.description);
       formData.append('subscribed', values.subscribed.toString());
       formData.append('status', values.status);
-      formData.append('currentRating', institute?.currentRating?.toString() ?? '0');
+      formData.append(
+        'currentRating',
+        institute?.currentRating?.toString() ?? '0',
+      );
       formData.append('mapsLocation', values.mapsLocation);
       // @ts-ignore
       formData.append('logo', values.logo);
       if (values.telephone) formData.append('telephone', values.telephone);
 
       // @ts-ignore
-      formik.values.logo?.size > 0 ?
-        updateInstituteMultipart({
-          instituteId: institute?.id,
-          instituteConfig: formData,
-        }) :
-        updateInstituteJson({
-          instituteId: institute?.id,
-          instituteConfig: values,
-        });
-      },
+      formik.values.logo?.size > 0
+        ? updateInstituteMultipart({
+            instituteId: institute?.id,
+            instituteConfig: formData,
+          })
+        : updateInstituteJson({
+            instituteId: institute?.id,
+            instituteConfig: values,
+          });
+    },
   });
 
   const [loading, setLoading] = useState(true);
@@ -188,7 +194,12 @@ const UpdateInstituteForm = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  if (isUpdatingInstituteMultipart || isUpdatingInstituteJson ||  isDeactivating || loading) {
+  if (
+    isUpdatingInstituteMultipart ||
+    isUpdatingInstituteJson ||
+    isDeactivating ||
+    loading
+  ) {
     return <Loader />;
   }
 
@@ -202,7 +213,6 @@ const UpdateInstituteForm = () => {
         }`}
       />
       <form
-        onSubmit={formik.handleSubmit}
         className="p-6 rounded-lg border border-stroke bg-white shadow-md dark:border-strokedark dark:bg-boxdark"
       >
         <h2 className="text-lg font-medium mb-6 text-black dark:text-white">
@@ -280,7 +290,7 @@ const UpdateInstituteForm = () => {
             {/* Email */}
             <div className="mb-4 flex items-center">
               <label
-                className="block w-40 text-black dark:text-white"
+                className="block w-40 mr-4.5 text-black dark:text-white"
                 htmlFor="email"
               >
                 Email
@@ -293,8 +303,8 @@ const UpdateInstituteForm = () => {
                 className={`w-full rounded-md border border-stroke py-2 pl-4 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary ${
                   formik.touched.email && formik.errors.email
                     ? 'border-red-500'
-                    : 'border-gray-800 focus:border-primary'
-                } dark:bg-gray-800`}
+                    : 'border-gray-300 focus:border-primary'
+                }dark:bg-gray-800`}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.email}
@@ -550,18 +560,27 @@ const UpdateInstituteForm = () => {
                 setIsUpdateModalOpen(true);
               }}
               disabled={!formik.isValid}
-              className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-primary hover:border-primary hover:text-white"
+              className={`mt-6 w-full inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out ${
+                formik.isValid
+                  ? 'hover:bg-primary hover:border-primary hover:text-white hover:bg-opacity-90'
+                  : ''
+              }`}
             >
               Update Settings
             </button>
             <Link to={'/app/profile/pricing-card'}>
-              <button className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-success hover:border-success hover:text-white">
+              <button disabled={!formik.isValid} className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-success hover:border-success hover:text-white">
                 Update Your Plan
               </button>
             </Link>
             <button
               onClick={() => setIsDeactivateModalOpen(true)}
-              className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-red-500 py-2 px-5 text-center font-medium text-red-500 transition duration-150 ease-in-out hover:bg-red-600 hover:border-red-600 hover:text-white"
+              className={`mt-6 w-full inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-red-500 py-2 px-5 text-center font-medium text-red-500 transition duration-150 ease-in-out ${
+                formik.isValid
+                  ? 'hover:bg-red-500 hover:border-red-500 hover:text-white hover:bg-opacity-90'
+                  : ''
+              }`}
+              disabled={!formik.isValid}
             >
               Deactivate Account
             </button>
@@ -696,7 +715,7 @@ const UpdateInstituteForm = () => {
         <NavigateModal
           onClose={handleModalClose}
           onConfirm={handleModalConfirm}
-          message={'Institute Updated Successfuly'}
+          message={'Institute Updated Successfully'}
           btnOne={'Keep Updating'}
           btnTwo={'Go To Profile'}
         />

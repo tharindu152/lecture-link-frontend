@@ -109,6 +109,7 @@ const UpdateLecturerForm = () => {
       contactNo: lecturer?.contactNo ?? '',
       hourlyPayRate: lecturer?.hourlyPayRate ?? 0,
       subscribed: lecturer?.subscribed ?? false,
+      currentRating: lecturer?.currentRating ?? 0,
       picture: undefined,
       status: lecturer?.status ?? Status.ACTIVE,
       preference: lecturer?.preference ?? '',

@@ -6,11 +6,9 @@ import { MainProvider } from './context/MainContext.tsx';
 function App() {
   const wrappedRoutes = useRoutes(routes);
   return (
-    <>
-      <MainProvider>
-        <LoaderWrapper>{wrappedRoutes}</LoaderWrapper>
-      </MainProvider>
-    </>
+    <MainProvider>
+      <LoaderWrapper>{wrappedRoutes}</LoaderWrapper>
+    </MainProvider>
   );
 }
 

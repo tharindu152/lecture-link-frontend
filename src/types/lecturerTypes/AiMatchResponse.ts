@@ -4,6 +4,6 @@ export type AiMatchResponseDto = {
 };
 
 export type Recommendation = {
-  lecturerId: number;
+  lecturer_id: number;
   probability: number;
 };

@@ -2,6 +2,8 @@ import { lectureLinkAxios } from './axiosConfig.ts';
 import { LecturerRes } from '../types/lecturerTypes/lecturerRes.ts';
 import { Lecturer } from '../types/lecturerTypes/lecturer.ts';
 import { FilteredLecturersRes } from '../types/lecturerTypes/filteredLecturersRes.ts';
+import { AiMatchResponseDto } from '../types/lecturerTypes/AiMatchResponse.ts';
+import { AiMatchRequest } from '../types/lecturerTypes/AiMatchRequest.ts';
 
 const LecturerService = {
   getAllLecturers: async (): Promise<LecturerRes[]> => {
@@ -94,7 +96,7 @@ const LecturerService = {
     return data;
   },
 
-  getAiMatchPrediction: async (requestDto: Record<string, any>): Promise<any> => {
+  getAiMatchPrediction: async (requestDto: AiMatchRequest): Promise<AiMatchResponseDto> => {
     const { data } = await lectureLinkAxios.post('/lecturers/ai-match', requestDto);
     return data;
   },

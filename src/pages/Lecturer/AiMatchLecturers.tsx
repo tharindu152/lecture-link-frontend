@@ -7,13 +7,17 @@ import lecturerService from '../../services/lecturerService.ts';
 import { useData } from '../../context/MainContext.tsx';
 import dummyProfileImg from '../../images/user/profile_dummy.png';
 import { LecturerRes } from '../../types/lecturerTypes/lecturerRes.ts';
+import { InstituteRes } from '../../types/instituteTypes/instituteRes.ts';
+import { AiMatchRequest } from '../../types/lecturerTypes/AiMatchRequest.ts';
+import { Recommendation } from '../../types/lecturerTypes/AiMatchResponse.ts';
 
 const AiMatchLecturers = () => {
-  const instituteData = useData(); // Retrieve institute details
+  //@ts-ignore
+  const instituteData: InstituteRes | null = useData();
   const [subjects, setSubjects] = useState<string[]>([]);
   const [selectedSubject, setSelectedSubject] = useState<string>('');
   const [matchedLecturers, setMatchedLecturers] = useState<any>(null);
-  const [lecturersToDisplay, setLecturersToDisplay] = useState([]);
+  const [lecturersToDisplay, setLecturersToDisplay] = useState([] as LecturerRes[]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -46,10 +50,10 @@ const AiMatchLecturers = () => {
       return;
     }
 
-    const instituteRating = instituteData.currentRating;
+    const instituteRating = instituteData?.currentRating;
 
-    const programDetails = instituteData.programs.find((program) =>
-      program.subjects.some((subject) => subject.name === selectedSubject)
+    const programDetails = instituteData?.programs?.find((program) =>
+      program?.subjects?.some((subject) => subject.name === selectedSubject)
     );
 
     if (!programDetails) {
@@ -62,7 +66,7 @@ const AiMatchLecturers = () => {
     const timePreference = programDetails.timePreference;
     const studentCount = programDetails.studentCount;
 
-    const subjectDetails = programDetails.subjects.find(
+    const subjectDetails = programDetails?.subjects?.find(
       (subject) => subject.name === selectedSubject
     );
 
@@ -73,7 +77,7 @@ const AiMatchLecturers = () => {
     const subjectName = subjectDetails.name;
     const noOfCredits = subjectDetails.noOfCredits;
 
-    const payload = {
+    const payload : AiMatchRequest = {
       program: programName,
       hourlyPay: hourlyPay,
       level: level.slice(0,1)+level.slice(1).toLowerCase(),
@@ -110,10 +114,11 @@ const AiMatchLecturers = () => {
 
   useEffect(() => {
     if (matchedLecturers?.top_3_recommendations) {
-      const lecturerIds = matchedLecturers.top_3_recommendations.map(
-        (recommendation) => recommendation.lecturer_id
+      const lecturerIds = matchedLecturers?.top_3_recommendations?.map(
+        (recommendation: Recommendation) => recommendation.lecturer_id
       );
       fetchLecturers(lecturerIds).then((data) => {
+        //@ts-expect-error
         setLecturersToDisplay(data);
       });
     }
@@ -135,7 +140,7 @@ const AiMatchLecturers = () => {
     return priority.find(level => qualifications.includes(level)) ?? "N/A";
   };
 
-  const currentLecturers = lecturersToDisplay.filter((lec) => lec?.name !== undefined);
+  const currentLecturers = lecturersToDisplay?.filter((lec) => lec?.name !== undefined);
 
   return (
     <>
