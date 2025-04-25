@@ -102,7 +102,9 @@ const PricingCard = () => {
     <div className="max-w-m flex flex-col rounded-3xl bg-white dark:bg-boxdark shadow-xl ring-1 ring-black/10">
       <div className="p-8 sm:p-10">
         <h3 className="text-xl font-semibold leading-8 tracking-tight text-indigo-600">
-          { data?.subscribed ? `Change subscription to AI Match Feature` : `Subscribe to AI Match Feature`}
+          {data?.subscribed
+            ? `Change subscription to AI Match Feature`
+            : `Subscribe to AI Match Feature`}
         </h3>
         <div className="mt-4 flex items-baseline text-5xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
           <span>$10</span>
@@ -111,14 +113,18 @@ const PricingCard = () => {
           </span>
         </div>
         <p className="mt-6 text-base leading-7 text-gray-500 ">
-          The $10 per month Basic Subscription Package unlocks the AI Match
-          Feature, offering one click smart matching between a given subject and a suitable lecturer to that subject.
+          {`The $10 per month Basic Subscription Package unlocks the AI Match
+            Feature, ${
+              localStorage.getItem('role') === 'INSTITUTE'
+                ? 'offering one click smart matching between a given subject and a suitable lecturer to that subject.'
+                : 'makes your profile available for AI match model training'
+            }`}
         </p>
       </div>
       <div className="flex flex-1 flex-col p-2">
         <div className="flex flex-1 flex-col justify-between rounded-2xl bg-gray-50 dark:bg-gray-900 p-6 sm:p-8">
           <ul className="space-y-6">
-            <strong className="ml-3" >Features enabled</strong>
+            <strong className="ml-3">Features enabled</strong>
             <li className="flex items-start">
               <p className="ml-3 text-sm leading-6 text-gray-600 dark:text-gray-400">
                 Unlimited AI Assistance

@@ -53,16 +53,28 @@ const UpdateInstituteForm = () => {
 
   const { mutate: updateInstituteJson, isLoading: isUpdatingInstituteJson } =
     useMutation(instituteService.updateInstituteJson, {
-      onSuccess: () => {
+      onSuccess: async () => {
         if(!pathname.includes('settings')) {
           setToast({
             // @ts-ignore
             message: 'Institute updated successfully!',
             type: 'success',
           });
+        } else if(pathname.includes('settings') && (formik.initialValues.email !== formik.values.email || formik.initialValues.password !== formik.values.password) ) {
+          setToast({
+            // @ts-ignore
+            message: 'Settings updated successfully!. Logging out',
+            type: 'success',
+          });
+          await setTimeout(() => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('issuer');
+            localStorage.removeItem('role');
+            localStorage.removeItem('userId');
+            navigate('/auth/signin');
+          }, 2000);
         }
         dispatch({ type: 'delete' });
-        !pathname.includes('settings') && dispatch({ type: 'delete' });
         setShowModal(true);
       },
       onError: () => {
@@ -197,6 +209,10 @@ const UpdateInstituteForm = () => {
     const timer = setTimeout(() => setLoading(false), 1000);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    console.log(formik)
+  }, [formik]);
 
   if (
     isUpdatingInstituteMultipart ||
@@ -564,9 +580,8 @@ const UpdateInstituteForm = () => {
         {pathname.includes('settings') ? (
           <>
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsUpdateModalOpen(true);
+              onClick={() => {
+                formik.handleSubmit();
               }}
               disabled={!formik.isValid}
               className={`mt-6 w-full inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out ${
@@ -616,8 +631,8 @@ const UpdateInstituteForm = () => {
       </form>
       <ConfirmationModal
         isOpen={isDeactivateModalOpen}
-        title={'Confirm Account Settings Change'}
-        message={`Account settings changes will log you out from LectureLink. You have to login again using new credentials. Enter Confirm to continue?`}
+        title={'Confirm Account Deactivation'}
+        message={`Account deactivation will log you out from LectureLink. You have to login again using new credentials. Enter Confirm to continue?`}
         btnOne={'Yes'}
         btnTwo={'No'}
         onConfirm={handleDeactivate}
