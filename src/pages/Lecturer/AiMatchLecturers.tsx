@@ -45,12 +45,6 @@ const AiMatchLecturers = () => {
   );
 
   const handleAiMatch = () => {
-    if (!selectedSubject) {
-      alert('Please select a subject.');
-      return;
-    }
-
-    const instituteRating = instituteData?.currentRating;
 
     const programDetails = instituteData?.programs?.find((program) =>
       program?.subjects?.some((subject) => subject.name === selectedSubject)
@@ -60,12 +54,6 @@ const AiMatchLecturers = () => {
       throw new Error("Program not found for the selected subject.");
     }
 
-    const programName = programDetails.name;
-    const hourlyPay = programDetails.hourlyPayRate;
-    const level = programDetails.level;
-    const timePreference = programDetails.timePreference;
-    const studentCount = programDetails.studentCount;
-
     const subjectDetails = programDetails?.subjects?.find(
       (subject) => subject.name === selectedSubject
     );
@@ -74,18 +62,19 @@ const AiMatchLecturers = () => {
       throw new Error("Subject details not found.");
     }
 
-    const subjectName = subjectDetails.name;
-    const noOfCredits = subjectDetails.noOfCredits;
-
     const payload : AiMatchRequest = {
-      program: programName.toLowerCase(),
-      hourlyPay: hourlyPay,
-      level: level.toLowerCase(),
-      time_pref: timePreference.toLowerCase(),
-      studentCount: studentCount,
-      subject: subjectName.toLowerCase(),
-      noOfCredits: noOfCredits,
-      instituteRating: instituteRating,
+      program: programDetails.name?.toLowerCase(),
+      hourlyPay: programDetails.hourlyPayRate,
+      level: programDetails.level.toLowerCase(),
+      time_pref: programDetails.timePreference.toLowerCase(),
+      studentCount: programDetails.studentCount,
+      subject: subjectDetails.name?.toLowerCase(),
+      noOfCredits: subjectDetails.noOfCredits,
+      instituteRating: instituteData?.currentRating,
+      duration: programDetails?.durationInDays,
+      division: instituteData?.division.toLowerCase(),
+      status: instituteData?.status.toLowerCase(),
+      language: programDetails.language.toLowerCase(),
     };
 
     getAiMatchPrediction(payload);

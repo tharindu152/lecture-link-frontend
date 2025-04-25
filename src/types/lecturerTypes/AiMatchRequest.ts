@@ -7,4 +7,8 @@ export type AiMatchRequest = {
   subject: string;
   noOfCredits: number;
   instituteRating?: number;
+  duration: number;
+  division?: string;
+  status?: string;
+  language: string;
 };
