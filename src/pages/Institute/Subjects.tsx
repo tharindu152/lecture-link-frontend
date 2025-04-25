@@ -24,12 +24,10 @@ const Subjects = () => {
   const [sortColumn, setSortColumn] = useState<string>('');
 
   useEffect(() => {
-    dispatch({ type: "delete" });
-    dispatch({ type: "view", data: data });
     // @ts-ignore
     setProgramsList(data?.programs);
     localStorage.removeItem('programs');
-  }, []);
+  }, [data?.programs, currentPage]);
 
   const { mutate: deleteSubject, isLoading: isDeletingSubject } = useMutation(
     subjectService.deleteSubjectById,
@@ -56,7 +54,6 @@ const Subjects = () => {
 
   const deleteOperation = (subjectId: number) => {
     deleteSubject({ subjectId });
-    console.log(deleteErrCode);
     (setProgramsList((prev) =>
       prev.map((program) =>
         // @ts-ignore
@@ -73,8 +70,17 @@ const Subjects = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const subjects = programsList?.flatMap(prog => prog.subjects || []);
+  const uniqueSubjects = new Set<string>();
+  const uniqueSub = new Set<string>();
 
-  const totalPages = Math.ceil(subjects?.length / itemsPerPage);
+  subjects?.map(sub => {
+    if (uniqueSub?.has(sub?.name)) {
+      return null;
+    }
+    uniqueSub?.add(sub?.name);
+  })
+
+  const totalPages = Math.ceil(uniqueSub?.size / itemsPerPage);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -87,7 +93,12 @@ const Subjects = () => {
   const subjectProgramMap = programsList?.reduce((acc, prog) => {
     prog.subjects?.forEach((sub) => {
       // @ts-ignore
-      acc[sub.id] = prog.name;
+      if (!acc[sub?.id]) {
+        //@ts-ignore
+        acc[sub?.id] = [];
+      }
+      //@ts-ignore
+      acc[sub?.id].push(prog.name);
     });
     return acc;
   }, {} as Record<number, string>);
@@ -136,7 +147,7 @@ const Subjects = () => {
                   Subject
                 </th>
                 <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
-                  Program
+                  Program(s)
                 </th>
                 <th
                   className="min-w-[100px] py-4 px-4 text-left font-medium text-black dark:text-white cursor-pointer"
@@ -163,7 +174,13 @@ const Subjects = () => {
                   </td>
                 </tr>
               ) : (
-                currentSubjects?.map((subject, key) => (
+                currentSubjects?.map((subject, key) => {
+                  if (uniqueSubjects?.has(subject?.name)) {
+                    return null;
+                  }
+                  uniqueSubjects?.add(subject?.name);
+
+                  return (
                   <tr
                     key={key + subject.name + subject?.noOfCredits}
                     className={'hover:bg-gray-200 dark:hover:bg-gray-800'}
@@ -177,7 +194,7 @@ const Subjects = () => {
                       <h5 className="font-medium text-black dark:text-white">
                         {subjectProgramMap[
                           // @ts-ignore
-                          subject.id] || 'No Program'}
+                          subject.id]?.join(", ") || 'No Program'}
                       </h5>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
@@ -297,7 +314,7 @@ const Subjects = () => {
                       </div>
                     </td>
                   </tr>
-                ))
+                )})
               )}
               </tbody>
             </table>
@@ -352,7 +369,7 @@ const Subjects = () => {
         btnTwo={'Cancel'}
         onConfirm={() => {
           deleteOperation(selectedSubject);
-          setIsModalOpen(false)
+          setIsModalOpen(false);
         }}
         onClose={() => setIsModalOpen(false)}
       ></ConfirmationModal>

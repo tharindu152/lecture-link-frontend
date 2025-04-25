@@ -19,11 +19,18 @@ const Subject = () => {
 
   const subject = programsList?.flatMap(prog => prog.subjects || []).find(sub => sub?.id === Number(pathname.slice(14)));
 
-  const subjectProgramMap = Object.fromEntries(
-    programsList?.flatMap(prog =>
-      prog.subjects?.map(sub => [sub.id, prog.name]) || []
-    ) || []
-  );
+  const subjectProgramMap = programsList?.reduce((acc, prog) => {
+    prog.subjects?.forEach((sub) => {
+      //@ts-ignore
+      if (!acc[sub?.id]) {
+        //@ts-ignore
+        acc[sub?.id] = [];
+      }
+      //@ts-ignore
+      acc[sub?.id].push(prog.name);
+    });
+    return acc;
+  }, {} as Record<number, string>);
 
   const [loading, setLoading] = useState(true);
 
@@ -49,11 +56,11 @@ const Subject = () => {
           {/* Program */}
           <div className="flex gap-4">
             <h4 className="font-semibold text-black dark:text-white w-40">
-              Program:
+              Program(s):
             </h4>
             <p className="flex-1">{
               // @ts-ignore
-              subjectProgramMap[subject?.id] ?? ''}</p>
+              subjectProgramMap[subject?.id].join(", ") ?? ''}</p>
           </div>
 
           {/* Number of Credits */}

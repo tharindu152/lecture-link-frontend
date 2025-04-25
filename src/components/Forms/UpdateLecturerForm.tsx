@@ -717,16 +717,20 @@ const UpdateLecturerForm = () => {
                   )}
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setIsImgModalOpen(true);
-                }}
-                className="mx-3 text-red-500 hover:text-red-700 text-xs"
-              >
-                Remove Added
-                <br /> Picture
-              </button>
+              {
+                //@ts-ignore
+                formik.values.picture?.size > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsImgModalOpen(true);
+                    }}
+                    className="mx-3 text-red-500 hover:text-red-700 text-xs"
+                  >
+                    Remove Added
+                    <br /> Logo
+                  </button>
+                )}
             </div>
           </>
         )}
@@ -829,15 +833,15 @@ const UpdateLecturerForm = () => {
         btnTwo={'Cancel'}
         onConfirm={() => {
           formik.setFieldValue('picture', null);
+          setToast({
+            // @ts-ignore
+            message: 'Selected image is removed',
+            type: 'success',
+          });
           setIsImgModalOpen(false);
         }}
         onClose={() => {
           setIsImgModalOpen(false);
-          setToast({
-            // @ts-ignore
-            message: 'Account settings are reverted to last saved',
-            type: 'success',
-          });
         }}
       />
       {showModal && pathname.includes('update') && (

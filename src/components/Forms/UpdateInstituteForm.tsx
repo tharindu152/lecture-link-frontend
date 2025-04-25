@@ -540,16 +540,20 @@ const UpdateInstituteForm = () => {
                   )}
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setIsImgModalOpen(true);
-                }}
-                className="mx-3 text-red-500 hover:text-red-700 text-xs"
-              >
-                Remove Added
-                <br /> Logo
-              </button>
+              {
+                //@ts-ignore
+                formik.values.logo?.size > 0 && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsImgModalOpen(true);
+                  }}
+                  className="mx-3 text-red-500 hover:text-red-700 text-xs"
+                >
+                  Remove Added
+                  <br /> Logo
+                </button>
+              )}
             </div>
           </>
         )}
@@ -572,7 +576,10 @@ const UpdateInstituteForm = () => {
               Update Settings
             </button>
             <Link to={'/app/profile/pricing-card'}>
-              <button disabled={!formik.isValid} className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-success hover:border-success hover:text-white">
+              <button
+                disabled={!formik.isValid}
+                className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-success hover:border-success hover:text-white"
+              >
                 Update Your Plan
               </button>
             </Link>
@@ -697,21 +704,21 @@ const UpdateInstituteForm = () => {
       <ConfirmationModal
         isOpen={isImgModalOpen}
         title={'Remove Confirmation'}
-        message={`This will remove selected Image. Enter Confirm to continue?`}
+        message={`This will remove selected logo. Enter Confirm to continue?`}
         btnOne={'Confirm'}
         btnTwo={'Cancel'}
         submit={true}
         onConfirm={() => {
           formik.setFieldValue('logo', null);
+          setToast({
+            // @ts-ignore
+            message: 'Selected logo is removed',
+            type: 'success',
+          });
           setIsImgModalOpen(false);
         }}
         onClose={() => {
           setIsImgModalOpen(false);
-          setToast({
-            // @ts-ignore
-            message: 'Account settings are reverted to last saved',
-            type: 'success',
-          });
         }}
       />
       {showModal && pathname.includes('update') && (

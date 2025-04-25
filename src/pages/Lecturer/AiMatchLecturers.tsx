@@ -35,7 +35,6 @@ const AiMatchLecturers = () => {
     lecturerService.getAiMatchPrediction,
     {
       onSuccess: (data) => {
-        console.log(data)
         setMatchedLecturers(data);
       },
       onError: () => {

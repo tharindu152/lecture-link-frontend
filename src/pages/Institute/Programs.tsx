@@ -24,7 +24,7 @@ const Programs = () => {
     // @ts-ignore
     setProgramsList(data?.programs);
     localStorage.removeItem('program');
-  }, []);
+  }, [data]);
 
   const { mutate: deleteProgram, isLoading: isDeletingProgram } = useMutation(
     programService.deleteProgramById,

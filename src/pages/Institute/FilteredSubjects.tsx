@@ -39,8 +39,6 @@ const FilteredSubjects = () => {
             type: 'error',
           });
         // @ts-ignore
-        console.log(data)
-        // @ts-ignore
         setFilteredSubjects(data.content)
       },
       onError: () => {
