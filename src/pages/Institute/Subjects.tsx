@@ -43,7 +43,7 @@ const Subjects = () => {
         setToast({
           // @ts-ignore
           message:
-            'Subject deletion unsuccessful!. Please unassign the subject from program and lecturer before deleting.',
+            'Subject deletion unsuccessful!. Please unassign the subject from program before deleting.',
           type: 'error',
         });
         // @ts-ignore

@@ -61,6 +61,7 @@ const UpdateInstituteForm = () => {
             type: 'success',
           });
         }
+        dispatch({ type: 'delete' });
         !pathname.includes('settings') && dispatch({ type: 'delete' });
         setShowModal(true);
       },
@@ -83,6 +84,7 @@ const UpdateInstituteForm = () => {
             message: 'Account deactivated successfully!',
             type: 'success',
           });
+          dispatch({ type: 'delete' });
           navigate('/auth/signin');
         },
         onError: () => {

@@ -62,6 +62,7 @@ const UpdateLecturerForm = () => {
             type: 'success',
           });
         }
+        dispatch({ type: 'delete' });
         !pathname.includes('settings') && dispatch({ type: 'delete' });
         setShowModal(true);
       },
@@ -85,6 +86,7 @@ const UpdateLecturerForm = () => {
           message: 'Account deactivated successfully!',
           type: 'success',
         });
+        dispatch({ type: 'delete' });
         navigate('/auth/signin');
       },
       onError: () => {
