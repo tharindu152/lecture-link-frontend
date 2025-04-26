@@ -4,7 +4,6 @@ import twitter from '../../images/brand/twitter.svg';
 import github from '../../images/brand/gitHub.svg';
 import linkedIn from '../../images/brand/linkedin.svg';
 import facebook from '../../images/brand/facebook.svg';
-import { Role } from '../../types/enums/role.ts';
 
 const brandData = [
   {
@@ -51,9 +50,7 @@ const TableOne = () => {
       ${isVisible ? "opacity-100 translate-y-0 transition-all duration-700 ease-out" : "opacity-0 translate-y-5"}
     `}>
       <h4 className="mb-6 text-xl font-semibold text-black dark:text-white">
-        {`Other Platforms of the ${
-          localStorage.getItem("role") === Role.INSTITUTE ? 'Institute' : 'Lecturer'
-        }`}
+        {`Important links for collaboration`}
       </h4>
 
       <div className="flex flex-col">

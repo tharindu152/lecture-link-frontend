@@ -15,6 +15,7 @@ const SignIn = () => {
   const [toast, setToast] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const dispatcher = useDispatcher();
+  const [failedPasswordAttempt, setFailedPasswordAttempt] = useState(0);
 
   const { mutate: signInUser, isLoading: isSigningIn } = useMutation(
     authService.signIn,
@@ -30,17 +31,34 @@ const SignIn = () => {
             return;
           }
 
-          localStorage.setItem("token", data.token);
-          localStorage.setItem("issuer", decodedToken.iss ?? '');
-          localStorage.setItem("userId", data.id ?? '');
-          localStorage.setItem("role", data.role ?? '');
-          dispatcher({ type: 'view'});
-          // @ts-ignore
-          setToast({ message: 'User Signed In Successfully', type: 'success' });
-          setTimeout(() => {
-            window.location.href = '/app/dashboard';
-          }, 3000);
+          if(failedPasswordAttempt <= 3) {
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("issuer", decodedToken.iss ?? '');
+            localStorage.setItem("userId", data.id ?? '');
+            localStorage.setItem("role", data.role ?? '');
+            dispatcher({ type: 'view'});
+            // @ts-ignore
+            setToast({ message: 'User Signed In Successfully', type: 'success' });
+            setTimeout(() => {
+              window.location.href = '/app/dashboard';
+            }, 3000);
+          } else {
+            // @ts-ignore
+            setToast({ message: "Account Locked! Too many attempts", type: "error" });
+            setTimeout(() => {
+              window.location.href = '/auth/signin';
+            }, 3000);
+          }
+
         } catch (error) {
+          setFailedPasswordAttempt(prevState => prevState+1)
+          if(failedPasswordAttempt > 3) {
+            // @ts-ignore
+            setToast({ message: "Account Locked! Too many attempts", type: "error" });
+            setTimeout(() => {
+              window.location.href = '/auth/signin';
+            }, 3000);
+          }
           // @ts-ignore
           setToast({ message: "Token validation failed!", type: "error" });
         }
