@@ -1,6 +1,6 @@
 export type AiMatchRequest = {
   program?: string;
-  hourlyPay: number;
+  hourly_pay: number;
   level: string;
   time_pref?: string;
   studentCount: number;

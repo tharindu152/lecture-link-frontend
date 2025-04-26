@@ -14,7 +14,7 @@ const options: ApexOptions = {
     type: 'donut',
   },
   colors: ['#8FD0EF', '#6577F3'],
-  labels: ['Lecturer Assigned', 'Lecturer Unassigned'],
+  labels: ['With lecturer', 'With out lecturer'],
   legend: {
     show: false,
   },

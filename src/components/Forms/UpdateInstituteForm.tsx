@@ -597,7 +597,7 @@ const UpdateInstituteForm = () => {
                 disabled={!formik.isValid}
                 className="mt-6 w-full hover:bg-opacity-90 inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-gray-500 py-2 px-5 text-center font-medium text-gray-500 transition duration-150 ease-in-out hover:bg-success hover:border-success hover:text-white"
               >
-                Update Your Plan
+                Update Your Subscription
               </button>
             </Link>
             <button

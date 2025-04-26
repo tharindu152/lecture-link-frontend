@@ -172,6 +172,7 @@ const SignUp: React.FC = () => {
                     id="type"
                     value={formik.values.type}
                     onChange={formik.handleChange}
+                    //@ts-ignore
                     placeholder="Select whether your a Lectyrer or an Institute user"
                     className={`w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary ${
                       formik.touched.type && formik.errors.type

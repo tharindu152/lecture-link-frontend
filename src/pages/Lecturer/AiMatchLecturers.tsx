@@ -63,7 +63,7 @@ const AiMatchLecturers = () => {
 
     const payload : AiMatchRequest = {
       program: programDetails.name?.toLowerCase(),
-      hourlyPay: programDetails.hourlyPayRate,
+      hourly_pay: programDetails.hourlyPayRate,
       level: programDetails.level.toLowerCase(),
       time_pref: programDetails.timePreference.toLowerCase(),
       studentCount: programDetails.studentCount,
