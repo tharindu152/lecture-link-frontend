@@ -124,7 +124,7 @@ const PricingCard = () => {
       <div className="flex flex-1 flex-col p-2">
         <div className="flex flex-1 flex-col justify-between rounded-2xl bg-gray-50 dark:bg-gray-900 p-6 sm:p-8">
           <ul className="space-y-6">
-            <strong className="ml-3">Features enabled</strong>
+            <strong className="ml-3">Features enabled 24 hrs</strong>
             <li className="flex items-start">
               <p className="ml-3 text-sm leading-6 text-gray-600 dark:text-gray-400">
                 Unlimited AI Assistance

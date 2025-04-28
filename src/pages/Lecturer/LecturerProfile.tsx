@@ -14,11 +14,6 @@ const Lecturer = () => {
   const { pathname } = location;
   const [loading, setLoading] = useState(true);
 
-  document.addEventListener('mousemove', () => {
-    // @ts-ignore
-    setCurrentRating(lecturer?.currentRating);
-  });
-
   useEffect(() => {
       const timer = setTimeout(() => setLoading(false), 1000);
       return () => clearTimeout(timer);

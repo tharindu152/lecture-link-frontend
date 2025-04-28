@@ -401,7 +401,7 @@ const UpdateInstituteForm = () => {
                 className="block w-40 text-black dark:text-white"
                 htmlFor="mapsLocation"
               >
-                Location
+                Location (Lat Long)
               </label>
               <input
                 id="mapsLocation"

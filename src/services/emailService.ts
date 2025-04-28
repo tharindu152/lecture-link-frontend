@@ -11,7 +11,7 @@ const EmailService = {
             const { data } = await lectureLinkAxios.post('/email/send', {
                 toEmail: payload.instituteEmail, 
                 subject: 'Convey Interest For Subject',
-                body: `Dear Institute, ${payload.data} Lecturer has expressed interest in the "${payload.name}" subject.`
+                body: `To whom it may concern, Visiting Lecturer ${payload.data} has expressed interest to the subject: "${payload.name}".`
             });
 
             return data;
@@ -23,9 +23,9 @@ const EmailService = {
     data: string | undefined;
     }): Promise<InstituteRes> => {
             const { data } = await lectureLinkAxios.post('/email/send', {
-                toEmail: payload.lecturerEmail,
-                subject: 'Subject Assigning Notification',
-                body: `Dear Lecturer, You have assigned to the  "${payload.name}" subject by ${payload.data}.`
+              toEmail: payload.lecturerEmail,
+              subject: 'Subject Assigning Notification',
+              body: `Dear Lecturer, We are delighted to inform you that, you have been considered to conduct "${payload.name}" subject at ${payload.data}. Please reply to this email if you are interested.`,
             });
 
             return data;
